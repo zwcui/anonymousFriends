@@ -1,86 +1,19 @@
 package models
 
-import (
-	"errors"
-	"strconv"
-	"time"
-)
+/*	1. 默认float32和float64映射到数据库中为float,real,double这几种类型，这几种数据库类型数据库的实现一般都是非精确的
+		如果一定要作为查询条件，请将数据库中的类型定义为Numeric或者Decimal  `xorm:"Numeric"`
+	2. 复合主键  Id(xorm.PK{1, 2})
 
-var (
-	UserList map[string]*User
-)
-
-func init() {
-	UserList = make(map[string]*User)
-	u := User{"user_11111", "astaxie", "11111", Profile{"male", 20, "Singapore", "astaxie@gmail.com"}}
-	UserList["user_11111"] = &u
-}
+*/
 
 type User struct {
-	Id       string
-	Username string
-	Password string
-	Profile  Profile
+	UId       			int64			`description:"注册时间" json:"uId" xorm:"pk autoincr"`
+	NickName 			string			`description:"昵称" json:"nickName" xorm:"notnull "`		//string类型默认映射为varchar(255)
+	Password 			string			`description:"密码" json:"password" xorm:"notnull"`
+	Salt	 			string			`description:"密码" json:"salt" xorm:"notnull"`
+	Gender        		int    			`description:"性别,1 男, 2 女" json:"gender" xorm:"notnull default 0"`
+	Created           	int64  			`description:"注册时间" json:"created" xorm:"created"`
+	Updated           	int64  			`description:"修改时间" json:"updated" xorm:"updated"`
+	DeletedAt         	int64  			`description:"删除时间" json:"deleted" xorm:"deleted"`
 }
 
-type Profile struct {
-	Gender  string
-	Age     int
-	Address string
-	Email   string
-}
-
-func AddUser(u User) string {
-	u.Id = "user_" + strconv.FormatInt(time.Now().UnixNano(), 10)
-	UserList[u.Id] = &u
-	return u.Id
-}
-
-func GetUser(uid string) (u *User, err error) {
-	if u, ok := UserList[uid]; ok {
-		return u, nil
-	}
-	return nil, errors.New("User not exists")
-}
-
-func GetAllUsers() map[string]*User {
-	return UserList
-}
-
-func UpdateUser(uid string, uu *User) (a *User, err error) {
-	if u, ok := UserList[uid]; ok {
-		if uu.Username != "" {
-			u.Username = uu.Username
-		}
-		if uu.Password != "" {
-			u.Password = uu.Password
-		}
-		if uu.Profile.Age != 0 {
-			u.Profile.Age = uu.Profile.Age
-		}
-		if uu.Profile.Address != "" {
-			u.Profile.Address = uu.Profile.Address
-		}
-		if uu.Profile.Gender != "" {
-			u.Profile.Gender = uu.Profile.Gender
-		}
-		if uu.Profile.Email != "" {
-			u.Profile.Email = uu.Profile.Email
-		}
-		return u, nil
-	}
-	return nil, errors.New("User Not Exist")
-}
-
-func Login(username, password string) bool {
-	for _, u := range UserList {
-		if u.Username == username && u.Password == password {
-			return true
-		}
-	}
-	return false
-}
-
-func DeleteUser(uid string) {
-	delete(UserList, uid)
-}
