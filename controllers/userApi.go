@@ -1,12 +1,13 @@
 package controllers
 
 import (
-	"github.com/astaxie/beego"
+	"baseApi/base"
+	"baseApi/models"
 )
 
 // Operations about Users
 type UserController struct {
-	beego.Controller
+	apiController
 }
 
 //// @Title 新增用户
@@ -127,3 +128,16 @@ type UserController struct {
 //	u.ServeJSON()
 //}
 
+
+
+//通过手机号获取用户信息
+func UserWithPhoneNumber(phoneNumber string) (user *models.User, err error) {
+	hasUser, err := base.DBEngine.Table("user").Where("phone_number=?", phoneNumber).Get(&user)
+	if err != nil {
+		return nil, err
+	}
+	if !hasUser {
+		return nil, nil
+	}
+	return user, nil
+}

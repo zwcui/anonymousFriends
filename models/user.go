@@ -8,6 +8,7 @@ package models
 
 type User struct {
 	UId       			int64			`description:"注册时间" json:"uId" xorm:"pk autoincr"`
+	PhoneNumber			string			`description:"手机号" json:"phoneNumber"`
 	NickName 			string			`description:"昵称" json:"nickName" xorm:"notnull "`		//string类型默认映射为varchar(255)
 	Password 			string			`description:"密码" json:"password" xorm:"notnull"`
 	Salt	 			string			`description:"密码" json:"salt" xorm:"notnull"`
