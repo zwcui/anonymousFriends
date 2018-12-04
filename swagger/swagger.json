@@ -14,11 +14,38 @@
         }
     },
     "basePath": "/v1",
-    "paths": null,
+    "paths": {
+        "/user/": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "description": "create users",
+                "operationId": "UserController.新增用户",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "nickName",
+                        "description": "昵称",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} success"
+                    },
+                    "403": {
+                        "description": "create users failed"
+                    }
+                }
+            }
+        }
+    },
     "tags": [
         {
             "name": "user",
-            "description": "Operations about Users\n"
+            "description": "继承apiController\n"
         }
     ]
 }

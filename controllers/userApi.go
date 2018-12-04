@@ -3,25 +3,38 @@ package controllers
 import (
 	"baseApi/base"
 	"baseApi/models"
+	"baseApi/util"
 )
 
-// Operations about Users
+//继承apiController
+//用户模块
 type UserController struct {
 	apiController
 }
 
-//// @Title 新增用户
-//// @Description create users
-//// @Param	nickName		string  		true		"昵称"
-//// @Success 200 {int} models.User.Id
-//// @Failure 403 create users failed
-//// @router / [post]
-//func (u *UserController) Post() {
-//	var user models.User
-//	uid := models.AddUser(user)
-//	u.Data["json"] = map[string]string{"uid": uid}
-//	u.ServeJSON()
-//}
+//当前api请求之前调用，用于配置哪些接口需要进行head身份验证
+func (this *UserController) Prepare(){
+	//this.NeedBaseAuthList = []RequestPathAndMethod{{".+", "post"}, {".+", "patch"}, {".+", "delete"}}
+	this.NeedBaseAuthList = []RequestPathAndMethod{}
+	this.bathAuth()
+	util.Logger.Info("UserController beforeRequest ")
+}
+
+// @Title 新增用户
+// @Description create users
+// @Param	nickName		formData		string  		true		"昵称"
+// @Success 200 {string} success
+// @Failure 403 create users failed
+// @router / [post]
+func (this *UserController) Post() {
+	nickName := this.MustString("nickName")
+
+	var user models.User
+	user.NickName = nickName
+	base.DBEngine.Table("user").InsertOne(&user)
+
+	this.ReturnData = "success"
+}
 //
 //// @Title CreateUser
 //// @Description create users

@@ -94,15 +94,15 @@ func initDB(dbConfig databaseConfig){
 	dbUrl := fmt.Sprintf("%s:%s@tcp(%s%s)/%s?charset=%s",
 		dbConfig.DbUser, dbConfig.DbPassword, dbConfig.DbHost, dbConfig.DbPort, dbConfig.DbName, dbConfig.DbCharset)
 	fmt.Println(dbUrl)
-	Engine, err := xorm.NewEngine(dbConfig.DbType, dbUrl)
+	DBEngine, err = xorm.NewEngine(dbConfig.DbType, dbUrl)
 	if err != nil {
 		panic("创建数据库连接Engine失败! err:"+err.Error())
 	}
-	Engine.ShowSQL(false)			//在控制台打印出生成的SQL
-	Engine.SetMaxIdleConns(20)	//设置闲置的连接数
-	Engine.SetMaxOpenConns(100)	//设置最大打开的连接数，默认值为0表示不限制
+	DBEngine.ShowSQL(false)			//在控制台打印出生成的SQL
+	DBEngine.SetMaxIdleConns(20)	//设置闲置的连接数
+	DBEngine.SetMaxOpenConns(100)	//设置最大打开的连接数，默认值为0表示不限制
 	cacher := xorm.NewLRUCacher(xorm.NewMemoryStore(), 1000)	//启用一个全局的内存缓存，存放到内存中，缓存struct的记录数为1000条
-	Engine.SetDefaultCacher(cacher)
+	DBEngine.SetDefaultCacher(cacher)
 
 	//SnakeMapper为默认值，结构体驼峰结构，表名转为下划线，可以不写。SameMapper为结构体与表名一致
 	//表名前后缀 core.NewPrefixMapper(core.SnakeMapper{}, "prefix")  core.NewSufffixMapper(core.SnakeMapper{}, "suffix")
@@ -122,7 +122,7 @@ func initDB(dbConfig databaseConfig){
 	//engine.Import()		//导入
 	//engine.ImportFile()
 
-	err = Engine.Ping()
+	err = DBEngine.Ping()
 	if err != nil {
 		panic("数据库连接ping失败! err:"+err.Error())
 	}
@@ -133,10 +133,10 @@ func initDB(dbConfig databaseConfig){
 		panic("创建sql.log文件失败! err:"+err.Error())
 	}
 	 defer f.Close()
-	Engine.SetLogger(xorm.NewSimpleLogger(f))
+	DBEngine.SetLogger(xorm.NewSimpleLogger(f))
 
 	//同步表结构
-	err = Engine.Sync2(new(models.User))
+	err = DBEngine.Sync2(new(models.User), new(models.Role), new(models.UserRole))
 	if err != nil {
 		panic("同步表结构失败! err:"+err.Error())
 	}

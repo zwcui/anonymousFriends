@@ -8,10 +8,13 @@ import (
 	"baseApi/util"
 	"time"
 	"baseApi/base"
+	"net/http"
+	"fmt"
+	"errors"
 )
 
 //数据返回结构体
-type baseController struct {
+type BaseController struct {
 	beego.Controller
 	Err        error
 	ErrCode    int
@@ -20,7 +23,7 @@ type baseController struct {
 
 //api接口统一controller
 type apiController struct {
-	baseController
+	BaseController
 	NeedBaseAuthList []RequestPathAndMethod
 }
 
@@ -34,8 +37,27 @@ const (
 	REDIS_BATHAUTH = "BaseAuth_"
 )
 
-//默认需要验证的请求路径
-func (this *apiController) prepare(){
+//接口调用返回code
+const (
+	ServerApiSuccuess 		= 1000		//调用成功
+	ServerApiUndefinedFail 	= 999		//未知错误
+
+)
+
+//返回数据的head
+const (
+	headerCodeKey 	= "code"
+	headerDesKey 	= "description"
+)
+
+const (
+	DEFAULT_PAGESIZE = 15	//默认分页15条
+)
+
+
+//默认请求之前加路径head身份验证，默认所有方法都需要验证，各个api可以重写该方法
+func (this *apiController) Prepare(){
+	util.Logger.Info("apiController Prepare")
 	this.NeedBaseAuthList = []RequestPathAndMethod{{".+", "post"}, {".+", "patch"}, {".+", "delete"}, {".+", "put"}}
 	this.bathAuth()
 }
@@ -101,7 +123,153 @@ func (this *apiController) bathAuth(){
 		}
 
 	}
+}
 
+//func (this *BaseController) Init() {
+//	util.Logger.Info("BaseController Init")
+//}
 
+func (this *BaseController) Prepare() {
+	util.Logger.Info("BaseController Prepare")
+}
 
+func (this *BaseController) Get() {
+	util.Logger.Info("BaseController Get")
+}
+
+func (this *BaseController) Post() {
+	util.Logger.Info("BaseController Post")
+}
+
+func (this *BaseController) Delete() {
+	util.Logger.Info("BaseController Delete")
+}
+
+func (this *BaseController) Put() {
+	util.Logger.Info("BaseController Put")
+}
+
+func (this *BaseController) Head() {
+	util.Logger.Info("BaseController Head")
+}
+
+func (this *BaseController) Patch() {
+	util.Logger.Info("BaseController Patch")
+}
+
+func (this *BaseController) Options() {
+	util.Logger.Info("BaseController Options")
+}
+
+//func (this *BaseController) Render() {
+//	util.Logger.Info("BaseController Render")
+//}
+
+//func (this *BaseController) XSRFToken() {
+//	util.Logger.Info("BaseController XSRFToken")
+//}
+
+//func (this *BaseController) CheckXSRFCookie() {
+//	util.Logger.Info("BaseController CheckXSRFCookie")
+//}
+
+//func (this *BaseController) HandlerFunc() {
+//	util.Logger.Info("BaseController HandlerFunc")
+//}
+
+func (this *BaseController) URLMapping() {
+	util.Logger.Info("BaseController URLMapping")
+}
+
+//取参数错误返回
+func (this *BaseController) Failed() {
+	util.Logger.Info("BaseController Failed")
+	if this.ErrCode == 0 {
+		this.ErrCode = ServerApiUndefinedFail
+	}
+	this.Data["json"] = map[string]interface{}{
+		"header": map[string]string{
+			headerCodeKey: fmt.Sprintf("%d", this.ErrCode),
+			headerDesKey:  this.Err.Error(),
+		},
+	}
+	this.ServeJSON()
+	this.StopRun()
+}
+
+// 函数结束时,组装成json结果返回
+func (this *BaseController) Finish() {
+	util.Logger.Info("BaseController Finish")
+	if this.Err != nil {
+		this.Failed()
+	}
+	r := struct {
+		Header interface{} `json:"header"`
+		Data   interface{} `json:"data"`
+	}{}
+
+	r.Header = map[string]string{
+		headerCodeKey: fmt.Sprintf("%d", ServerApiSuccuess),
+		headerDesKey:  "success",
+	}
+
+	r.Data = this.ReturnData
+	this.Data["json"] = r
+	this.ServeJSON()
+}
+
+// 如果请求的参数不存在,就直接 error返回
+func (this *BaseController) MustString(key string) string {
+	v := this.GetString(key)
+	if v == "" {
+		// 400 Error, Parameter error
+		this.ErrCode = http.StatusBadRequest
+		this.Err = errors.New(fmt.Sprintf("require filed: %s", key))
+		this.Failed()
+	}
+	return v
+}
+
+// 如果请求的参数不存在,就直接 error返回
+func (this *BaseController) MustInt64(key string) int64 {
+	v, err := this.GetInt64(key)
+	if err != nil {
+		// 400 Error, Parameter error
+		this.ErrCode = http.StatusBadRequest
+		this.Err = errors.New(fmt.Sprintf("require filed: %s", key))
+		this.Failed()
+	}
+	return v
+}
+
+// 如果请求的参数不存在,就直接 error返回
+func (this *BaseController) MustFloat64(key string) float64 {
+	v, err := this.GetFloat(key)
+	if err != nil {
+		// 400 Error, Parameter error
+		this.ErrCode = http.StatusBadRequest
+		this.Err = errors.New(fmt.Sprintf("require filed: %s", key))
+		this.Failed()
+	}
+	return v
+}
+
+// 如果请求的参数不存在,就直接 error返回
+func (this *BaseController) MustInt(key string) int {
+	v, err := this.GetInt(key)
+	if err != nil {
+		// 400 Error, Parameter error
+		this.ErrCode = http.StatusBadRequest
+		this.Err = errors.New(fmt.Sprintf("require filed: %s", key))
+		this.Failed()
+	}
+	return v
+}
+
+func (this *BaseController) GetPageSize(key string) int {
+	v, _ := this.GetInt(key)
+	if v == 0 {
+		return DEFAULT_PAGESIZE
+	}
+	return v
 }

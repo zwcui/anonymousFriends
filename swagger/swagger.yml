@@ -10,8 +10,25 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 basePath: /v1
-paths: {}
+paths:
+  /user/:
+    post:
+      tags:
+      - user
+      description: create users
+      operationId: UserController.新增用户
+      parameters:
+      - in: formData
+        name: nickName
+        description: 昵称
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{string} success'
+        "403":
+          description: create users failed
 tags:
 - name: user
   description: |
-    Operations about Users
+    继承apiController
