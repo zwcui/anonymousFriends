@@ -19,6 +19,9 @@ import (
 	7. 考虑加入gRPC，远程调用，方便创建分布式应用
 	8. controller.go中，初始化后请求前调用Prepare()，请求后调用Finish()等等
 	9. 集成了seelog日志
+	10.deploy_dev.sh 用于部署开发服务器docker，取git最新程序同步至服务器；
+	   deploy_test.sh用于部署测试服务器docker，取git最新程序同步至服务器；
+       deploy_prod.sh用于部署正式服务器docker，取git最新程序同步至服务器；
  */
 func main() {
 	if beego.BConfig.RunMode == "dev" {
