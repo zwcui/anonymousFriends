@@ -6,6 +6,7 @@ import (
 	_ "baseApi/models"
 	_ "baseApi/base"
 	"baseApi/util"
+	"github.com/astaxie/beego/plugins/cors"
 )
 
 
@@ -34,6 +35,8 @@ import (
 			chmod 600 swapfile
 			swapoff -v swapfile	停用虚拟内存
 			vim /etc/fstab	; 最后加一行 /dev/swapfile            swap                    swap     defaults       0 0		开机启动虚拟内存
+	12.TODO:接入websocket
+	13.TODO:接入微信、支付宝 支付
 
  */
 func main() {
@@ -41,6 +44,15 @@ func main() {
 		beego.BConfig.WebConfig.DirectoryIndex = true
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
 	}
+
+	// 跨域
+	beego.InsertFilter("/v1/*", beego.BeforeRouter, cors.Allow(&cors.Options{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
+		AllowHeaders:     []string{"Origin", "Accept", "Content-Type", "Authorization", "Access-Control-Allow-Origin", "Api-Version", "AppNo", "Source"},
+		ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Origin"},
+		AllowCredentials: true,
+	}))
 
 	defer util.Logger.Flush()
 
