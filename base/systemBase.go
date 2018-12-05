@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"baseApi/util"
 	"baseApi/models"
+	"gopkg.in/mgo.v2"
 )
 
 //运行标识
@@ -23,6 +24,7 @@ const (
 var redisConn, serverURL string
 var dbConfig databaseConfig
 var rdConfig redisConfig
+var mongoDBUrl, mongoDBName string
 
 type databaseConfig struct {
 	DbType   		string
@@ -41,8 +43,11 @@ type redisConfig struct {
 //数据库引擎
 var DBEngine *xorm.Engine
 
-//redis
+//Redis
 var RedisCache cache.Cache
+
+//MongoDB
+var MongoDBSession *mgo.Session
 
 //系统初始化
 func init(){
@@ -57,6 +62,8 @@ func init(){
 		dbConfig.DbName = "startapi"
 		dbConfig.DbCharset = "utf8mb4"
 		rdConfig.RedisConn = "106.14.202.179:6379"
+		mongoDBUrl = "106.14.202.179:27017"
+		mongoDBName = "baseapi"
 	} else if beego.BConfig.RunMode == RUN_MODE_TEST {
 		serverURL = "http://106.14.202.179:8888"
 		dbConfig.DbType = "mysql"
@@ -67,6 +74,8 @@ func init(){
 		dbConfig.DbName = "startapi"
 		dbConfig.DbCharset = "utf8mb4"
 		rdConfig.RedisConn = "106.14.202.179:6379"
+		mongoDBUrl = "106.14.202.179:27017"
+		mongoDBName = "baseapi"
 	} else if beego.BConfig.RunMode == RUN_MODE_PROD {
 		serverURL = "http://106.14.202.179:8888"
 		dbConfig.DbType = "mysql"
@@ -77,12 +86,15 @@ func init(){
 		dbConfig.DbName = "startapi"
 		dbConfig.DbCharset = "utf8mb4"
 		rdConfig.RedisConn = "106.14.202.179:6379"
+		mongoDBUrl = "106.14.202.179:27017"
+		mongoDBName = "baseapi"
 	} else {
 		panic("运行标识错误")
 	}
 
 	initDB(dbConfig)
 	//initRedis(rdConfig)
+	initMongoDB()
 }
 
 
@@ -144,9 +156,32 @@ func initDB(dbConfig databaseConfig){
 
 //初始化redis
 func initRedis(rdConfig redisConfig){
-	RedisCache, err := cache.NewCache("redis", `{"conn":"`+rdConfig.RedisConn+`", "key":"baseRedis", "dbNum":"1"}`)
+	var err error
+	RedisCache, err = cache.NewCache("redis", `{"conn":"`+rdConfig.RedisConn+`", "key":"baseRedis", "dbNum":"1"}`)
 	if err != nil {
 		panic("redis初始化失败！err:"+err.Error())
 	}
 	RedisCache.Put("lastStartTime", strconv.FormatInt(util.UnixOfBeijingTime(), 10), 0)
+}
+
+//初始化MongoDB
+func initMongoDB(){
+	var err error
+	session, err := mgo.Dial(mongoDBUrl)
+	if err != nil {
+		panic("MongoDB初始化失败！err:"+err.Error())
+	}
+	//session.SetMode(mgo.Monotonic, true)
+	session.DB(mongoDBName)
+}
+
+//获取MondoDB的session
+//调用完该方法需加 defer session.Close()
+func MongoDB() (session *mgo.Session, database *mgo.Database){
+	session, err := mgo.Dial(mongoDBUrl)
+	if err != nil {
+		panic("MongoDB session获取失败！err:"+err.Error())
+	}
+	session.SetMode(mgo.Monotonic, true)
+	return session, session.DB(mongoDBName)
 }
