@@ -23,6 +23,18 @@ import (
        deploy_dev.sh 用于部署开发服务器docker，取git最新程序同步至服务器；
 	   deploy_test.sh用于部署测试服务器docker，取git最新程序同步至服务器；
        deploy_prod.sh用于部署正式服务器docker，取git最新程序同步至服务器；
+	11.服务器go build编译时出现signal: killed，多半是服务器内存不够，free -h查看，
+	   然后
+		手动释放 echo 1 > /proc/sys/vm/drop_caches
+		或者
+		增加虚拟内存
+			dd if=/dev/vda1 of=swapfile bs=1024000 count=2000
+			mkswap swapfile
+			swapon swapfile
+			chmod 600 swapfile
+			swapoff -v swapfile	停用虚拟内存
+			vim /etc/fstab	; 最后加一行 /dev/swapfile            swap                    swap     defaults       0 0		开机启动虚拟内存
+
  */
 func main() {
 	if beego.BConfig.RunMode == "dev" {
