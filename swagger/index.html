@@ -78,8 +78,10 @@
       });
 
       window.swaggerUi.load();
+      window.swaggerUi.api.clientAuthorizations.add({"api-version":new SwaggerClient.ApiKeyAuthorization("api-version", "1.0.0", "header"),"appNo":new SwaggerClient.ApiKeyAuthorization("appNo", "1", "header")});
 
-      function log() {
+
+        function log() {
         if ('console' in window) {
           console.log.apply(console, arguments);
         }
