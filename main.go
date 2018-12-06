@@ -5,6 +5,7 @@ import (
 	"github.com/astaxie/beego"
 	_ "baseApi/models"
 	_ "baseApi/base"
+	_ "baseApi/task"
 	"baseApi/util"
 	"github.com/astaxie/beego/plugins/cors"
 )
@@ -13,7 +14,7 @@ import (
 /*
 	1. govendor add +e 将项目使用到但为加入vendor的包加入工程，参考vendor.json
 	2. xorm 同步结构体与表结构，默认驼峰  其他参考： https://www.kancloud.cn/kancloud/xorm-manual-zh-cn/56013
-	3. 使用swagger 第一次执行  bee run -gendoc=true -downdoc=true
+	3. 使用swagger 第一次执行  bee run -gendoc=true -downdoc=true；目前只能在swagger目录下的index.html中配置默认head
 	4. 如果启动工程时想执行其他包中的init()方法，则引入进来，前面加 "_ "
 	5. 为了对老版本的兼容，docker部署多个容器，由请求head中的api-version区分，通过nginx进行不同端口的跳转；可能同一套数据库多个服务会产生新版本更新时老版本仍需更新，配置主从数据库？
 	6. 域名解析时，注意接口前缀如api，网页前缀如www
@@ -35,8 +36,9 @@ import (
 			chmod 600 swapfile
 			swapoff -v swapfile	停用虚拟内存
 			vim /etc/fstab	; 最后加一行 /dev/swapfile            swap                    swap     defaults       0 0		开机启动虚拟内存
-	12.TODO:接入websocket
-	13.TODO:接入微信、支付宝 支付
+	12.加入定时任务，建议定时任务的设计原则是可以反复跑，以便宕机补数据；可以通过数据库记录跑任务的时间与状态，然后只跑未执行的任务
+	13.TODO:接入websocket
+	14.TODO:接入微信、支付宝 支付
 
  */
 func main() {
