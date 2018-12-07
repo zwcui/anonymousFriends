@@ -4,7 +4,8 @@ set -e
 
 runmode_from_conf=`awk '$1=="runmode" {print $3}' ./conf/app.conf`
 version_from_conf=`awk '$1=="version" {print $3}' ./conf/app.conf`
-dockerport_from_conf=`awk '$1=="dockerport" {print $3}' ./conf/app.conf`
+apiport_from_conf=`awk '$1=="apiport" {print $3}' ./conf/app.conf`
+socketport_from_conf=`awk '$1=="socketport" {print $3}' ./conf/app.conf`
 
 if [ $# == 0 ] && [ -z $version_from_conf ]; then
     echo "baby, we need a version code"
@@ -25,12 +26,19 @@ fi
 
 echo $version
 
-dockerport=$dockerport_from_conf
+apiport=$apiport_from_conf
 if [ $# == 1 ]; then
-    dockerport=$1
+    apiport=$1
 fi
 
-echo $dockerport
+echo $apiport
+
+socketport=$socketport_from_conf
+if [ $# == 1 ]; then
+    socketport=$1
+fi
+
+echo $socketport
 
 default_runmode="prod"
 runmode=`awk '$1=="runmode" {print $3}' ./conf/app.conf`
@@ -41,7 +49,7 @@ then
 	exit 1
 fi
 
-ssh  root@106.14.202.179 version=$version dockerport=$dockerport runmode=$runmode 'bash -se' <<'ENDSSH'
+ssh  root@106.14.202.179 version=$version apiport=$apiport socketport=$socketport runmode=$runmode 'bash -se' <<'ENDSSH'
 cd ~/app/api/baseApi/prod/baseApi
 git pull;
 echo baseapi\_$runmode
@@ -51,7 +59,7 @@ then
     echo "stop and rm old container,start new one..."
     docker stop baseapi\_$runmode
     docker rm baseapi\_$runmode
-    docker run --restart=always --name baseapi\_$runmode -d -p $dockerport:8080 baseapi\_$runmode:$version
+    docker run --restart=always --name baseapi\_$runmode -d -p $apiport:8080 -p $socketport:6666 baseapi\_$runmode:$version
     docker ps
 fi
 ENDSSH

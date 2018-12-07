@@ -38,7 +38,7 @@ import (
 			swapoff -v swapfile	停用虚拟内存
 			vim /etc/fstab	; 最后加一行 /dev/swapfile            swap                    swap     defaults       0 0		开机启动虚拟内存
 	12.加入定时任务，建议定时任务的设计原则是可以反复跑，以便宕机补数据；可以通过数据库记录跑任务的时间与状态，然后只跑未执行的任务
-	13.TODO:接入websocket
+	13.接入websocket，ws://ip:8079/ws
 	14.TODO:接入微信、支付宝 支付
 
  */
