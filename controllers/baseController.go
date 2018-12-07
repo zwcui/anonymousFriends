@@ -8,7 +8,6 @@ import (
 	"baseApi/util"
 	"time"
 	"baseApi/base"
-	"net/http"
 	"fmt"
 	"errors"
 )
@@ -41,6 +40,7 @@ const (
 const (
 	ServerApiSuccuess 		= 1000		//调用成功
 	ServerApiUndefinedFail 	= 999		//未知错误
+	ServerApiIllegalParam 	= 900		//接口参数不合法
 
 )
 
@@ -222,8 +222,7 @@ func (this *BaseController) Finish() {
 func (this *BaseController) MustString(key string) string {
 	v := this.GetString(key)
 	if v == "" {
-		// 400 Error, Parameter error
-		this.ErrCode = http.StatusBadRequest
+		this.ErrCode = ServerApiIllegalParam
 		this.Err = errors.New(fmt.Sprintf("require filed: %s", key))
 		this.Failed()
 	}
@@ -234,8 +233,7 @@ func (this *BaseController) MustString(key string) string {
 func (this *BaseController) MustInt64(key string) int64 {
 	v, err := this.GetInt64(key)
 	if err != nil {
-		// 400 Error, Parameter error
-		this.ErrCode = http.StatusBadRequest
+		this.ErrCode = ServerApiIllegalParam
 		this.Err = errors.New(fmt.Sprintf("require filed: %s", key))
 		this.Failed()
 	}
@@ -246,8 +244,7 @@ func (this *BaseController) MustInt64(key string) int64 {
 func (this *BaseController) MustFloat64(key string) float64 {
 	v, err := this.GetFloat(key)
 	if err != nil {
-		// 400 Error, Parameter error
-		this.ErrCode = http.StatusBadRequest
+		this.ErrCode = ServerApiIllegalParam
 		this.Err = errors.New(fmt.Sprintf("require filed: %s", key))
 		this.Failed()
 	}
@@ -258,8 +255,7 @@ func (this *BaseController) MustFloat64(key string) float64 {
 func (this *BaseController) MustInt(key string) int {
 	v, err := this.GetInt(key)
 	if err != nil {
-		// 400 Error, Parameter error
-		this.ErrCode = http.StatusBadRequest
+		this.ErrCode = ServerApiIllegalParam
 		this.Err = errors.New(fmt.Sprintf("require filed: %s", key))
 		this.Failed()
 	}
