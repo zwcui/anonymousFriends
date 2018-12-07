@@ -6,6 +6,7 @@ import (
 	_ "baseApi/models"
 	_ "baseApi/base"
 	_ "baseApi/task"
+	_ "baseApi/controllers"
 	"baseApi/util"
 	"github.com/astaxie/beego/plugins/cors"
 )
