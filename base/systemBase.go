@@ -7,10 +7,11 @@ import (
 	"os"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/astaxie/beego/cache"
-	"strconv"
-	"baseApi/util"
 	"baseApi/models"
 	"gopkg.in/mgo.v2"
+	"github.com/garyburd/redigo/redis"
+	"baseApi/util"
+	"strconv"
 )
 
 //运行标识
@@ -38,6 +39,12 @@ type databaseConfig struct {
 
 type redisConfig struct {
 	RedisConn		string
+	Auth			string
+	Key				string
+	DBNum			int
+	//MaxIdle			int
+	//MaxActive		int
+	//IdleTimeout		time.Duration
 }
 
 //数据库引擎
@@ -45,6 +52,7 @@ var DBEngine *xorm.Engine
 
 //Redis
 var RedisCache cache.Cache
+var redisPool *redis.Pool
 
 //MongoDB
 var MongoDBSession *mgo.Session
@@ -62,6 +70,7 @@ func init(){
 		dbConfig.DbName = "startapi"
 		dbConfig.DbCharset = "utf8mb4"
 		rdConfig.RedisConn = "106.14.202.179:6379"
+		rdConfig.Auth = "baseapi"
 		mongoDBUrl = "106.14.202.179:27017"
 		mongoDBName = "baseapi"
 	} else if beego.BConfig.RunMode == RUN_MODE_TEST {
@@ -74,6 +83,7 @@ func init(){
 		dbConfig.DbName = "startapi"
 		dbConfig.DbCharset = "utf8mb4"
 		rdConfig.RedisConn = "106.14.202.179:6379"
+		rdConfig.Auth = "baseapi"
 		mongoDBUrl = "106.14.202.179:27017"
 		mongoDBName = "baseapi"
 	} else if beego.BConfig.RunMode == RUN_MODE_PROD {
@@ -86,6 +96,7 @@ func init(){
 		dbConfig.DbName = "startapi"
 		dbConfig.DbCharset = "utf8mb4"
 		rdConfig.RedisConn = "106.14.202.179:6379"
+		rdConfig.Auth = "baseapi"
 		mongoDBUrl = "106.14.202.179:27017"
 		mongoDBName = "baseapi"
 	} else {
@@ -93,7 +104,7 @@ func init(){
 	}
 
 	initDB(dbConfig)
-	//initRedis(rdConfig)
+	initRedis(rdConfig)
 	initMongoDB()
 }
 
@@ -157,7 +168,7 @@ func initDB(dbConfig databaseConfig){
 //初始化redis
 func initRedis(rdConfig redisConfig){
 	var err error
-	RedisCache, err = cache.NewCache("redis", `{"conn":"`+rdConfig.RedisConn+`", "key":"baseRedis", "dbNum":"1"}`)
+	RedisCache, err = cache.NewCache("redis", `{"conn":"`+rdConfig.RedisConn+`", "key":"`+rdConfig.Key+`", "dbNum":"`+strconv.Itoa(rdConfig.DBNum)+`", "password":"`+rdConfig.Auth+`"}`)
 	if err != nil {
 		panic("redis初始化失败！err:"+err.Error())
 	}
