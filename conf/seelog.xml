@@ -4,7 +4,7 @@
         <console/>
         <!--使用main的输出格式-->
         <filter levels="info,critical,error,warn">
-            <rollingfile type="date" filename="/opt/baseApiLogs/log.log" namemode="prefix" datepattern="2006.01.02" maxrolls="30" />
+            <rollingfile type="date" filename="/opt/anonymousFriendsLogs/log.log" namemode="prefix" datepattern="2006.01.02" maxrolls="30" />
         </filter>
 
     </outputs>

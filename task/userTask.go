@@ -2,7 +2,7 @@ package task
 
 import (
 	"strconv"
-	"baseApi/util"
+	"anonymousFriends/util"
 )
 
 func TestTimedTask(){

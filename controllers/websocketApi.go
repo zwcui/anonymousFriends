@@ -9,8 +9,8 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"strings"
-	"baseApi/models"
-	"baseApi/util"
+	"anonymousFriends/models"
+	"anonymousFriends/util"
 	"flag"
 )
 

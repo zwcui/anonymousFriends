@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"baseApi/base"
-	"baseApi/models"
-	"baseApi/util"
+	"anonymousFriends/base"
+	"anonymousFriends/models"
+	"anonymousFriends/util"
 )
 
 //继承apiController

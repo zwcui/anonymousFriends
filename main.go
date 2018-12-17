@@ -1,13 +1,13 @@
 package main
 
 import (
-	_ "baseApi/routers"
+	_ "anonymousFriends/routers"
 	"github.com/astaxie/beego"
-	_ "baseApi/models"
-	_ "baseApi/base"
-	_ "baseApi/task"
-	_ "baseApi/controllers"
-	"baseApi/util"
+	_ "anonymousFriends/models"
+	_ "anonymousFriends/base"
+	_ "anonymousFriends/task"
+	_ "anonymousFriends/controllers"
+	"anonymousFriends/util"
 	"github.com/astaxie/beego/plugins/cors"
 )
 

@@ -7,10 +7,10 @@ import (
 	"os"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/astaxie/beego/cache"
-	"baseApi/models"
+	"anonymousFriends/models"
 	"gopkg.in/mgo.v2"
 	"github.com/garyburd/redigo/redis"
-	"baseApi/util"
+	"anonymousFriends/util"
 	"strconv"
 )
 
@@ -70,9 +70,9 @@ func init(){
 		dbConfig.DbName = "startapi"
 		dbConfig.DbCharset = "utf8mb4"
 		rdConfig.RedisConn = "106.14.202.179:6379"
-		rdConfig.Auth = "baseapi"
+		rdConfig.Auth = "anonymousFriends"
 		mongoDBUrl = "106.14.202.179:27017"
-		mongoDBName = "baseapi"
+		mongoDBName = "anonymousFriends"
 	} else if beego.BConfig.RunMode == RUN_MODE_TEST {
 		serverURL = "http://106.14.202.179:8888"
 		dbConfig.DbType = "mysql"
@@ -83,9 +83,9 @@ func init(){
 		dbConfig.DbName = "startapi"
 		dbConfig.DbCharset = "utf8mb4"
 		rdConfig.RedisConn = "106.14.202.179:6379"
-		rdConfig.Auth = "baseapi"
+		rdConfig.Auth = "anonymousFriends"
 		mongoDBUrl = "106.14.202.179:27017"
-		mongoDBName = "baseapi"
+		mongoDBName = "anonymousFriends"
 	} else if beego.BConfig.RunMode == RUN_MODE_PROD {
 		serverURL = "http://106.14.202.179:8888"
 		dbConfig.DbType = "mysql"
@@ -96,9 +96,9 @@ func init(){
 		dbConfig.DbName = "startapi"
 		dbConfig.DbCharset = "utf8mb4"
 		rdConfig.RedisConn = "106.14.202.179:6379"
-		rdConfig.Auth = "baseapi"
+		rdConfig.Auth = "anonymousFriends"
 		mongoDBUrl = "106.14.202.179:27017"
-		mongoDBName = "baseapi"
+		mongoDBName = "anonymousFriends"
 	} else {
 		panic("运行标识错误")
 	}

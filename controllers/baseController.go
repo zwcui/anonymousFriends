@@ -5,9 +5,9 @@ import (
 	"regexp"
 	"strings"
 	_ "github.com/astaxie/beego/cache/redis"
-	"baseApi/util"
+	"anonymousFriends/util"
 	"time"
-	"baseApi/base"
+	"anonymousFriends/base"
 	"fmt"
 	"errors"
 )

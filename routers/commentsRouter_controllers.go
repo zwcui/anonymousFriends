@@ -6,14 +6,14 @@ import (
 
 func init() {
 
-	beego.GlobalControllerRouter["baseApi/controllers:MessageController"] = append(beego.GlobalControllerRouter["baseApi/controllers:MessageController"],
+	beego.GlobalControllerRouter["anonymousFriends/controllers:MessageController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:MessageController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
 			AllowHTTPMethods: []string{"post"},
 			Params: nil})
 
-	beego.GlobalControllerRouter["baseApi/controllers:UserController"] = append(beego.GlobalControllerRouter["baseApi/controllers:UserController"],
+	beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
