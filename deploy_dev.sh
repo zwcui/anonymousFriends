@@ -52,14 +52,14 @@ fi
 ssh  root@106.14.202.179 version=$version apiport=$apiport socketport=$socketport runmode=$runmode 'bash -se' <<'ENDSSH'
 cd ~/app/api/anonymousFriends/dev/anonymousFriends
 git pull;
-echo anonymousFriends\_$runmode
+echo anonymousfriends\_$runmode
 #go clean;
-if docker build -t anonymousFriends\_$runmode:$version .
+if docker build -t anonymousfriends\_$runmode:$version .
 then
     echo "stop and rm old container,start new one..."
-    docker stop anonymousFriends\_$runmode
-    docker rm anonymousFriends\_$runmode
-    docker run --restart=always --name anonymousFriends\_$runmode -d -p $apiport:8080 -p $socketport:6666 anonymousFriends\_$runmode:$version
+    docker stop anonymousfriends\_$runmode
+    docker rm anonymousfriends\_$runmode
+    docker run --restart=always --name anonymousfriends\_$runmode -d -p $apiport:8080 -p $socketport:6666 anonymousfriends\_$runmode:$version
     docker ps
 fi
 ENDSSH
