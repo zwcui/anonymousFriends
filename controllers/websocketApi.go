@@ -12,6 +12,7 @@ import (
 	"anonymousFriends/models"
 	"anonymousFriends/util"
 	"flag"
+	"anonymousFriends/base"
 )
 
 //socket连接池
@@ -83,7 +84,7 @@ func (this *WSServer) Handler (conn *websocket.Conn) {
 
 		//普通聊天/直连聊天
 		if socketMessage.MessageType == 1 {
-			handleUserMessage(&socketMessage, conn)
+			handleUserChatMessage(&socketMessage, reply, conn)
 		}
 
 
@@ -183,8 +184,27 @@ func handleHeartbeat(socketMessage *models.SocketMessage, conn *websocket.Conn){
 }
 
 //处理聊天
-func handleUserMessage(socketMessage *models.SocketMessage, conn *websocket.Conn) {
+func handleUserChatMessage(socketMessage *models.SocketMessage, reply string, conn *websocket.Conn) {
+	var userMessage models.UserChatSocketMessage
+	err := json.Unmarshal([]byte(socketMessage.MessageContent), &userMessage)
+	if err != nil {
+		util.Logger.Info("----userMessage--json.Unmarshal--err---- "+err.Error())
+		return
+	}
 
+	//存入mongoDB
+	session, mongoDB := base.MongoDB()
+	defer session.Close()
+	c := mongoDB.C("userChatMessage")
+	err = c.Insert(&userMessage)
+	if err != nil {
+		util.Logger.Info("Insert err:"+err.Error())
+	}
+
+	//转发
+	if err := websocket.Message.Send(UserSocketConnections[socketMessage.MessageSenderUid].Conn, reply); err != nil {
+		util.Logger.Info("----handleUserChatMessage--转发 err:", err.Error())
+	}
 }
 
 

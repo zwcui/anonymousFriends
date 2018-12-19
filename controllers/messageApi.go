@@ -5,7 +5,6 @@ import (
 	"anonymousFriends/models"
 	"anonymousFriends/util"
 	"gopkg.in/mgo.v2/bson"
-	"strconv"
 )
 
 //继承apiController
@@ -17,12 +16,12 @@ type MessageController struct {
 //当前api请求之前调用，用于配置哪些接口需要进行head身份验证
 func (this *MessageController) Prepare(){
 	//this.NeedBaseAuthList = []RequestPathAndMethod{{".+", "post"}, {".+", "patch"}, {".+", "delete"}}
-	this.NeedBaseAuthList = []RequestPathAndMethod{}
+	this.NeedBaseAuthList = []RequestPathAndMethod{{"/addGroup$", "post"}}
 	this.bathAuth()
 }
 
-// @Title 新增MongoDB消息
-// @Description 新增MongoDB消息
+// @Title 测试新增MongoDB消息
+// @Description 测试新增MongoDB消息
 // @Param	content		formData		string  		true		"内容"
 // @Success 200 {object} models.MongoDBMessage
 // @Failure 403 create message failed
@@ -37,24 +36,82 @@ func (this *MessageController) Post() {
 	session, mongoDB := base.MongoDB()
 	defer session.Close()
 	c := mongoDB.C("message")
-	err := c.Insert(&models.MongoDBMessage{1, 2, 3, 1, content, util.UnixOfBeijingTime()})
+	err := c.Insert(&models.UserChatSocketMessage{})
 	if err != nil {
 		util.Logger.Info("Insert err:"+err.Error())
 	}
 
-	result := models.MongoDBMessage{}
+	result := models.UserChatSocketMessage{}
 	err = c.Find(bson.M{"content":content}).One(&result)
 	if err != nil {
 		util.Logger.Info("One err:"+err.Error())
 	}
-	util.Logger.Info("One result:"+strconv.FormatInt(result.MId, 10))
-	util.Logger.Info("One result:"+strconv.FormatInt(result.GroupId, 10))
-	util.Logger.Info("One result:"+strconv.FormatInt(result.SenderUid, 10))
-	util.Logger.Info("One result:"+strconv.Itoa(result.Type))
-	util.Logger.Info("One result:"+result.Content)
-	util.Logger.Info("One result:"+strconv.FormatInt(result.Created, 10))
+	//util.Logger.Info("One result:"+strconv.FormatInt(result.MId, 10))
+	//util.Logger.Info("One result:"+strconv.FormatInt(result.GroupId, 10))
+	//util.Logger.Info("One result:"+strconv.FormatInt(result.SenderUid, 10))
+	//util.Logger.Info("One result:"+strconv.Itoa(result.Type))
+	//util.Logger.Info("One result:"+result.Content)
+	//util.Logger.Info("One result:"+strconv.FormatInt(result.Created, 10))
 
 
 	this.ReturnData = result
 }
+
+
+// @Title 加入聊天组，包括一对一和群聊
+// @Description 加入聊天组，包括一对一和群聊
+// @Param	groupId				formData		int64	  		false		"聊天组id"
+// @Param	groupType			formData		int		  		true		"组类型 1:一对一 2:一对多"
+// @Param	uId1				formData		int64  			true		"聊天人1"
+// @Param	uId2				formData		int64  			false		"聊天人2，一对一时必传"
+// @Success 200 {object} models.GroupInfo
+// @router /addGroup [post]
+func (this *MessageController) AddGroup() {
+	groupId, _ := this.GetInt64("groupId", 0)
+	groupType := this.MustInt("groupType")
+	uId1 := this.MustInt64("uId1")
+	uId2, _ := this.GetInt64("uId2", 0)
+
+	addGroupFlag := false
+	var group models.Group
+	if groupId == 0 {
+		addGroupFlag = true
+		group.GroupType = groupType
+		base.DBEngine.Table("group").InsertOne(&group)
+	} else {
+		base.DBEngine.Table("group").Where("group_id=?", groupId).Get(&group)
+	}
+
+	if addGroupFlag {
+		hasMember1, _ := base.DBEngine.Table("member").Where("group_id=? and u_id=?", group.GroupId, uId1).Get(new(models.Member))
+		if !hasMember1 {
+			var member1 models.Member
+			member1.GroupId = group.GroupId
+			member1.UId = uId1
+			base.DBEngine.Table("member").InsertOne(&member1)
+		}
+
+		hasMember2, _ := base.DBEngine.Table("member").Where("group_id=? and u_id=?", group.GroupId, uId2).Get(new(models.Member))
+		if !hasMember2 {
+			var member2 models.Member
+			member2.GroupId = group.GroupId
+			member2.UId = uId2
+			base.DBEngine.Table("member").InsertOne(&member2)
+		}
+	} else {
+		hasMember1, _ := base.DBEngine.Table("member").Where("group_id=? and u_id=?", group.GroupId, uId1).Get(new(models.Member))
+		if !hasMember1 {
+			var member1 models.Member
+			member1.GroupId = group.GroupId
+			member1.UId = uId1
+			base.DBEngine.Table("member").InsertOne(&member1)
+		}
+	}
+
+	this.ReturnData = models.GroupInfo{group}
+}
+
+
+
+
 

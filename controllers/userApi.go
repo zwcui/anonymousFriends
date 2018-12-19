@@ -92,7 +92,8 @@ func (this *UserController) SignUp() {
 	userAccount.CashBalance = 0
 	base.DBEngine.Table("user_account").InsertOne(&userAccount)
 
-	this.ReturnData = "success"
+	userShort, _ := user.UsetToUserShort()
+	this.ReturnData = models.UserInfo{*userShort}
 }
 
 
@@ -147,7 +148,8 @@ func (this *UserController) SignIn() {
 	userSignInDeviceInfo.AppVersion = appVersion
 	base.DBEngine.Table("user_sign_in_device_info").Where("u_id=?", storedUser.UId).AllCols().Update(&userSignInDeviceInfo)
 
-	this.ReturnData, _ = storedUser.UsetToUserShort()
+	userShort, _ := storedUser.UsetToUserShort()
+	this.ReturnData = models.UserInfo{*userShort}
 }
 
 // @Title 获取用户详情
@@ -357,6 +359,18 @@ func (this *UserController) UpdateUserInfo() {
 //通过手机号获取用户信息
 func UserWithPhoneNumber(phoneNumber string) (user models.User, err error) {
 	hasUser, err := base.DBEngine.Table("user").Where("phone_number=?", phoneNumber).Get(&user)
+	if err != nil {
+		return user, err
+	}
+	if !hasUser {
+		return user, nil
+	}
+	return user, nil
+}
+
+//通过昵称获取用户信息
+func UserWithNickName(nickName string) (user models.User, err error) {
+	hasUser, err := base.DBEngine.Table("user").Where("nick_name=?", nickName).Get(&user)
 	if err != nil {
 		return user, err
 	}

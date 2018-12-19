@@ -72,9 +72,9 @@ func (this *apiController) bathAuth(){
 		}
 	}
 
-	//要求head中放Authorization，内容格式为 "Basic XXXXXX", 其中XXXXX为base64加密后的"18800000000:123456"  密码为加密后的密文，加密方式为base64
+	//要求head中放Authorization，内容格式为 "Basic XXXXXX", 其中XXXXX为base64加密后的"昵称:密码"  密码为加密后的密文，加密方式为base64
 	if pathNeedAuth {
-		phoneNumber, encryptedPassword, ok := this.Ctx.Request.BasicAuth()
+		nickName, encryptedPassword, ok := this.Ctx.Request.BasicAuth()
 		if !ok {
 			w := this.Ctx.ResponseWriter
 			w.Header().Set("WWW-Authenticate", `Base Auth failed : "`+"empty auth"+`"`)
@@ -83,9 +83,9 @@ func (this *apiController) bathAuth(){
 			this.ServeJSON()
 			this.StopRun()
 		}
-		redisTemp := base.RedisCache.Get(REDIS_BATHAUTH+phoneNumber)
+		redisTemp := base.RedisCache.Get(REDIS_BATHAUTH+nickName)
 		if redisTemp == nil {
-			user, err := UserWithPhoneNumber(phoneNumber)
+			user, err := UserWithNickName(nickName)
 			if err != nil || user.UId == 0 {
 				w := this.Ctx.ResponseWriter
 				w.Header().Set("WWW-Authenticate", `Base Auth failed : "`+err.Error()+`"`)
@@ -110,7 +110,7 @@ func (this *apiController) bathAuth(){
 
 			//存入redis
 			if user.UId != 0 {
-				base.RedisCache.Put(REDIS_BATHAUTH+phoneNumber, encryptedPassword, 60*60*2*time.Second)
+				base.RedisCache.Put(REDIS_BATHAUTH+nickName, encryptedPassword, 60*60*2*time.Second)
 			}
 		} else {
 			if encryptedPassword != redisTemp {

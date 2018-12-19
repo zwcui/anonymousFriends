@@ -15,8 +15,8 @@ paths:
     post:
       tags:
       - message
-      description: 新增MongoDB消息
-      operationId: MessageController.新增MongoDB消息
+      description: 测试新增MongoDB消息
+      operationId: MessageController.测试新增MongoDB消息
       parameters:
       - in: formData
         name: content
@@ -26,9 +26,42 @@ paths:
       responses:
         "200":
           schema:
-            $ref: '#/definitions/models.MongoDBMessage'
+            $ref: '#/definitions/.MongoDBMessage'
         "403":
           description: create message failed
+  /message/addGroup:
+    post:
+      tags:
+      - message
+      description: 加入聊天组，包括一对一和群聊
+      operationId: MessageController.加入聊天组，包括一对一和群聊
+      parameters:
+      - in: formData
+        name: groupId
+        description: 聊天组id
+        type: integer
+        format: int64
+      - in: formData
+        name: groupType
+        description: 组类型 1:一对一 2:一对多
+        required: true
+        type: integer
+        format: int64
+      - in: formData
+        name: uId1
+        description: 聊天人1
+        required: true
+        type: integer
+        format: int64
+      - in: formData
+        name: uId2
+        description: 聊天人2，一对一时必传
+        type: integer
+        format: int64
+      responses:
+        "200":
+          schema:
+            $ref: '#/definitions/models.GroupInfo'
   /public/sendSocketMessage:
     post:
       tags:
@@ -287,33 +320,42 @@ paths:
           schema:
             $ref: '#/definitions/models.UserInfo'
 definitions:
-  models.MongoDBMessage:
-    title: MongoDBMessage
+  .MongoDBMessage:
+    type: object
+  models.Group:
+    title: Group
     type: object
     properties:
-      content:
-        description: 聊天内容
-        type: string
       created:
-        description: 消息时间
+        description: 注册时间
+        type: integer
+        format: int64
+      deleted:
+        description: 删除时间
         type: integer
         format: int64
       groupId:
         description: 聊天组id
         type: integer
         format: int64
-      mId:
-        description: 消息id
+      groupName:
+        description: 聊天组名称
+        type: string
+      groupType:
+        description: '聊天组类型 1:一对一 2:一对多 '
         type: integer
         format: int64
-      senderUid:
-        description: 发送人id
+      updated:
+        description: 修改时间
         type: integer
         format: int64
-      type:
-        description: 聊天类型，1为文本，2为语音
-        type: integer
-        format: int64
+  models.GroupInfo:
+    title: GroupInfo
+    type: object
+    properties:
+      group:
+        $ref: '#/definitions/models.Group'
+        description: 聊天组
   models.SignInUser:
     title: SignInUser
     type: object

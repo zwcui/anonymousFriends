@@ -21,19 +21,16 @@ type HeartBeatSocketMessage struct {
 
 }
 
-//聊天结构体
-type UserSocketMessage struct {
+//聊天结构体，存入mongodb结构体
+type UserChatSocketMessage struct {
 	FromNickName  			string 	 			`description:"fromNickName" json:"fromNickName" `
 	FromUid       			int64 	 			`description:"fromUid" json:"fromUid" `
 	ToNickName         		string 	 			`description:"toNickName" json:"toNickName" `
 	ToUid         			int64 	 			`description:"toUid" json:"toUid" `
 	GroupId           		int64	  			`description:"groupId" json:"groupId" `
-	GroupType        		int    				`description:"组类型 0:一对一 1:一对多 2:系统消息（不存库，仅识别使用） 3:客服一对一 " json:"groupType"`
-	From					int	   				`description:"客服显示当前咨询者进入IM的入口，1.首页 2.首页列表（张三1231）3.次首页 4.次首页列表（张三1231）5.列表页（张三1231）6.详情页（张三1231）0.其他" json:"from" xorm:"notnull default 0"`
-	Param					string 				`description:"咨询者进入IM的入口相关信息(json string)" json:"param" valid:"MaxSize(300)" `
+	GroupType        		int    				`description:"组类型 1:一对一 2:一对多 " json:"groupType"`
 	Content           		string  			`description:"content" json:"content" `
-	ActionUrl         		string  			`description:"actionUrl" json:"actionUrl" `
-	Type	           		int		  			`description:"消息内容类型 0:文本 1:图片 2:语音 3:视频" json:"type" `
+	ContentType	           	int		  			`description:"消息内容类型 0:文本 1:图片 2:语音 3:视频" json:"contentType" `
 	ImageWidth     			string 				`description:"图片宽度,客户端根据这个显示图片宽度" json:"imageWidth"`
 	ImageHeight     		string 				`description:"图片高度,客户端根据这个显示图片高度" json:"imageHeight"`
 }
@@ -41,15 +38,6 @@ type UserSocketMessage struct {
 //刷新结构体
 type RefreshSocketMessage struct {
 	Position				int    				`description:"刷新位置 1首页 " json:"position"`
-}
-
-//客户端定义直连
-type BillSocketMessage struct {
-	BillId 					int64				`description:"billId" json:"billId" `
-	CallBack        		int    				`description:"是否为回调,0:否,1:是 （客服拨打都是回拨）" json:"callBack" `
-	Badge        			int    				`description:"取消通知，1是取消" json:"badge" `
-	Type 					int					`description:"类型" json:"type" `
-	Content 				interface{}			`description:"内容" json:"content" `
 }
 
 //socket签名key
