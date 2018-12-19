@@ -79,7 +79,7 @@ func (this *apiController) bathAuth(){
 			w := this.Ctx.ResponseWriter
 			w.Header().Set("WWW-Authenticate", `Base Auth failed : "`+"empty auth"+`"`)
 			w.WriteHeader(401)
-			w.Write([]byte("401 Unauthorized\n"))
+			w.Write([]byte("401 Unauthorized 1\n"))
 			this.ServeJSON()
 			this.StopRun()
 		}
@@ -90,7 +90,7 @@ func (this *apiController) bathAuth(){
 				w := this.Ctx.ResponseWriter
 				w.Header().Set("WWW-Authenticate", `Base Auth failed : "`+err.Error()+`"`)
 				w.WriteHeader(401)
-				w.Write([]byte("401 Unauthorized\n"))
+				w.Write([]byte("401 Unauthorized 2\n"))
 				this.ServeJSON()
 				this.StopRun()
 			}
@@ -102,7 +102,7 @@ func (this *apiController) bathAuth(){
 				w := this.Ctx.ResponseWriter
 				w.Header().Set("WWW-Authenticate", `Base Auth failed : "`+"password error"+`"`)
 				w.WriteHeader(401)
-				w.Write([]byte("401 Unauthorized\n"))
+				w.Write([]byte("401 Unauthorized 3\n"))
 				this.ServeJSON()
 				this.StopRun()
 			}
@@ -116,7 +116,7 @@ func (this *apiController) bathAuth(){
 				w := this.Ctx.ResponseWriter
 				w.Header().Set("WWW-Authenticate", `Base Auth failed : "`+"password redis error"+`"`)
 				w.WriteHeader(401)
-				w.Write([]byte("401 Unauthorized\n"))
+				w.Write([]byte("401 Unauthorized 4\n"))
 				this.ServeJSON()
 				this.StopRun()
 			}
