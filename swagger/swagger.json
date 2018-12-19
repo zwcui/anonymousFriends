@@ -43,6 +43,64 @@
                 }
             }
         },
+        "/public/sendSocketMessage": {
+            "post": {
+                "tags": [
+                    "public"
+                ],
+                "description": "测试发送socket",
+                "operationId": "PublicController.测试发送socket",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "messageType",
+                        "description": "消息类型，-1为后台建立连接，0为前台建立连接，1为普通聊天/直连聊天，2为被挤下线，3直播消息，4直连消息，5刷新标识，6客户端自定义",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "messageSenderUid",
+                        "description": "消息发送uid",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "messageReceiverUid",
+                        "description": "消息接受uid",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "messageExpireTime",
+                        "description": "心跳有效时间",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "messageContent",
+                        "description": "消息内容",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "messageToken",
+                        "description": "用户token",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} success"
+                    }
+                }
+            }
+        },
         "/public/testHttpRequest": {
             "post": {
                 "tags": [

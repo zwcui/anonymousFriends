@@ -26,6 +26,7 @@ var redisConn, serverURL string
 var dbConfig databaseConfig
 var rdConfig redisConfig
 var mongoDBUrl, mongoDBName string
+var SocketUrl string
 
 type databaseConfig struct {
 	DbType   		string
@@ -74,6 +75,7 @@ func init(){
 		rdConfig.DBNum = 1
 		mongoDBUrl = "106.14.202.179:27017"
 		mongoDBName = "anonymousFriends"
+		SocketUrl = "106.14.202.179:8078"
 	} else if beego.BConfig.RunMode == RUN_MODE_TEST {
 		serverURL = "http://106.14.202.179:8888"
 		dbConfig.DbType = "mysql"
@@ -88,6 +90,7 @@ func init(){
 		rdConfig.DBNum = 1
 		mongoDBUrl = "106.14.202.179:27017"
 		mongoDBName = "anonymousFriends"
+		SocketUrl = "106.14.202.179:8078"
 	} else if beego.BConfig.RunMode == RUN_MODE_PROD {
 		serverURL = "http://106.14.202.179:8888"
 		dbConfig.DbType = "mysql"
@@ -102,6 +105,7 @@ func init(){
 		rdConfig.DBNum = 1
 		mongoDBUrl = "106.14.202.179:27017"
 		mongoDBName = "anonymousFriends"
+		SocketUrl = "106.14.202.179:8078"
 	} else {
 		panic("运行标识错误")
 	}

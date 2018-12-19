@@ -11,6 +11,7 @@ import (
 	"strings"
 	"anonymousFriends/models"
 	"anonymousFriends/util"
+	"flag"
 )
 
 //socket连接池
@@ -18,6 +19,22 @@ var UserSocketConnections map[int64]models.SocketConnection
 
 type WSServer struct {
 	ListenAddr string
+}
+
+func init()  {
+	go startSocket()
+}
+
+func startSocket(){
+	util.Logger.Info("--------websocket--------start--------")
+	//	//websocket
+	addr := flag.String("a", ":6666", "websocket server listen address")
+	flag.Parse()
+	wsServer := &WSServer{
+		ListenAddr : *addr,
+	}
+	wsServer.Start()
+	util.Logger.Info("--------websocket--------end--------")
 }
 
 func (this *WSServer) Handler (conn *websocket.Conn) {

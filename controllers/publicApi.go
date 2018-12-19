@@ -5,6 +5,10 @@ import (
 	"net/http"
 	"strings"
 	"io/ioutil"
+	"encoding/json"
+	"anonymousFriends/models"
+	"golang.org/x/net/websocket"
+	"anonymousFriends/base"
 )
 
 //公共模块
@@ -75,4 +79,53 @@ func (this *PublicController) TestHttpRequest() {
 	}
 
 	this.ReturnData = string(body)
+}
+
+// @Title 测试发送socket
+// @Description 测试发送socket
+// @Param	messageType  		formData		int   		true   			"消息类型，-1为后台建立连接，0为前台建立连接，1为普通聊天/直连聊天，2为被挤下线，3直播消息，4直连消息，5刷新标识，6客户端自定义"
+// @Param	messageSenderUid  	formData		int64   	false   		"消息发送uid"
+// @Param	messageReceiverUid  formData		int64   	true	   		"消息接受uid"
+// @Param	messageExpireTime  	formData		int64   	false   		"心跳有效时间"
+// @Param	messageContent  	formData		string   	false   		"消息内容"
+// @Param	messageToken  		formData		string   	false   		"用户token"
+// @Success 200 {string} success
+// @router /sendSocketMessage [post]
+func (this *PublicController) SendSocketMessage() {
+	messageType := this.MustInt("messageType")
+	messageSenderUid, _ := this.GetInt64("messageSenderUid", 0)
+	messageReceiverUid := this.MustInt64("messageReceiverUid")
+	messageExpireTime, _ := this.GetInt64("messageExpireTime", 0)
+	messageContent := this.GetString("messageContent", "")
+	messageToken := this.GetString("messageToken", "")
+
+	var socketMessage models.SocketMessage
+	socketMessage.MessageType = messageType
+	socketMessage.MessageSendTime = util.UnixOfBeijingTime()
+	socketMessage.MessageSenderUid = messageSenderUid
+	socketMessage.MessageReceiverUid = messageReceiverUid
+	socketMessage.MessageExpireTime = messageExpireTime
+	socketMessage.MessageContent = messageContent
+	socketMessage.MessageToken = messageToken
+	socketMessage.MessageSign = SignMessage(socketMessage)
+
+	replySocketMessageJsonByte, err := json.Marshal(socketMessage)
+	util.Logger.Info("--test send socket--"+string(replySocketMessageJsonByte))
+	if err != nil {
+		util.Logger.Info("---json to string---replySocketMessage----err:"+err.Error())
+	}
+
+	ws, err := websocket.Dial(base.SocketUrl, "", "http://127.0.0.1:8080/")
+	util.Logger.Info(base.SocketUrl)
+	defer ws.Close()//关闭连接
+	if err != nil {
+		util.Logger.Info("----websocket.Dial----err:"+err.Error())
+	}
+	message := []byte(string(replySocketMessageJsonByte))
+	_, err = ws.Write(message)
+	if err != nil {
+		util.Logger.Info("----websocket.ws.Write----err:"+err.Error())
+	}
+
+	this.ReturnData = "success"
 }
