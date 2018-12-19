@@ -18,7 +18,12 @@ type SocketMessage struct {
 
 //心跳结构体，传输地理位置，返回周围人的位置信息
 type HeartBeatSocketMessage struct {
-
+	Province        		string				`description:"省" json:"province"`
+	City	        		string				`description:"市" json:"city"`
+	Area	        		string				`description:"区" json:"area"`
+	Longitude				float64				`description:"经度" json:"longitude"`
+	Latitude				float64				`description:"纬度" json:"latitude"`
+	ChangeFlag				int					`description:"是否需要变更，1是0否" json:"changeFlag"`
 }
 
 //聊天结构体，存入mongodb结构体

@@ -181,6 +181,23 @@ func handleHeartbeat(socketMessage *models.SocketMessage, conn *websocket.Conn){
 		}
 	}
 
+	//更新地理位置
+	var heartBeatSocketMessage models.HeartBeatSocketMessage
+	err := json.Unmarshal([]byte(socketMessage.MessageContent), &heartBeatSocketMessage)
+	if err != nil {
+		util.Logger.Info("----heartBeatSocketMessage--json.Unmarshal--err---- "+err.Error())
+		return
+	}
+	if heartBeatSocketMessage.ChangeFlag == 1 {
+		var user models.User
+		base.DBEngine.Table("user").Where("u_id=?", socketMessage.MessageSenderUid).Get(&user)
+		user.Province = heartBeatSocketMessage.Province
+		user.City = heartBeatSocketMessage.City
+		user.Area = heartBeatSocketMessage.Area
+		user.Longitude = heartBeatSocketMessage.Longitude
+		user.Latitude = heartBeatSocketMessage.Latitude
+		base.DBEngine.Table("user").Where("u_id=?", socketMessage.MessageSenderUid).Cols("province", "city", "area", "longitude", "latitude").Update(&user)
+	}
 }
 
 //处理聊天
