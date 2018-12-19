@@ -27,23 +27,6 @@ type User struct {
 	DeletedAt         	int64  			`description:"删除时间" json:"deleted" xorm:"deleted"`
 }
 
-type UserShort struct {
-	UId       			int64			`description:"注册时间" json:"uId" xorm:"pk autoincr"`
-	PhoneNumber			string			`description:"手机号" json:"phoneNumber"`
-	NickName 			string			`description:"昵称" json:"nickName" xorm:"notnull "`		//string类型默认映射为varchar(255)
-	Gender        		int    			`description:"性别,1 男, 2 女" json:"gender" xorm:"notnull default 0"`
-	Birthday        	string			`description:"出生年月" json:"birthday"`
-	Status	        	int				`description:"在线状态，0离线，1在线，2隐身" json:"status"`
-	Province        	string			`description:"省" json:"province"`
-	City	        	string			`description:"市" json:"city"`
-	Area	        	string			`description:"区" json:"area"`
-	Longitude			float64			`description:"经度" json:"longitude"`
-	Latitude			float64			`description:"纬度" json:"latitude"`
-	Created           	int64  			`description:"注册时间" json:"created" xorm:"created"`
-	Updated           	int64  			`description:"修改时间" json:"updated" xorm:"updated"`
-	DeletedAt         	int64  			`description:"删除时间" json:"deleted" xorm:"deleted"`
-}
-
 //用户登录信息
 type UserSignInDeviceInfo struct {
 	UId           		int64  			`description:"uId" json:"uId" xorm:"pk"`
@@ -68,11 +51,30 @@ type UserAccount struct {
 
 //-------------结构体如下---------------
 
+type UserShort struct {
+	UId       			int64			`description:"注册时间" json:"uId" xorm:"pk autoincr"`
+	PhoneNumber			string			`description:"手机号" json:"phoneNumber"`
+	NickName 			string			`description:"昵称" json:"nickName" xorm:"notnull "`		//string类型默认映射为varchar(255)
+	Gender        		int    			`description:"性别,1 男, 2 女" json:"gender" xorm:"notnull default 0"`
+	Birthday        	string			`description:"出生年月" json:"birthday"`
+	Status	        	int				`description:"在线状态，0离线，1在线，2隐身" json:"status"`
+	Province        	string			`description:"省" json:"province"`
+	City	        	string			`description:"市" json:"city"`
+	Area	        	string			`description:"区" json:"area"`
+	Longitude			float64			`description:"经度" json:"longitude"`
+	Latitude			float64			`description:"纬度" json:"latitude"`
+	Created           	int64  			`description:"注册时间" json:"created" xorm:"created"`
+	Updated           	int64  			`description:"修改时间" json:"updated" xorm:"updated"`
+	DeletedAt         	int64  			`description:"删除时间" json:"deleted" xorm:"deleted"`
+}
+
 type SignInUser struct {
 	User				UserShort		`description:"登录用户信息" json:"user"`
 }
 
-
+type UserInfo struct {
+	User				UserShort		`description:"用户信息" json:"user"`
+}
 
 
 //-------------user方法如下--------------

@@ -20,6 +20,6 @@ func getErrorCodeAndDescription(error string) (errorCode string, errorDescriptio
 //生成错误返回结构体
 func GenerateAlertMessage(error string) models.AlertMessage{
 	var alert models.AlertMessage
-	alert.AlertCode, alert.AlertMessage = getErrorCodeAndDescription(models.UserError101)
+	alert.AlertCode, alert.AlertMessage = getErrorCodeAndDescription(error)
 	return alert
 }

@@ -43,6 +43,32 @@
                 }
             }
         },
+        "/user/getUserInfo": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "description": "获取用户详情",
+                "operationId": "UserController.获取用户详情",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "uId",
+                        "description": "uId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInfo"
+                        }
+                    }
+                }
+            }
+        },
         "/user/signIn": {
             "post": {
                 "tags": [
@@ -115,9 +141,6 @@
                         "schema": {
                             "$ref": "#/definitions/models.SignInUser"
                         }
-                    },
-                    "403": {
-                        "description": "create users failed"
                     }
                 }
             }
@@ -223,6 +246,57 @@
                     }
                 }
             }
+        },
+        "/user/updateUserInfo": {
+            "patch": {
+                "tags": [
+                    "user"
+                ],
+                "description": "更新用户信息",
+                "operationId": "UserController.更新用户信息",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "uId",
+                        "description": "uId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "nickName",
+                        "description": "昵称",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "phoneNumber",
+                        "description": "手机号",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "gender",
+                        "description": "性别,1 男, 2 女",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "birthday",
+                        "description": "出生年月",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInfo"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -268,6 +342,16 @@
                 "user": {
                     "$ref": "#/definitions/models.UserShort",
                     "description": "登录用户信息"
+                }
+            }
+        },
+        "models.UserInfo": {
+            "title": "UserInfo",
+            "type": "object",
+            "properties": {
+                "user": {
+                    "$ref": "#/definitions/models.UserShort",
+                    "description": "用户信息"
                 }
             }
         },

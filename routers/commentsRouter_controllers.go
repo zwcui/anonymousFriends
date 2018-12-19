@@ -27,4 +27,18 @@ func init() {
 			AllowHTTPMethods: []string{"post"},
 			Params: nil})
 
+	beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"],
+		beego.ControllerComments{
+			Method: "GetUserInfo",
+			Router: `/getUserInfo`,
+			AllowHTTPMethods: []string{"get"},
+			Params: nil})
+
+	beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"],
+		beego.ControllerComments{
+			Method: "UpdateUserInfo",
+			Router: `/updateUserInfo`,
+			AllowHTTPMethods: []string{"patch"},
+			Params: nil})
+
 }

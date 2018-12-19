@@ -108,7 +108,7 @@ func init(){
 
 	initDB(dbConfig)
 	initRedis(rdConfig)
-	initMongoDB()
+	//initMongoDB()
 }
 
 

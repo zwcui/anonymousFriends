@@ -14,7 +14,7 @@ type UserController struct {
 //当前api请求之前调用，用于配置哪些接口需要进行head身份验证
 func (this *UserController) Prepare(){
 	//this.NeedBaseAuthList = []RequestPathAndMethod{{".+", "post"}, {".+", "patch"}, {".+", "delete"}}
-	this.NeedBaseAuthList = []RequestPathAndMethod{}
+	this.NeedBaseAuthList = []RequestPathAndMethod{{"/updateUserInfo","patch"}}
 	this.bathAuth()
 	util.Logger.Info("UserController beforeRequest ")
 }
@@ -51,8 +51,7 @@ func (this *UserController) SignUp() {
 	manufacturers, _ := this.GetInt("manufacturers", 0)
 
 	//昵称唯一
-	hasSameNickNameUser, _ := base.DBEngine.Table("user").Where("nick_name=?", nickName).Get(new(models.User))
-	if hasSameNickNameUser {
+	if checkSameNickName(nickName) {
 		this.ReturnData = util.GenerateAlertMessage(models.UserError100)
 		return
 	}
@@ -109,7 +108,6 @@ func (this *UserController) SignUp() {
 // @Param   appVersion      formData    	string  		false       "app版本号"
 // @Param   manufacturers   formData    	int     		false       "厂商 1:华为 2:魅族 3:小米"
 // @Success 200 {object} models.SignInUser
-// @Failure 403 create users failed
 // @router /signIn [post]
 func (this *UserController) SignIn() {
 	nickName := this.MustString("nickName")
@@ -152,7 +150,60 @@ func (this *UserController) SignIn() {
 	this.ReturnData, _ = storedUser.UsetToUserShort()
 }
 
+// @Title 获取用户详情
+// @Description 获取用户详情
+// @Param	uId				query			int64	  		true		"uId"
+// @Success 200 {object} models.UserInfo
+// @router /getUserInfo [get]
+func (this *UserController) GetUserInfo() {
+	uId := this.MustInt64("uId")
 
+	var user models.UserShort
+	base.DBEngine.Table("user").Where("u_id=?", uId).Get(&user)
+
+	this.ReturnData = models.UserInfo{user}
+}
+
+// @Title 更新用户信息
+// @Description 更新用户信息
+// @Param	uId				formData		int64	  		true		"uId"
+// @Param	nickName		formData		string  		false		"昵称"
+// @Param	phoneNumber		formData		string  		false		"手机号"
+// @Param	gender			formData		int		  		false		"性别,1 男, 2 女"
+// @Param	birthday		formData		string  		false		"出生年月"
+// @Success 200 {object} models.UserInfo
+// @router /updateUserInfo [patch]
+func (this *UserController) UpdateUserInfo() {
+	uId := this.MustInt64("uId")
+	nickName := this.GetString("nickName", "")
+	phoneNumber := this.GetString("phoneNumber", "")
+	birthday := this.GetString("birthday", "")
+	gender, _ := this.GetInt("gender", 0)
+
+	//昵称唯一
+	if nickName != "" && checkSameNickName(nickName) {
+		this.ReturnData = util.GenerateAlertMessage(models.UserError100)
+		return
+	}
+
+	var user models.UserShort
+	base.DBEngine.Table("user").Where("u_id=?", uId).Get(&user)
+	if nickName != "" {
+		user.NickName = nickName
+	}
+	if phoneNumber != "" {
+		user.PhoneNumber = phoneNumber
+	}
+	if birthday != "" {
+		user.Birthday = birthday
+	}
+	if gender != 0 {
+		user.Gender = gender
+	}
+	base.DBEngine.Table("user").Where("u_id=?", uId).Cols("nick_name", "phone_number", "birthday", "gender").Update(&user)
+
+	this.ReturnData = models.UserInfo{user}
+}
 
 
 
@@ -313,4 +364,10 @@ func UserWithPhoneNumber(phoneNumber string) (user *models.User, err error) {
 		return nil, nil
 	}
 	return user, nil
+}
+
+//检查昵称是否唯一
+func checkSameNickName(nickName string) bool {
+	hasSameNickNameUser, _ := base.DBEngine.Table("user").Where("nick_name=?", nickName).Get(new(models.User))
+	return hasSameNickNameUser
 }
