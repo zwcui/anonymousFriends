@@ -29,6 +29,52 @@ paths:
             $ref: '#/definitions/models.MongoDBMessage'
         "403":
           description: create message failed
+  /public/testHttpRequest:
+    post:
+      tags:
+      - public
+      description: 测试http请求
+      operationId: PublicController.测试http请求
+      parameters:
+      - in: formData
+        name: url
+        description: url
+        required: true
+        type: string
+      - in: formData
+        name: method
+        description: method
+        required: true
+        type: string
+      - in: formData
+        name: headerKey1
+        description: headerKey1
+        type: string
+      - in: formData
+        name: headerValue1
+        description: headerValue1
+        type: string
+      - in: formData
+        name: headerKey2
+        description: headerKey2
+        type: string
+      - in: formData
+        name: headerValue2
+        description: headerValue2
+        type: string
+      - in: formData
+        name: headerKey3
+        description: headerKey3
+        type: string
+      - in: formData
+        name: headerValue3
+        description: headerValue3
+        type: string
+      responses:
+        "200":
+          description: '{string} success'
+        "403":
+          description: create users failed
   /user/getUserInfo:
     get:
       tags:
@@ -297,6 +343,9 @@ definitions:
         type: integer
         format: int64
 tags:
+- name: public
+  description: |
+    公共模块
 - name: user
   description: |
     用户模块

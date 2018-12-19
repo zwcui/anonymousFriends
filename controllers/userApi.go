@@ -355,13 +355,13 @@ func (this *UserController) UpdateUserInfo() {
 
 
 //通过手机号获取用户信息
-func UserWithPhoneNumber(phoneNumber string) (user *models.User, err error) {
+func UserWithPhoneNumber(phoneNumber string) (user models.User, err error) {
 	hasUser, err := base.DBEngine.Table("user").Where("phone_number=?", phoneNumber).Get(&user)
 	if err != nil {
-		return nil, err
+		return user, err
 	}
 	if !hasUser {
-		return nil, nil
+		return user, nil
 	}
 	return user, nil
 }
