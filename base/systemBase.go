@@ -162,7 +162,8 @@ func initDB(dbConfig databaseConfig){
 	DBEngine.SetLogger(xorm.NewSimpleLogger(f))
 
 	//同步表结构
-	err = DBEngine.Sync2(new(models.User), new(models.Role), new(models.UserRole))
+	err = DBEngine.Sync2(new(models.User), new(models.UserSignInDeviceInfo), new(models.UserAccount),
+		new(models.Role), new(models.UserRole))
 	if err != nil {
 		panic("同步表结构失败! err:"+err.Error())
 	}

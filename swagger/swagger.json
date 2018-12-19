@@ -43,13 +43,13 @@
                 }
             }
         },
-        "/user/": {
+        "/user/signIn": {
             "post": {
                 "tags": [
                     "user"
                 ],
-                "description": "create users",
-                "operationId": "UserController.新增用户",
+                "description": "登录",
+                "operationId": "UserController.登录",
                 "parameters": [
                     {
                         "in": "formData",
@@ -57,6 +57,161 @@
                         "description": "昵称",
                         "required": true,
                         "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "phoneNumber",
+                        "description": "手机号",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "password",
+                        "description": "密码",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "system",
+                        "description": "系统类型 1:android 2:ios 3:h5",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "deviceToken",
+                        "description": "deviceToken",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "deviceModel",
+                        "description": "设备型号",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "systemVersion",
+                        "description": "systemVersion",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "appVersion",
+                        "description": "app版本号",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "manufacturers",
+                        "description": "厂商 1:华为 2:魅族 3:小米",
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "schema": {
+                            "$ref": "#/definitions/models.SignInUser"
+                        }
+                    },
+                    "403": {
+                        "description": "create users failed"
+                    }
+                }
+            }
+        },
+        "/user/signUp": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "description": "注册",
+                "operationId": "UserController.注册",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "nickName",
+                        "description": "昵称",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "phoneNumber",
+                        "description": "手机号",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "password",
+                        "description": "密码",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "veriCode",
+                        "description": "veriCode",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "needVeriCode",
+                        "description": "是否需要验证码，需要为1，不需要为0",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "gender",
+                        "description": "性别,1 男, 2 女",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "birthday",
+                        "description": "出生年月",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "system",
+                        "description": "系统类型 1:android 2:ios 3:h5",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "deviceToken",
+                        "description": "deviceToken",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "deviceModel",
+                        "description": "设备型号",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "systemVersion",
+                        "description": "systemVersion",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "appVersion",
+                        "description": "app版本号",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "manufacturers",
+                        "description": "厂商 1:华为 2:魅族 3:小米",
+                        "type": "integer",
+                        "format": "int64"
                     }
                 ],
                 "responses": {
@@ -105,12 +260,92 @@
                     "format": "int64"
                 }
             }
+        },
+        "models.SignInUser": {
+            "title": "SignInUser",
+            "type": "object",
+            "properties": {
+                "user": {
+                    "$ref": "#/definitions/models.UserShort",
+                    "description": "登录用户信息"
+                }
+            }
+        },
+        "models.UserShort": {
+            "title": "UserShort",
+            "type": "object",
+            "properties": {
+                "area": {
+                    "description": "区",
+                    "type": "string"
+                },
+                "birthday": {
+                    "description": "出生年月",
+                    "type": "string"
+                },
+                "city": {
+                    "description": "市",
+                    "type": "string"
+                },
+                "created": {
+                    "description": "注册时间",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "deleted": {
+                    "description": "删除时间",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "gender": {
+                    "description": "性别,1 男, 2 女",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "latitude": {
+                    "description": "纬度",
+                    "type": "number",
+                    "format": "double"
+                },
+                "longitude": {
+                    "description": "经度",
+                    "type": "number",
+                    "format": "double"
+                },
+                "nickName": {
+                    "description": "昵称",
+                    "type": "string"
+                },
+                "phoneNumber": {
+                    "description": "手机号",
+                    "type": "string"
+                },
+                "province": {
+                    "description": "省",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "在线状态，0离线，1在线，2隐身",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "uId": {
+                    "description": "注册时间",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "updated": {
+                    "description": "修改时间",
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
         }
     },
     "tags": [
         {
             "name": "user",
-            "description": "继承apiController\n用户模块\n"
+            "description": "用户模块\n"
         },
         {
             "name": "message",

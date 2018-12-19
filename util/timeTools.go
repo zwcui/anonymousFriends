@@ -20,6 +20,12 @@ func UnixOfBeijingTime() int64 {
 	return beijingTime.Unix()
 }
 
+func FormatTimestamp(timestamp int64) string{
+	timeLayout := "2006-01-02 15:04:05"
+	dataTimeStr := time.Unix(timestamp, 0).Format(timeLayout)
+	return dataTimeStr
+}
+
 // 格式化时间
 func TimeDurationFormat(timestamp int64) (timeFormat string) {
 	if timestamp == 0 {

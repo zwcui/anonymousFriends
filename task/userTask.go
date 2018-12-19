@@ -6,5 +6,5 @@ import (
 )
 
 func TestTimedTask(){
-	util.Logger.Info(strconv.FormatInt(util.UnixOfBeijingTime(), 10))
+	util.Logger.Info(strconv.FormatInt(util.UnixOfBeijingTime(), 10)+"-->"+util.FormatTimestamp(util.UnixOfBeijingTime()))
 }

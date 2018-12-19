@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"errors"
+	"crypto/rand"
 )
 
 //base64
@@ -21,6 +22,15 @@ func Base64Decode(src []byte) ([]byte, error) {
 
 
 
+//获取盐
+func saltString() (salt string, error error) {
+	b := make([]byte, 32)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "", errors.New(err.Error())
+	}
+	return fmt.Sprintf("%x", b), nil
+}
 
 //对密码进行sha256
 func EncryptPasswordWithSalt(password, salt string) (hashedPwd string, error error) {
@@ -32,3 +42,16 @@ func EncryptPasswordWithSalt(password, salt string) (hashedPwd string, error err
 	return fmt.Sprintf("%x", sha_256.Sum(nil)), nil
 }
 
+//加密密码 返回加密结果 以及使用的盐
+func EncryptPassword(password string) (hashedPwd string, salt string, error error) {
+	saltStr, err := saltString()
+	if err != nil {
+		return "", "", errors.New("server err")
+	}
+
+	hashedPd, err := EncryptPasswordWithSalt(password, saltStr)
+	if err != nil {
+		return "", "", errors.New("server err")
+	}
+	return hashedPd, saltStr, nil
+}

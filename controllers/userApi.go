@@ -6,7 +6,6 @@ import (
 	"anonymousFriends/util"
 )
 
-//继承apiController
 //用户模块
 type UserController struct {
 	apiController
@@ -20,21 +19,182 @@ func (this *UserController) Prepare(){
 	util.Logger.Info("UserController beforeRequest ")
 }
 
-// @Title 新增用户
-// @Description create users
+// @Title 注册
+// @Description 注册
 // @Param	nickName		formData		string  		true		"昵称"
+// @Param	phoneNumber		formData		string  		false		"手机号"
+// @Param	password		formData		string  		true		"密码"
+// @Param   veriCode        formData        string  		false       "veriCode"
+// @Param   needVeriCode    formData        string  		false       "是否需要验证码，需要为1，不需要为0"
+// @Param	gender			formData		int		  		false		"性别,1 男, 2 女"
+// @Param	birthday		formData		string  		false		"出生年月"
+// @Param   system         	formData        int     		false       "系统类型 1:android 2:ios 3:h5"
+// @Param   deviceToken     formData    	string  		false       "deviceToken"
+// @Param   deviceModel     formData    	string  		false       "设备型号"
+// @Param   systemVersion   formData    	string  		false       "systemVersion"
+// @Param   appVersion      formData    	string  		false       "app版本号"
+// @Param   manufacturers   formData    	int     		false       "厂商 1:华为 2:魅族 3:小米"
 // @Success 200 {string} success
 // @Failure 403 create users failed
-// @router / [post]
-func (this *UserController) Post() {
+// @router /signUp [post]
+func (this *UserController) SignUp() {
 	nickName := this.MustString("nickName")
+	phoneNumber := this.GetString("phoneNumber", "")
+	password := this.MustString("password")
+	gender, _ := this.GetInt("gender", 2)
+	birthday := this.GetString("birthday", "")
+	system, _ := this.GetInt("system", 0)
+	deviceToken := this.GetString("deviceToken", "")
+	deviceModel := this.GetString("deviceModel", "")
+	systemVersion := this.GetString("systemVersion", "")
+	appVersion := this.GetString("appVersion", "")
+	manufacturers, _ := this.GetInt("manufacturers", 0)
+
+	//昵称唯一
+	hasSameNickNameUser, _ := base.DBEngine.Table("user").Where("nick_name=?", nickName).Get(new(models.User))
+	if hasSameNickNameUser {
+		this.ReturnData = util.GenerateAlertMessage(models.UserError100)
+		return
+	}
+
+	if len(password) < 6 || len(password) > 30 {
+		this.ReturnData = util.GenerateAlertMessage(models.UserError104)
+		return
+	}
 
 	var user models.User
 	user.NickName = nickName
+	user.PhoneNumber = phoneNumber
+	user.Gender = gender
+	user.Birthday = birthday
+	user.Status = 1
+	hashedPassword, salt, err := util.EncryptPassword(password)
+	if err != nil {
+		this.ReturnData = util.GenerateAlertMessage(models.UserError101)
+		return
+	}
+	user.Password = hashedPassword
+	user.Salt = salt
 	base.DBEngine.Table("user").InsertOne(&user)
+
+	//推送用表
+	var userSignInDeviceInfo models.UserSignInDeviceInfo
+	userSignInDeviceInfo.UId = user.UId
+	userSignInDeviceInfo.System = system
+	userSignInDeviceInfo.Manufacturers = manufacturers
+	userSignInDeviceInfo.DeviceToken = deviceToken
+	userSignInDeviceInfo.DeviceModel = deviceModel
+	userSignInDeviceInfo.SystemVersion = systemVersion
+	userSignInDeviceInfo.AppVersion = appVersion
+	base.DBEngine.Table("user_sign_in_device_info").InsertOne(&userSignInDeviceInfo)
+
+	//账户表
+	var userAccount models.UserAccount
+	userAccount.CashBalance = 0
+	base.DBEngine.Table("user_account").InsertOne(&userAccount)
 
 	this.ReturnData = "success"
 }
+
+
+// @Title 登录
+// @Description 登录
+// @Param	nickName		formData		string  		true		"昵称"
+// @Param	phoneNumber		formData		string  		false		"手机号"
+// @Param	password		formData		string  		true		"密码"
+// @Param   system         	formData        int     		false       "系统类型 1:android 2:ios 3:h5"
+// @Param   deviceToken     formData    	string  		false       "deviceToken"
+// @Param   deviceModel     formData    	string  		false       "设备型号"
+// @Param   systemVersion   formData    	string  		false       "systemVersion"
+// @Param   appVersion      formData    	string  		false       "app版本号"
+// @Param   manufacturers   formData    	int     		false       "厂商 1:华为 2:魅族 3:小米"
+// @Success 200 {object} models.SignInUser
+// @Failure 403 create users failed
+// @router /signIn [post]
+func (this *UserController) SignIn() {
+	nickName := this.MustString("nickName")
+	//phoneNumber := this.GetString("phoneNumber", "")
+	password := this.MustString("password")
+	system, _ := this.GetInt("system", 0)
+	deviceToken := this.GetString("deviceToken", "")
+	deviceModel := this.GetString("deviceModel", "")
+	systemVersion := this.GetString("systemVersion", "")
+	appVersion := this.GetString("appVersion", "")
+	manufacturers, _ := this.GetInt("manufacturers", 0)
+
+	var storedUser models.User
+	hasStoredUser, _ := base.DBEngine.Table("user").Where("nick_name=?", nickName).Get(&storedUser)
+	if !hasStoredUser {
+		this.ReturnData = util.GenerateAlertMessage(models.UserError102)
+		return
+	}
+
+	hashedPassword, _ := util.EncryptPasswordWithSalt(password, storedUser.Salt)
+	if hashedPassword != storedUser.Password {
+		this.ReturnData = util.GenerateAlertMessage(models.UserError103)
+		return
+	}
+
+	storedUser.Status = 1
+	base.DBEngine.Table("user").Where("u_id=?", storedUser.UId).Cols("status").Update(&storedUser)
+
+	//推送用表
+	var userSignInDeviceInfo models.UserSignInDeviceInfo
+	base.DBEngine.Table("user_sign_in_device_info").Where("u_id=?", storedUser.UId).Get(&userSignInDeviceInfo)
+	userSignInDeviceInfo.System = system
+	userSignInDeviceInfo.Manufacturers = manufacturers
+	userSignInDeviceInfo.DeviceToken = deviceToken
+	userSignInDeviceInfo.DeviceModel = deviceModel
+	userSignInDeviceInfo.SystemVersion = systemVersion
+	userSignInDeviceInfo.AppVersion = appVersion
+	base.DBEngine.Table("user_sign_in_device_info").Where("u_id=?", storedUser.UId).AllCols().Update(&userSignInDeviceInfo)
+
+	this.ReturnData, _ = storedUser.UsetToUserShort()
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //
 //// @Title CreateUser
 //// @Description create users
