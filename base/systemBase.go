@@ -188,6 +188,7 @@ func initRedis(rdConfig redisConfig){
 func initMongoDB(){
 	var err error
 	session, err := mgo.Dial(mongoDBUrl)
+	defer session.Close()
 	if err != nil {
 		panic("MongoDB初始化失败！err:"+err.Error())
 	}

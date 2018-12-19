@@ -62,4 +62,11 @@ func init() {
 			AllowHTTPMethods: []string{"patch"},
 			Params: nil})
 
+	beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"],
+		beego.ControllerComments{
+			Method: "UpdateUserPassword",
+			Router: `/updateUserPassword`,
+			AllowHTTPMethods: []string{"patch"},
+			Params: nil})
+
 }

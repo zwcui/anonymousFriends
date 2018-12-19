@@ -14,7 +14,7 @@ type UserController struct {
 //当前api请求之前调用，用于配置哪些接口需要进行head身份验证
 func (this *UserController) Prepare(){
 	//this.NeedBaseAuthList = []RequestPathAndMethod{{".+", "post"}, {".+", "patch"}, {".+", "delete"}}
-	this.NeedBaseAuthList = []RequestPathAndMethod{{"/updateUserInfo","patch"}}
+	this.NeedBaseAuthList = []RequestPathAndMethod{{"/updateUserInfo","patch"}, {"/updateUserPassword","patch"}}
 	this.bathAuth()
 	util.Logger.Info("UserController beforeRequest ")
 }
@@ -207,7 +207,38 @@ func (this *UserController) UpdateUserInfo() {
 	this.ReturnData = models.UserInfo{user}
 }
 
+// @Title 更新用户密码
+// @Description 更新用户密码
+// @Param	uId				formData		int64	  		true		"uId"
+// @Param	oldPassword		formData		string  		true		"旧密码"
+// @Param	newPassword		formData		string  		true		"新密码"
+// @Success 200 {string} success
+// @router /updateUserPassword [patch]
+func (this *UserController) UpdateUserPassword() {
+	uId := this.MustInt64("uId")
+	oldPassword := this.MustString("oldPassword")
+	newPassword := this.MustString("newPassword")
 
+	var user models.User
+	base.DBEngine.Table("user").Where("u_id=?", uId).Get(&user)
+
+	hashedPassword, _ := util.EncryptPasswordWithSalt(oldPassword, user.Salt)
+	if hashedPassword != oldPassword {
+		this.ReturnData = util.GenerateAlertMessage(models.UserError103)
+		return
+	}
+
+	hashedPassword, salt, err := util.EncryptPassword(newPassword)
+	if err != nil {
+		this.ReturnData = util.GenerateAlertMessage(models.UserError101)
+		return
+	}
+	user.Password = hashedPassword
+	user.Salt = salt
+	base.DBEngine.Table("user").Where("u_id=?", uId).Cols("password", "salt").Update(&user)
+
+	this.ReturnData = "success"
+}
 
 
 

@@ -472,6 +472,44 @@
                     }
                 }
             }
+        },
+        "/user/updateUserPassword": {
+            "patch": {
+                "tags": [
+                    "user"
+                ],
+                "description": "更新用户密码",
+                "operationId": "UserController.更新用户密码",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "uId",
+                        "description": "uId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "oldPassword",
+                        "description": "旧密码",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "newPassword",
+                        "description": "新密码",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} success"
+                    }
+                }
+            }
         }
     },
     "definitions": {
