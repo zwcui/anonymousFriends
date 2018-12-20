@@ -57,6 +57,13 @@ func init() {
 
 	beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"],
 		beego.ControllerComments{
+			Method: "GetUserAccountInfo",
+			Router: `/getUserAccountInfo`,
+			AllowHTTPMethods: []string{"get"},
+			Params: nil})
+
+	beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"],
+		beego.ControllerComments{
 			Method: "UpdateUserInfo",
 			Router: `/updateUserInfo`,
 			AllowHTTPMethods: []string{"patch"},
@@ -67,6 +74,20 @@ func init() {
 			Method: "UpdateUserPassword",
 			Router: `/updateUserPassword`,
 			AllowHTTPMethods: []string{"patch"},
+			Params: nil})
+
+	beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"],
+		beego.ControllerComments{
+			Method: "UpdateUserPosition",
+			Router: `/updateUserPosition`,
+			AllowHTTPMethods: []string{"patch"},
+			Params: nil})
+
+	beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"],
+		beego.ControllerComments{
+			Method: "GetUserListByPosition",
+			Router: `/getUserListByPosition`,
+			AllowHTTPMethods: []string{"get"},
 			Params: nil})
 
 }

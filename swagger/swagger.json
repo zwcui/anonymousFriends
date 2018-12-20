@@ -218,6 +218,32 @@
                 }
             }
         },
+        "/user/getUserAccountInfo": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "description": "获取用户账户详情",
+                "operationId": "UserController.获取用户账户详情",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "uId",
+                        "description": "uId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "schema": {
+                            "$ref": "#/definitions/models.UserAccountInfo"
+                        }
+                    }
+                }
+            }
+        },
         "/user/getUserInfo": {
             "get": {
                 "tags": [
@@ -239,6 +265,70 @@
                     "200": {
                         "schema": {
                             "$ref": "#/definitions/models.UserInfo"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/getUserListByPosition": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "description": "根据当前位置要求获取用户列表",
+                "operationId": "UserController.根据当前位置要求获取用户列表",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "province",
+                        "description": "省",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "city",
+                        "description": "市",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "area",
+                        "description": "区",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "longitudeMax",
+                        "description": "经度最大",
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "longitudeMin",
+                        "description": "经度最小",
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "latitudeMax",
+                        "description": "纬度最大",
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "latitudeMin",
+                        "description": "纬度最小",
+                        "type": "number",
+                        "format": "double"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "schema": {
+                            "$ref": "#/definitions/models.UserList"
                         }
                     }
                 }
@@ -510,6 +600,62 @@
                     }
                 }
             }
+        },
+        "/user/updateUserPosition": {
+            "patch": {
+                "tags": [
+                    "user"
+                ],
+                "description": "接口调用更新用户位置，心跳实现相同功能",
+                "operationId": "UserController.接口调用更新用户位置，心跳实现相同功能",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "uId",
+                        "description": "uId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "province",
+                        "description": "省",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "city",
+                        "description": "市",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "area",
+                        "description": "区",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "longitude",
+                        "description": "经度",
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "latitude",
+                        "description": "纬度",
+                        "type": "number",
+                        "format": "double"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} success"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -571,6 +717,42 @@
                 }
             }
         },
+        "models.UserAccount": {
+            "title": "UserAccount",
+            "type": "object",
+            "properties": {
+                "cashBalance": {
+                    "description": "现金余额，单位分",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "created": {
+                    "description": "创建时间",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "uId": {
+                    "description": "注册时间",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "updated": {
+                    "description": "修改时间",
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
+        "models.UserAccountInfo": {
+            "title": "UserAccountInfo",
+            "type": "object",
+            "properties": {
+                "userAccount": {
+                    "$ref": "#/definitions/models.UserAccount",
+                    "description": "用户账户信息"
+                }
+            }
+        },
         "models.UserInfo": {
             "title": "UserInfo",
             "type": "object",
@@ -578,6 +760,19 @@
                 "user": {
                     "$ref": "#/definitions/models.UserShort",
                     "description": "用户信息"
+                }
+            }
+        },
+        "models.UserList": {
+            "title": "UserList",
+            "type": "object",
+            "properties": {
+                "userList": {
+                    "description": "用户信息",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UserShort"
+                    }
                 }
             }
         },

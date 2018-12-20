@@ -8,6 +8,8 @@ import "encoding/json"
 
 */
 
+const ZOMBIE_USER_NUMBER = 100
+
 type User struct {
 	UId       			int64			`description:"uId" json:"uId" xorm:"pk autoincr"`
 	PhoneNumber			string			`description:"手机号" json:"phoneNumber"`
@@ -22,6 +24,7 @@ type User struct {
 	Area	        	string			`description:"区" json:"area"`
 	Longitude			float64			`description:"经度" json:"longitude"`
 	Latitude			float64			`description:"纬度" json:"latitude"`
+	IsZombie			int				`description:"是否僵尸账户，1是0否" json:"isZombie"`
 	Created           	int64  			`description:"注册时间" json:"created" xorm:"created"`
 	Updated           	int64  			`description:"修改时间" json:"updated" xorm:"updated"`
 	DeletedAt         	int64  			`description:"删除时间" json:"deleted" xorm:"deleted"`
@@ -48,6 +51,26 @@ type UserAccount struct {
 	Updated       		int64  			`description:"修改时间" json:"updated" xorm:"updated"`
 }
 
+// 收支明细
+type AccountTransactionRecord struct {
+	Id	       			int64  			`description:"记录id" json:"id" xorm:"pk autoincr"`
+	UId        			int64  			`description:"用户id" json:"uId"`
+	Money      			int    			`description:"金额" json:"money"`
+	MoneyType  			int    			`description:"金额类型，1:收入,-1:支出" json:"moneyType"`
+	RecordType 			int    			`description:"记录类型，" json:"recordType"`
+	RecordName 			string 			`description:"记录类型，" json:"recordName"`
+	OrderId    			int64  			`description:"订单编号 " json:"orderId" xorm:"notnull default 0"`
+	Created    			int64  			`description:"生成时间" json:"created" xorm:"created"`
+	Updated    			int64   		`description:"更新时间" xorm:"updated" json:"updated"`
+	Status     			int    			`description:"交易状态 0:交易未执行 1:交易已执行 2:交易取消" json:"status" xorm:"notnull default 1"`
+}
+
+//默认昵称
+type DefaultNickName struct {
+	Id	       			int64  			`description:"记录id" json:"id" xorm:"pk autoincr"`
+	NickName			string 			`description:"默认昵称" json:"nickName"`
+	Status     			int    			`description:"状态 0未使用，1已使用" json:"status" xorm:"notnull default 0"`
+}
 
 //-------------结构体如下---------------
 
@@ -76,6 +99,13 @@ type UserInfo struct {
 	User				UserShort		`description:"用户信息" json:"user"`
 }
 
+type UserList struct {
+	UserList			[]UserShort		`description:"用户信息" json:"userList"`
+}
+
+type UserAccountInfo struct {
+	UserAccount			UserAccount		`description:"用户账户信息" json:"userAccount"`
+}
 
 //-------------user方法如下--------------
 
@@ -91,4 +121,11 @@ func (u *User) UsetToUserShort() (userDTO *UserShort, error error) {
 		return nil, err
 	}
 	return &userD, nil
+}
+
+//--------------默认参数----------------
+
+var DefaulGenders = []int{
+	1,	//男
+	2,	//女
 }

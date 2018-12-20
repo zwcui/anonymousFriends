@@ -112,7 +112,7 @@ func init(){
 
 	initDB(dbConfig)
 	initRedis(rdConfig)
-	initMongoDB()
+	//initMongoDB()
 }
 
 
@@ -166,7 +166,7 @@ func initDB(dbConfig databaseConfig){
 	DBEngine.SetLogger(xorm.NewSimpleLogger(f))
 
 	//同步表结构
-	err = DBEngine.Sync2(new(models.User), new(models.UserSignInDeviceInfo), new(models.UserAccount),
+	err = DBEngine.Sync2(new(models.User), new(models.UserSignInDeviceInfo), new(models.UserAccount), new(models.AccountTransactionRecord), new(models.DefaultNickName),
 		new(models.Group), new(models.Member),
 		new(models.Role), new(models.UserRole))
 	if err != nil {

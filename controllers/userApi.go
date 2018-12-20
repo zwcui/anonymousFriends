@@ -4,6 +4,9 @@ import (
 	"anonymousFriends/base"
 	"anonymousFriends/models"
 	"anonymousFriends/util"
+	"strconv"
+	"math/rand"
+	"github.com/satori/go.uuid"
 )
 
 //用户模块
@@ -14,7 +17,7 @@ type UserController struct {
 //当前api请求之前调用，用于配置哪些接口需要进行head身份验证
 func (this *UserController) Prepare(){
 	//this.NeedBaseAuthList = []RequestPathAndMethod{{".+", "post"}, {".+", "patch"}, {".+", "delete"}}
-	this.NeedBaseAuthList = []RequestPathAndMethod{{"/updateUserInfo","patch"}, {"/updateUserPassword","patch"}}
+	this.NeedBaseAuthList = []RequestPathAndMethod{{"/updateUserInfo","patch"}, {"/updateUserPassword","patch"}, {"/updateUserPosition","patch"}, {"getUserAccountInfo", "get"}}
 	this.bathAuth()
 	util.Logger.Info("UserController beforeRequest ")
 }
@@ -166,6 +169,20 @@ func (this *UserController) GetUserInfo() {
 	this.ReturnData = models.UserInfo{user}
 }
 
+// @Title 获取用户账户详情
+// @Description 获取用户账户详情
+// @Param	uId				query			int64	  		true		"uId"
+// @Success 200 {object} models.UserAccountInfo
+// @router /getUserAccountInfo [get]
+func (this *UserController) GetUserAccountInfo() {
+	uId := this.MustInt64("uId")
+
+	var userAccount models.UserAccount
+	base.DBEngine.Table("user_account").Where("u_id=?", uId).Get(&userAccount)
+
+	this.ReturnData = models.UserAccountInfo{userAccount}
+}
+
 // @Title 更新用户信息
 // @Description 更新用户信息
 // @Param	uId				formData		int64	  		true		"uId"
@@ -240,9 +257,95 @@ func (this *UserController) UpdateUserPassword() {
 	this.ReturnData = "success"
 }
 
+// @Title 接口调用更新用户位置，心跳实现相同功能
+// @Description 接口调用更新用户位置，心跳实现相同功能
+// @Param	uId				formData		int64	  		true		"uId"
+// @Param	province		formData		string  		false		"省"
+// @Param	city			formData		string  		false		"市"
+// @Param	area			formData		string  		false		"区"
+// @Param	longitude		formData		float64  		false		"经度"
+// @Param	latitude		formData		float64  		false		"纬度"
+// @Success 200 {string} success
+// @router /updateUserPosition [patch]
+func (this *UserController) UpdateUserPosition() {
+	uId := this.MustInt64("uId")
+	province := this.GetString("province", "")
+	city := this.GetString("city", "")
+	area := this.GetString("area", "")
+	longitude , _ := this.GetFloat("longitude", 0)
+	latitude , _ := this.GetFloat("latitude", 0)
 
+	var user models.User
+	base.DBEngine.Table("user").Where("u_id=?", uId).Get(&user)
 
+	if province != "" {
+		user.Province = province
+	}
+	if city != "" {
+		user.City = city
+	}
+	if area != "" {
+		user.Area = area
+	}
+	if longitude != 0 {
+		user.Longitude = longitude
+	}
+	if latitude != 0 {
+		user.Latitude = latitude
+	}
+	base.DBEngine.Table("user").Where("u_id=?", uId).Cols("province", "city", "area", "longitude", "latitude").Update(&user)
 
+	this.ReturnData = "success"
+}
+
+// @Title 根据当前位置要求获取用户列表
+// @Description 根据当前位置要求获取用户列表
+// @Param	province		formData		string  		false		"省"
+// @Param	city			formData		string  		false		"市"
+// @Param	area			formData		string  		false		"区"
+// @Param	longitudeMax	formData		float64  		false		"经度最大"
+// @Param	longitudeMin	formData		float64  		false		"经度最小"
+// @Param	latitudeMax		formData		float64  		false		"纬度最大"
+// @Param	latitudeMin		formData		float64  		false		"纬度最小"
+// @Success 200 {object} models.UserList
+// @router /getUserListByPosition [get]
+func (this *UserController) GetUserListByPosition() {
+	province := this.GetString("province", "")
+	city := this.GetString("city", "")
+	area := this.GetString("area", "")
+	longitudeMax, _ := this.GetFloat("longitudeMax", 0)
+	longitudeMin, _ := this.GetFloat("longitudeMin", 0)
+	latitudeMax, _ := this.GetFloat("latitudeMax", 0)
+	latitudeMin, _ := this.GetFloat("latitudeMin", 0)
+
+	whereSql := ""
+	if province != "" {
+		whereSql += " and province='" + province + "' "
+	}
+	if city != "" {
+		whereSql += " and city='" + city + "' "
+	}
+	if area != "" {
+		whereSql += " and area='" + area + "' "
+	}
+	if longitudeMax != 0 {
+		whereSql += " and longitude<=" + strconv.FormatFloat(longitudeMax, 'f', 6, 64) + " "
+	}
+	if longitudeMin != 0 {
+		whereSql += " and longitude>=" + strconv.FormatFloat(longitudeMin, 'f', 6, 64) + " "
+	}
+	if latitudeMax != 0 {
+		whereSql += " and latitude<=" + strconv.FormatFloat(latitudeMax, 'f', 6, 64) + " "
+	}
+	if latitudeMin != 0 {
+		whereSql += " and latitude>=" + strconv.FormatFloat(latitudeMin, 'f', 6, 64) + " "
+	}
+
+	var userList []models.UserShort
+	base.DBEngine.Table("user").Where("1=1 "+whereSql).Find(&userList)
+
+	this.ReturnData = models.UserList{userList}
+}
 
 
 
@@ -415,4 +518,46 @@ func UserWithNickName(nickName string) (user models.User, err error) {
 func checkSameNickName(nickName string) bool {
 	hasSameNickNameUser, _ := base.DBEngine.Table("user").Where("nick_name=?", nickName).Get(new(models.User))
 	return hasSameNickNameUser
+}
+
+//
+func createZombieUser(number int){
+	var zombieList []models.User
+	base.DBEngine.Table("user").Where("is_zombie=1").And("longitude=0 and latitude=0").Find(&zombieList)
+	if zombieList == nil {
+		zombieList = make([]models.User, 0)
+	}
+	if number > len(zombieList) {
+		var zombie models.User
+		zombie.NickName = getDefaultNickName()
+		hashedPassword, salt, _ := util.EncryptPassword("iamzombie")
+		zombie.Password = hashedPassword
+		zombie.Salt = salt
+		zombie.Gender = getRandomGender()
+
+
+
+
+	}
+
+
+}
+
+//获得默认昵称
+func getDefaultNickName() string {
+	var defaultNickName models.DefaultNickName
+	hasDefaultNickName, _ := base.DBEngine.Table("default_nick_name").Where("status=0").Asc("id").Limit(1, 0).Get(&defaultNickName)
+	if hasDefaultNickName {
+		return defaultNickName.NickName
+	} else {
+		randomUUId, _ := uuid.NewV4()
+		nickName := "匿名"+randomUUId.String()
+		return nickName
+	}
+}
+
+//获得默认性别
+func getRandomGender() int {
+	sIndex := rand.Intn(len(models.DefaulGenders))
+	return models.DefaulGenders[sIndex]
 }
