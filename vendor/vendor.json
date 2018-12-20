@@ -141,6 +141,12 @@
 			"revisionTime": "2018-05-05T20:34:41Z"
 		},
 		{
+			"checksumSHA1": "Tutue3nEgM/87jitUcYv6ODwyNE=",
+			"path": "github.com/satori/go.uuid",
+			"revision": "b2ce2384e17bbe0c6d34077efa39dbab3e09123b",
+			"revisionTime": "2018-10-28T12:50:25Z"
+		},
+		{
 			"checksumSHA1": "F+tqxPGFt5x7DKZakbbMmENX1oQ=",
 			"path": "golang.org/x/net/websocket",
 			"revision": "922f4815f713f213882e8ef45e0d315b164d705c",
@@ -177,5 +183,5 @@
 			"revisionTime": "2018-07-05T11:36:04Z"
 		}
 	],
-	"rootPath": "baseApi"
+	"rootPath": "anonymousFriends"
 }
