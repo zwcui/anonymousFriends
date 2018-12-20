@@ -12,6 +12,7 @@ const ZOMBIE_USER_NUMBER = 100
 
 type User struct {
 	UId       			int64			`description:"uId" json:"uId" xorm:"pk autoincr"`
+	Avatar				string			`description:"头像" json:"avatar"`
 	PhoneNumber			string			`description:"手机号" json:"phoneNumber"`
 	NickName 			string			`description:"昵称" json:"nickName" xorm:"notnull "`		//string类型默认映射为varchar(255)
 	Password 			string			`description:"密码" json:"password" xorm:"notnull"`
@@ -76,6 +77,7 @@ type DefaultNickName struct {
 
 type UserShort struct {
 	UId       			int64			`description:"注册时间" json:"uId" xorm:"pk autoincr"`
+	Avatar				string			`description:"头像" json:"avatar"`
 	PhoneNumber			string			`description:"手机号" json:"phoneNumber"`
 	NickName 			string			`description:"昵称" json:"nickName" xorm:"notnull "`		//string类型默认映射为varchar(255)
 	Gender        		int    			`description:"性别,1 男, 2 女" json:"gender" xorm:"notnull default 0"`
@@ -125,7 +127,31 @@ func (u *User) UsetToUserShort() (userDTO *UserShort, error error) {
 
 //--------------默认参数----------------
 
-var DefaulGenders = []int{
+var DefaultGender = []int{
 	1,	//男
 	2,	//女
+}
+
+var DefaultBirthday = []string{
+	"199301",
+	"199503",
+	"199002",
+	"198808",
+	"198011",
+	"198606",
+	"198209",
+	"198910",
+	"199011",
+	"199412",
+}
+
+var DefaultDirection = []float64{
+	1.0,
+	-1.0,
+}
+
+var DefaultAvatar = []string{
+	"da1",
+	"da2",
+	"da3",
 }

@@ -1,5 +1,9 @@
 package util
 
+import (
+	"math/rand"
+)
+
 //隐藏昵称后几位，用*替代
 func FormatNickname(nickname string, length int) (formatName string) {
 	rs := []rune(nickname)
@@ -27,4 +31,8 @@ func FormatPhoneNo(phoneNo string) (formatString string) {
 	return formatString
 }
 
-
+//范围之内生成随机数
+func GenerateRangeNum(min, max int) int {
+	randNum := rand.Intn(max - min) + min
+	return randNum
+}

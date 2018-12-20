@@ -25,6 +25,7 @@ func (this *UserController) Prepare(){
 // @Title 注册
 // @Description 注册
 // @Param	nickName		formData		string  		true		"昵称"
+// @Param	avatar			formData		string  		false		"头像"
 // @Param	phoneNumber		formData		string  		false		"手机号"
 // @Param	password		formData		string  		true		"密码"
 // @Param   veriCode        formData        string  		false       "veriCode"
@@ -42,6 +43,7 @@ func (this *UserController) Prepare(){
 // @router /signUp [post]
 func (this *UserController) SignUp() {
 	nickName := this.MustString("nickName")
+	avatar := this.GetString("avatar", "")
 	phoneNumber := this.GetString("phoneNumber", "")
 	password := this.MustString("password")
 	gender, _ := this.GetInt("gender", 2)
@@ -65,6 +67,7 @@ func (this *UserController) SignUp() {
 	}
 
 	var user models.User
+	user.Avatar = avatar
 	user.NickName = nickName
 	user.PhoneNumber = phoneNumber
 	user.Gender = gender
@@ -186,6 +189,7 @@ func (this *UserController) GetUserAccountInfo() {
 // @Title 更新用户信息
 // @Description 更新用户信息
 // @Param	uId				formData		int64	  		true		"uId"
+// @Param	avatar			formData		string  		false		"头像"
 // @Param	nickName		formData		string  		false		"昵称"
 // @Param	phoneNumber		formData		string  		false		"手机号"
 // @Param	gender			formData		int		  		false		"性别,1 男, 2 女"
@@ -194,6 +198,7 @@ func (this *UserController) GetUserAccountInfo() {
 // @router /updateUserInfo [patch]
 func (this *UserController) UpdateUserInfo() {
 	uId := this.MustInt64("uId")
+	avatar := this.GetString("avatar", "")
 	nickName := this.GetString("nickName", "")
 	phoneNumber := this.GetString("phoneNumber", "")
 	birthday := this.GetString("birthday", "")
@@ -210,6 +215,9 @@ func (this *UserController) UpdateUserInfo() {
 	if nickName != "" {
 		user.NickName = nickName
 	}
+	if avatar != "" {
+		user.Avatar = avatar
+	}
 	if phoneNumber != "" {
 		user.PhoneNumber = phoneNumber
 	}
@@ -219,7 +227,7 @@ func (this *UserController) UpdateUserInfo() {
 	if gender != 0 {
 		user.Gender = gender
 	}
-	base.DBEngine.Table("user").Where("u_id=?", uId).Cols("nick_name", "phone_number", "birthday", "gender").Update(&user)
+	base.DBEngine.Table("user").Where("u_id=?", uId).Cols("avatar", "nick_name", "phone_number", "birthday", "gender").Update(&user)
 
 	this.ReturnData = models.UserInfo{user}
 }
@@ -300,6 +308,7 @@ func (this *UserController) UpdateUserPosition() {
 
 // @Title 根据当前位置要求获取用户列表
 // @Description 根据当前位置要求获取用户列表
+// @Param	uId				formData		int64	  		true		"uId"
 // @Param	province		formData		string  		false		"省"
 // @Param	city			formData		string  		false		"市"
 // @Param	area			formData		string  		false		"区"
@@ -310,6 +319,7 @@ func (this *UserController) UpdateUserPosition() {
 // @Success 200 {object} models.UserList
 // @router /getUserListByPosition [get]
 func (this *UserController) GetUserListByPosition() {
+	uId := this.MustInt64("uId")
 	province := this.GetString("province", "")
 	city := this.GetString("city", "")
 	area := this.GetString("area", "")
@@ -317,6 +327,9 @@ func (this *UserController) GetUserListByPosition() {
 	longitudeMin, _ := this.GetFloat("longitudeMin", 0)
 	latitudeMax, _ := this.GetFloat("latitudeMax", 0)
 	latitudeMin, _ := this.GetFloat("latitudeMin", 0)
+
+		var user models.User
+		base.DBEngine.Table("user").Where("u_id=?", uId).Get(&user)
 
 	whereSql := ""
 	if province != "" {
@@ -344,7 +357,40 @@ func (this *UserController) GetUserListByPosition() {
 	var userList []models.UserShort
 	base.DBEngine.Table("user").Where("1=1 "+whereSql).Find(&userList)
 
+	if userList == nil {
+		userList = make([]models.UserShort, 0)
+	}
+
+	//如果周围的真实用户少于10个，则创建僵尸用户直到10个
+	if len(userList) < 10 {
+		zombieList := createZombieUser(user, 10 - len(userList))
+		for _, zombie := range zombieList {
+			userList = append(userList, zombie)
+		}
+	}
+
 	this.ReturnData = models.UserList{userList}
+}
+
+// @Title 登出
+// @Description 登出
+// @Param	uId				formData		int64	  		true		"uId"
+// @Success 200 {string} success
+// @router /signOut [post]
+func (this *UserController) SignOut() {
+	uId := this.MustInt64("uId")
+
+	//推送用表
+	var userSignInDeviceInfo models.UserSignInDeviceInfo
+	base.DBEngine.Table("user_sign_in_device_info").Where("u_id=?", uId).Get(&userSignInDeviceInfo)
+	userSignInDeviceInfo.DeviceToken = ""
+	userSignInDeviceInfo.DeviceModel = ""
+	userSignInDeviceInfo.SystemVersion = ""
+	userSignInDeviceInfo.AppVersion = ""
+	base.DBEngine.Table("user_sign_in_device_info").Where("u_id=?", uId).AllCols().Update(&userSignInDeviceInfo)
+
+
+	this.ReturnData = "success"
 }
 
 
@@ -377,116 +423,6 @@ func (this *UserController) GetUserListByPosition() {
 
 
 
-
-
-
-
-
-//
-//// @Title CreateUser
-//// @Description create users
-//// @Param	body		body 	models.User	true		"body for user content"
-//// @Success 200 {int} models.User.Id
-//// @Failure 403 body is empty
-//// @router / [post]
-//func (u *UserController) Post() {
-//	var user models.User
-//	json.Unmarshal(u.Ctx.Input.RequestBody, &user)
-//	uid := models.AddUser(user)
-//	u.Data["json"] = map[string]string{"uid": uid}
-//	u.ServeJSON()
-//}
-//
-//// @Title GetAll
-//// @Description get all Users
-//// @Success 200 {object} models.User
-//// @router / [get]
-//func (u *UserController) GetAll() {
-//	users := models.GetAllUsers()
-//	u.Data["json"] = users
-//	u.ServeJSON()
-//}
-//
-//// @Title Get
-//// @Description get user by uid
-//// @Param	uid		path 	string	true		"The key for staticblock"
-//// @Success 200 {object} models.User
-//// @Failure 403 :uid is empty
-//// @router /:uid [get]
-//func (u *UserController) Get() {
-//	uid := u.GetString(":uid")
-//	if uid != "" {
-//		user, err := models.GetUser(uid)
-//		if err != nil {
-//			u.Data["json"] = err.Error()
-//		} else {
-//			u.Data["json"] = user
-//		}
-//	}
-//	u.ServeJSON()
-//}
-//
-//// @Title Update
-//// @Description update the user
-//// @Param	uid		path 	string	true		"The uid you want to update"
-//// @Param	body		body 	models.User	true		"body for user content"
-//// @Success 200 {object} models.User
-//// @Failure 403 :uid is not int
-//// @router /:uid [put]
-//func (u *UserController) Put() {
-//	uid := u.GetString(":uid")
-//	if uid != "" {
-//		var user models.User
-//		json.Unmarshal(u.Ctx.Input.RequestBody, &user)
-//		uu, err := models.UpdateUser(uid, &user)
-//		if err != nil {
-//			u.Data["json"] = err.Error()
-//		} else {
-//			u.Data["json"] = uu
-//		}
-//	}
-//	u.ServeJSON()
-//}
-//
-//// @Title Delete
-//// @Description delete the user
-//// @Param	uid		path 	string	true		"The uid you want to delete"
-//// @Success 200 {string} delete success!
-//// @Failure 403 uid is empty
-//// @router /:uid [delete]
-//func (u *UserController) Delete() {
-//	uid := u.GetString(":uid")
-//	models.DeleteUser(uid)
-//	u.Data["json"] = "delete success!"
-//	u.ServeJSON()
-//}
-//
-//// @Title Login
-//// @Description Logs user into the system
-//// @Param	username		query 	string	true		"The username for login"
-//// @Param	password		query 	string	true		"The password for login"
-//// @Success 200 {string} login success
-//// @Failure 403 user not exist
-//// @router /login [get]
-//func (u *UserController) Login() {
-//	username := u.GetString("username")
-//	password := u.GetString("password")
-//	if models.Login(username, password) {
-//		u.Data["json"] = "login success"
-//	} else {
-//		u.Data["json"] = "user not exist"
-//	}
-//	u.ServeJSON()
-//}
-//
-//// @Title logout
-//// @Description Logs out current logged in user session
-//// @Success 200 {string} logout success
-//// @router /logout [get]
-//func (u *UserController) Logout() {
-//	u.Data["json"] = "logout success"
-//	u.ServeJSON()
-//}
 
 
 
@@ -520,27 +456,53 @@ func checkSameNickName(nickName string) bool {
 	return hasSameNickNameUser
 }
 
-//
-func createZombieUser(number int){
+//创建僵尸用户，如果用户退出则还原僵尸账户位置
+func createZombieUser(user models.User, number int) []models.UserShort {
 	var zombieList []models.User
+	var userList []models.UserShort
 	base.DBEngine.Table("user").Where("is_zombie=1").And("longitude=0 and latitude=0").Find(&zombieList)
 	if zombieList == nil {
 		zombieList = make([]models.User, 0)
 	}
+	//累加僵尸用户
 	if number > len(zombieList) {
-		var zombie models.User
-		zombie.NickName = getDefaultNickName()
-		hashedPassword, salt, _ := util.EncryptPassword("iamzombie")
-		zombie.Password = hashedPassword
-		zombie.Salt = salt
-		zombie.Gender = getRandomGender()
-
-
-
-
+		for i:=0; i< (number-len(zombieList));i++ {
+			var zombie models.User
+			zombie.NickName = getDefaultNickName()
+			zombie.Avatar = getRandomAvatar()
+			hashedPassword, salt, _ := util.EncryptPassword("iamzombie")
+			zombie.Password = hashedPassword
+			zombie.Salt = salt
+			zombie.Gender = getRandomGender()
+			zombie.Birthday = getRandomBirthday()
+			zombie.Status = 1
+			zombie.IsZombie = 1
+			base.DBEngine.Table("user").InsertOne(&zombie)
+			zombieList = append(zombieList, zombie)
+		}
 	}
+	//提供僵尸用户定位
+	for _, zombie := range zombieList {
+		zombie.Province = user.Province
+		zombie.City = user.City
+		zombie.Area = user.Area
+		zombie.Longitude, zombie.Latitude = calcZombiePositionByUserPosition(user.Longitude, user.Latitude)
+		base.DBEngine.Table("user").Where("u_id=?", zombie.UId).Cols("province", "city", "area", "longitude", "latitude").Update(&zombie)
 
+		user, _ := zombie.UsetToUserShort()
+		userList = append(userList, *user)
+	}
+	return userList
+}
 
+//根据用户定位获得僵尸定位
+//纬度每差1度，实际距离为111千米
+//在纬线上，经度每差1度，实际距离为111×cos(角)千米
+//300米范围随机加减
+func calcZombiePositionByUserPosition(longitude float64, latitude float64) (float64, float64) {
+	zombieLongitudeChange := float64(util.GenerateRangeNum(0, 300))/100000.0 * getRandomChange()
+	zombieLatitudeChange := float64(util.GenerateRangeNum(0, 300))/100000.0 * getRandomChange()
+	return longitude + zombieLongitudeChange, latitude + zombieLatitudeChange
 }
 
 //获得默认昵称
@@ -556,8 +518,26 @@ func getDefaultNickName() string {
 	}
 }
 
-//获得默认性别
+//获得随机性别
 func getRandomGender() int {
-	sIndex := rand.Intn(len(models.DefaulGenders))
-	return models.DefaulGenders[sIndex]
+	sIndex := rand.Intn(len(models.DefaultGender))
+	return models.DefaultGender[sIndex]
+}
+
+//获得随机性别
+func getRandomBirthday() string {
+	sIndex := rand.Intn(len(models.DefaultBirthday))
+	return models.DefaultBirthday[sIndex]
+}
+
+//获得随机头像
+func getRandomAvatar() string {
+	sIndex := rand.Intn(len(models.DefaultAvatar))
+	return models.DefaultAvatar[sIndex]
+}
+
+//获得随机经纬度加减
+func getRandomChange() float64 {
+	sIndex := rand.Intn(len(models.DefaultDirection))
+	return models.DefaultDirection[sIndex]
 }

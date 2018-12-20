@@ -190,6 +190,12 @@ paths:
       operationId: UserController.根据当前位置要求获取用户列表
       parameters:
       - in: formData
+        name: uId
+        description: uId
+        required: true
+        type: integer
+        format: int64
+      - in: formData
         name: province
         description: 省
         type: string
@@ -276,6 +282,22 @@ paths:
         "200":
           schema:
             $ref: '#/definitions/models.SignInUser'
+  /user/signOut:
+    post:
+      tags:
+      - user
+      description: 登出
+      operationId: UserController.登出
+      parameters:
+      - in: formData
+        name: uId
+        description: uId
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: '{string} success'
   /user/signUp:
     post:
       tags:
@@ -287,6 +309,10 @@ paths:
         name: nickName
         description: 昵称
         required: true
+        type: string
+      - in: formData
+        name: avatar
+        description: 头像
         type: string
       - in: formData
         name: phoneNumber
@@ -358,6 +384,10 @@ paths:
         required: true
         type: integer
         format: int64
+      - in: formData
+        name: avatar
+        description: 头像
+        type: string
       - in: formData
         name: nickName
         description: 昵称
@@ -536,6 +566,9 @@ definitions:
     properties:
       area:
         description: 区
+        type: string
+      avatar:
+        description: 头像
         type: string
       birthday:
         description: 出生年月

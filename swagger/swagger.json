@@ -280,6 +280,14 @@
                 "parameters": [
                     {
                         "in": "formData",
+                        "name": "uId",
+                        "description": "uId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
                         "name": "province",
                         "description": "省",
                         "type": "string"
@@ -410,6 +418,30 @@
                 }
             }
         },
+        "/user/signOut": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "description": "登出",
+                "operationId": "UserController.登出",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "uId",
+                        "description": "uId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} success"
+                    }
+                }
+            }
+        },
         "/user/signUp": {
             "post": {
                 "tags": [
@@ -423,6 +455,12 @@
                         "name": "nickName",
                         "description": "昵称",
                         "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "avatar",
+                        "description": "头像",
                         "type": "string"
                     },
                     {
@@ -527,6 +565,12 @@
                         "required": true,
                         "type": "integer",
                         "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "avatar",
+                        "description": "头像",
+                        "type": "string"
                     },
                     {
                         "in": "formData",
@@ -782,6 +826,10 @@
             "properties": {
                 "area": {
                     "description": "区",
+                    "type": "string"
+                },
+                "avatar": {
+                    "description": "头像",
                     "type": "string"
                 },
                 "birthday": {

@@ -90,4 +90,11 @@ func init() {
 			AllowHTTPMethods: []string{"get"},
 			Params: nil})
 
+	beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"],
+		beego.ControllerComments{
+			Method: "SignOut",
+			Router: `/signOut`,
+			AllowHTTPMethods: []string{"post"},
+			Params: nil})
+
 }
