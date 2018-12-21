@@ -15,5 +15,10 @@ func init() {
 		TestTimedTask()
 	})
 
+	//每分钟修改僵尸账户位置
+	c.AddFunc("@every 1m", func() {
+		ZombieMoveTask()
+	})
+
 	c.Start()
 }

@@ -155,3 +155,8 @@ var DefaultAvatar = []string{
 	"da2",
 	"da3",
 }
+
+var ZombieMoveFlagRatio = []int{
+	1,
+	0,
+}

@@ -308,14 +308,14 @@ func (this *UserController) UpdateUserPosition() {
 
 // @Title 根据当前位置要求获取用户列表
 // @Description 根据当前位置要求获取用户列表
-// @Param	uId				formData		int64	  		true		"uId"
-// @Param	province		formData		string  		false		"省"
-// @Param	city			formData		string  		false		"市"
-// @Param	area			formData		string  		false		"区"
-// @Param	longitudeMax	formData		float64  		false		"经度最大"
-// @Param	longitudeMin	formData		float64  		false		"经度最小"
-// @Param	latitudeMax		formData		float64  		false		"纬度最大"
-// @Param	latitudeMin		formData		float64  		false		"纬度最小"
+// @Param	uId				query			int64	  		true		"uId"
+// @Param	province		query			string  		false		"省"
+// @Param	city			query			string  		false		"市"
+// @Param	area			query			string  		false		"区"
+// @Param	longitudeMax	query			float64  		false		"经度最大"
+// @Param	longitudeMin	query			float64  		false		"经度最小"
+// @Param	latitudeMax		query			float64  		false		"纬度最大"
+// @Param	latitudeMin		query			float64  		false		"纬度最小"
 // @Success 200 {object} models.UserList
 // @router /getUserListByPosition [get]
 func (this *UserController) GetUserListByPosition() {
@@ -328,10 +328,10 @@ func (this *UserController) GetUserListByPosition() {
 	latitudeMax, _ := this.GetFloat("latitudeMax", 0)
 	latitudeMin, _ := this.GetFloat("latitudeMin", 0)
 
-		var user models.User
-		base.DBEngine.Table("user").Where("u_id=?", uId).Get(&user)
+	var user models.User
+	base.DBEngine.Table("user").Where("u_id=?", uId).Get(&user)
 
-	whereSql := ""
+	whereSql := " and u_id !='"+strconv.FormatInt(uId, 10)+"' "
 	if province != "" {
 		whereSql += " and province='" + province + "' "
 	}
@@ -464,9 +464,10 @@ func createZombieUser(user models.User, number int) []models.UserShort {
 	if zombieList == nil {
 		zombieList = make([]models.User, 0)
 	}
+	storedUnuseZombieNumber := len(zombieList)
 	//累加僵尸用户
 	if number > len(zombieList) {
-		for i:=0; i< (number-len(zombieList));i++ {
+		for i:=0; i< (number-storedUnuseZombieNumber);i++ {
 			var zombie models.User
 			zombie.NickName = getDefaultNickName()
 			zombie.Avatar = getRandomAvatar()
@@ -500,8 +501,8 @@ func createZombieUser(user models.User, number int) []models.UserShort {
 //在纬线上，经度每差1度，实际距离为111×cos(角)千米
 //300米范围随机加减
 func calcZombiePositionByUserPosition(longitude float64, latitude float64) (float64, float64) {
-	zombieLongitudeChange := float64(util.GenerateRangeNum(0, 300))/100000.0 * getRandomChange()
-	zombieLatitudeChange := float64(util.GenerateRangeNum(0, 300))/100000.0 * getRandomChange()
+	zombieLongitudeChange := float64(util.GenerateRangeNum(0, 300))/100000.0 * GetRandomChange()
+	zombieLatitudeChange := float64(util.GenerateRangeNum(0, 300))/100000.0 * GetRandomChange()
 	return longitude + zombieLongitudeChange, latitude + zombieLatitudeChange
 }
 
@@ -510,6 +511,8 @@ func getDefaultNickName() string {
 	var defaultNickName models.DefaultNickName
 	hasDefaultNickName, _ := base.DBEngine.Table("default_nick_name").Where("status=0").Asc("id").Limit(1, 0).Get(&defaultNickName)
 	if hasDefaultNickName {
+		defaultNickName.Status = 1
+		base.DBEngine.Table("default_nick_name").Where("id=?", defaultNickName.Id).Cols("status").Update(&defaultNickName)
 		return defaultNickName.NickName
 	} else {
 		randomUUId, _ := uuid.NewV4()
@@ -537,7 +540,7 @@ func getRandomAvatar() string {
 }
 
 //获得随机经纬度加减
-func getRandomChange() float64 {
+func GetRandomChange() float64 {
 	sIndex := rand.Intn(len(models.DefaultDirection))
 	return models.DefaultDirection[sIndex]
 }

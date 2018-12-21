@@ -23,7 +23,7 @@ func (this *MessageController) Prepare(){
 // @Title 测试新增MongoDB消息
 // @Description 测试新增MongoDB消息
 // @Param	content		formData		string  		true		"内容"
-// @Success 200 {object} models.MongoDBMessage
+// @Success 200 {object} models.UserChatSocketMessage
 // @Failure 403 create message failed
 // @router / [post]
 func (this *MessageController) Post() {

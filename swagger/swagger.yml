@@ -26,7 +26,7 @@ paths:
       responses:
         "200":
           schema:
-            $ref: '#/definitions/.MongoDBMessage'
+            $ref: '#/definitions/models.UserChatSocketMessage'
         "403":
           description: create message failed
   /message/addGroup:
@@ -189,40 +189,40 @@ paths:
       description: 根据当前位置要求获取用户列表
       operationId: UserController.根据当前位置要求获取用户列表
       parameters:
-      - in: formData
+      - in: query
         name: uId
         description: uId
         required: true
         type: integer
         format: int64
-      - in: formData
+      - in: query
         name: province
         description: 省
         type: string
-      - in: formData
+      - in: query
         name: city
         description: 市
         type: string
-      - in: formData
+      - in: query
         name: area
         description: 区
         type: string
-      - in: formData
+      - in: query
         name: longitudeMax
         description: 经度最大
         type: number
         format: double
-      - in: formData
+      - in: query
         name: longitudeMin
         description: 经度最小
         type: number
         format: double
-      - in: formData
+      - in: query
         name: latitudeMax
         description: 纬度最大
         type: number
         format: double
-      - in: formData
+      - in: query
         name: latitudeMin
         description: 纬度最小
         type: number
@@ -474,8 +474,6 @@ paths:
         "200":
           description: '{string} success'
 definitions:
-  .MongoDBMessage:
-    type: object
   models.Group:
     title: Group
     type: object
@@ -544,6 +542,45 @@ definitions:
       userAccount:
         $ref: '#/definitions/models.UserAccount'
         description: 用户账户信息
+  models.UserChatSocketMessage:
+    title: UserChatSocketMessage
+    type: object
+    properties:
+      content:
+        description: content
+        type: string
+      contentType:
+        description: 消息内容类型 0:文本 1:图片 2:语音 3:视频
+        type: integer
+        format: int64
+      fromNickName:
+        description: fromNickName
+        type: string
+      fromUid:
+        description: fromUid
+        type: integer
+        format: int64
+      groupId:
+        description: groupId
+        type: integer
+        format: int64
+      groupType:
+        description: '组类型 1:一对一 2:一对多 '
+        type: integer
+        format: int64
+      imageHeight:
+        description: 图片高度,客户端根据这个显示图片高度
+        type: string
+      imageWidth:
+        description: 图片宽度,客户端根据这个显示图片宽度
+        type: string
+      toNickName:
+        description: toNickName
+        type: string
+      toUid:
+        description: toUid
+        type: integer
+        format: int64
   models.UserInfo:
     title: UserInfo
     type: object
