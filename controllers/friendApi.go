@@ -72,7 +72,7 @@ func (this *FriendController) MakeFriends() {
 // @Param	id						formData		int64  		true		"申请id"
 // @Param	result					formData		int  		true		"处理结果，1接收 2拒绝"
 // @Success 200 {string} success
-// @router /handleMakeFriendsRequest [post]
+// @router /handleMakeFriendsRequest [patch]
 func (this *FriendController) HandleMakeFriendsRequest() {
 	id := this.MustInt64("id")
 	result := this.MustInt("result")

@@ -17,7 +17,7 @@ func init() {
 		beego.ControllerComments{
 			Method: "HandleMakeFriendsRequest",
 			Router: `/handleMakeFriendsRequest`,
-			AllowHTTPMethods: []string{"post"},
+			AllowHTTPMethods: []string{"patch"},
 			Params: nil})
 
 	beego.GlobalControllerRouter["anonymousFriends/controllers:MessageController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:MessageController"],

@@ -12,7 +12,7 @@ info:
 basePath: /v1
 paths:
   /friend/handleMakeFriendsRequest:
-    post:
+    patch:
       tags:
       - friend
       description: 处理好友请求

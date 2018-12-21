@@ -16,7 +16,7 @@
     "basePath": "/v1",
     "paths": {
         "/friend/handleMakeFriendsRequest": {
-            "post": {
+            "patch": {
                 "tags": [
                     "friend"
                 ],
