@@ -501,8 +501,8 @@ func createZombieUser(user models.User, number int) []models.UserShort {
 //在纬线上，经度每差1度，实际距离为111×cos(角)千米
 //300米范围随机加减
 func calcZombiePositionByUserPosition(longitude float64, latitude float64) (float64, float64) {
-	zombieLongitudeChange := float64(util.GenerateRangeNum(0, 300))/100000.0 * GetRandomChange()
-	zombieLatitudeChange := float64(util.GenerateRangeNum(0, 300))/100000.0 * GetRandomChange()
+	zombieLongitudeChange := float64(util.GenerateRangeNum(0, 300))/1000000.0 * GetRandomChange()
+	zombieLatitudeChange := float64(util.GenerateRangeNum(0, 300))/1000000.0 * GetRandomChange()
 	return longitude + zombieLongitudeChange, latitude + zombieLatitudeChange
 }
 

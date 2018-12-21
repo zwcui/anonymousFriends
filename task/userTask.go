@@ -24,10 +24,10 @@ func ZombieMoveTask(){
 	for _, zombie := range zombieList {
 		moveFlag := getRandomZombieMoveFlag()
 		if moveFlag == 1 {
-			util.Logger.Info("定时任务：僵尸账户位置移动前-->"+strconv.FormatInt(zombie.UId, 10)+"："+strconv.FormatFloat(zombie.Longitude, 'f', 6, 64)+", "+strconv.FormatFloat(zombie.Latitude, 'f', 6, 64))
+			//util.Logger.Info("定时任务：僵尸账户位置移动前-->"+strconv.FormatInt(zombie.UId, 10)+"："+strconv.FormatFloat(zombie.Longitude, 'f', 6, 64)+", "+strconv.FormatFloat(zombie.Latitude, 'f', 6, 64))
 			zombie.Longitude, zombie.Latitude = calcZombiePositionByTimedTask(zombie.Longitude, zombie.Latitude)
 			base.DBEngine.Table("user").Where("u_id=?", zombie.UId).Cols("longitude", "latitude").Update(&zombie)
-			util.Logger.Info("定时任务：僵尸账户位置移动后-->"+strconv.FormatInt(zombie.UId, 10)+"："+strconv.FormatFloat(zombie.Longitude, 'f', 6, 64)+", "+strconv.FormatFloat(zombie.Latitude, 'f', 6, 64))
+			//util.Logger.Info("定时任务：僵尸账户位置移动后-->"+strconv.FormatInt(zombie.UId, 10)+"："+strconv.FormatFloat(zombie.Longitude, 'f', 6, 64)+", "+strconv.FormatFloat(zombie.Latitude, 'f', 6, 64))
 		}
 	}
 
@@ -43,7 +43,7 @@ func getRandomZombieMoveFlag() int {
 //50米的范围
 //考虑不能去的位置，如河海
 func calcZombiePositionByTimedTask(longitude float64, latitude float64) (float64, float64) {
-	zombieLongitudeChange := float64(util.GenerateRangeNum(0, 50))/100000.0 * controllers.GetRandomChange()
-	zombieLatitudeChange := float64(util.GenerateRangeNum(0, 50))/100000.0 * controllers.GetRandomChange()
+	zombieLongitudeChange := float64(util.GenerateRangeNum(0, 50))/1000000.0 * controllers.GetRandomChange()
+	zombieLatitudeChange := float64(util.GenerateRangeNum(0, 50))/1000000.0 * controllers.GetRandomChange()
 	return longitude + zombieLongitudeChange, latitude + zombieLatitudeChange
 }
