@@ -35,6 +35,11 @@ func init() {
 				&controllers.SocialDynamicsController{},
 			),
 		),
+		beego.NSNamespace("/friend",
+			beego.NSInclude(
+				&controllers.FriendController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }

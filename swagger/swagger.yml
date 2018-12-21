@@ -11,6 +11,50 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 basePath: /v1
 paths:
+  /friend/handleMakeFriendsRequest:
+    post:
+      tags:
+      - friend
+      description: 处理好友请求
+      operationId: FriendController.处理好友请求
+      parameters:
+      - in: formData
+        name: id
+        description: 申请id
+        required: true
+        type: integer
+        format: int64
+      - in: formData
+        name: result
+        description: 处理结果，1接收 2拒绝
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: '{string} success'
+  /friend/makeFriends:
+    post:
+      tags:
+      - friend
+      description: 发送好友请求
+      operationId: FriendController.发送好友请求
+      parameters:
+      - in: formData
+        name: senderUid
+        description: 发送人id
+        required: true
+        type: integer
+        format: int64
+      - in: formData
+        name: receiverUid
+        description: 接收人id
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: '{string} success'
   /message/:
     post:
       tags:
@@ -968,3 +1012,6 @@ tags:
 - name: socialDynamics
   description: |
     朋友圈模块
+- name: friend
+  description: |
+    好友模块
