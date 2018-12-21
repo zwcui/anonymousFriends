@@ -20,6 +20,11 @@ const (
 
 	WebsocketError100 	= "Websocket100###您的账户已在其他地方登陆"
 
+	FriendError100 		= "Friend100###您已发起好友申请，稍等对方接收哦~"
+	FriendError200 		= "Friend200###你们已经成为好友了哦~"
+	FriendError300 		= "Friend300###对方也向您发起了好友申请，请先接收哦~"
+	FriendError400 		= "Friend400###您已处理该条申请哦~"
+
 )
 
 
