@@ -30,6 +30,11 @@ func init() {
 				&controllers.MessageController{},
 			),
 		),
+		beego.NSNamespace("/socialDynamics",
+			beego.NSInclude(
+				&controllers.SocialDynamicsController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }

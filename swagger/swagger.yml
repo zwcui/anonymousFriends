@@ -148,6 +148,164 @@ paths:
           description: '{string} success'
         "403":
           description: create users failed
+  /socialDynamics/deleteSocialDynamic:
+    delete:
+      tags:
+      - socialDynamics
+      description: 删除朋友圈
+      operationId: SocialDynamicsController.删除朋友圈
+      parameters:
+      - in: query
+        name: id
+        description: id
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: '{string} success'
+  /socialDynamics/getSocialDynamicList:
+    get:
+      tags:
+      - socialDynamics
+      description: 查看朋友圈
+      operationId: SocialDynamicsController.查看朋友圈
+      parameters:
+      - in: query
+        name: currentUid
+        description: 当前查看人
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: uId
+        description: uId
+        type: integer
+        format: int64
+      - in: query
+        name: position
+        description: 位置名称，如全家创意产业园店
+        type: string
+      - in: query
+        name: province
+        description: 省
+        type: string
+      - in: query
+        name: city
+        description: 市
+        type: string
+      - in: query
+        name: area
+        description: 区
+        type: string
+      - in: query
+        name: longitude
+        description: 经度
+        type: number
+        format: double
+      - in: query
+        name: latitude
+        description: 纬度
+        type: number
+        format: double
+      - in: query
+        name: pageNum
+        description: page num start from 1
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: pageTime
+        description: page time should be empty when pagenum == 1
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: page size default is 15
+        type: integer
+        format: int64
+      responses:
+        "200":
+          schema:
+            $ref: '#/definitions/models.SocialDynamicListContainer'
+  /socialDynamics/likeSocialDynamic:
+    post:
+      tags:
+      - socialDynamics
+      description: 朋友圈点赞
+      operationId: SocialDynamicsController.朋友圈点赞
+      parameters:
+      - in: formData
+        name: currentUid
+        description: 当前查看人
+        required: true
+        type: integer
+        format: int64
+      - in: formData
+        name: id
+        description: 朋友圈id
+        required: true
+        type: integer
+        format: int64
+      - in: formData
+        name: type
+        description: 类型，1点赞 2取消点赞
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: '{string} success'
+  /socialDynamics/postSocialDynamic:
+    post:
+      tags:
+      - socialDynamics
+      description: 发布朋友圈
+      operationId: SocialDynamicsController.发布朋友圈
+      parameters:
+      - in: formData
+        name: uId
+        description: uId
+        required: true
+        type: integer
+        format: int64
+      - in: formData
+        name: content
+        description: 文字内容
+        type: string
+      - in: formData
+        name: picture
+        description: 图片内容，多个英文逗号隔开
+        type: string
+      - in: formData
+        name: position
+        description: 位置名称，如全家创意产业园店
+        type: string
+      - in: formData
+        name: province
+        description: 省
+        type: string
+      - in: formData
+        name: city
+        description: 市
+        type: string
+      - in: formData
+        name: area
+        description: 区
+        type: string
+      - in: formData
+        name: longitude
+        description: 经度
+        type: number
+        format: double
+      - in: formData
+        name: latitude
+        description: 纬度
+        type: number
+        format: double
+      responses:
+        "200":
+          description: '{string} success'
   /user/getUserAccountInfo:
     get:
       tags:
@@ -474,6 +632,22 @@ paths:
         "200":
           description: '{string} success'
 definitions:
+  models.BaseListContainer:
+    title: BaseListContainer
+    type: object
+    properties:
+      pageNum:
+        description: 当前页数
+        type: integer
+        format: int64
+      pageTime:
+        description: 查询时间
+        type: integer
+        format: int64
+      totalCount:
+        description: 总数
+        type: integer
+        format: int64
   models.Group:
     title: Group
     type: object
@@ -515,6 +689,133 @@ definitions:
       user:
         $ref: '#/definitions/models.UserShort'
         description: 登录用户信息
+  models.SocialDynamicInfo:
+    title: SocialDynamics
+    type: object
+    properties:
+      area:
+        description: 区
+        type: string
+      city:
+        description: 市
+        type: string
+      content:
+        description: 文字内容
+        type: string
+      created:
+        description: 注册时间
+        type: integer
+        format: int64
+      deleted:
+        description: 删除时间
+        type: integer
+        format: int64
+      id:
+        description: id
+        type: integer
+        format: int64
+      isLike:
+        description: 是否点赞，1是0否
+        type: integer
+        format: int64
+      latitude:
+        description: 纬度
+        type: number
+        format: double
+      likeNum:
+        description: 点赞数
+        type: integer
+        format: int64
+      longitude:
+        description: 经度
+        type: number
+        format: double
+      picture:
+        description: 图片内容，多个英文逗号隔开
+        type: string
+      province:
+        description: 省
+        type: string
+      uId:
+        description: uId
+        type: integer
+        format: int64
+      updated:
+        description: 修改时间
+        type: integer
+        format: int64
+  models.SocialDynamicListContainer:
+    title: BaseListContainer
+    type: object
+    properties:
+      pageNum:
+        description: 当前页数
+        type: integer
+        format: int64
+      pageTime:
+        description: 查询时间
+        type: integer
+        format: int64
+      socialDynamicList:
+        description: 社交动态列表
+        type: array
+        items:
+          $ref: '#/definitions/models.SocialDynamicInfo'
+      totalCount:
+        description: 总数
+        type: integer
+        format: int64
+  models.SocialDynamics:
+    title: SocialDynamics
+    type: object
+    properties:
+      area:
+        description: 区
+        type: string
+      city:
+        description: 市
+        type: string
+      content:
+        description: 文字内容
+        type: string
+      created:
+        description: 注册时间
+        type: integer
+        format: int64
+      deleted:
+        description: 删除时间
+        type: integer
+        format: int64
+      id:
+        description: id
+        type: integer
+        format: int64
+      latitude:
+        description: 纬度
+        type: number
+        format: double
+      likeNum:
+        description: 点赞数
+        type: integer
+        format: int64
+      longitude:
+        description: 经度
+        type: number
+        format: double
+      picture:
+        description: 图片内容，多个英文逗号隔开
+        type: string
+      province:
+        description: 省
+        type: string
+      uId:
+        description: uId
+        type: integer
+        format: int64
+      updated:
+        description: 修改时间
+        type: integer
+        format: int64
   models.UserAccount:
     title: UserAccount
     type: object
@@ -665,3 +966,6 @@ tags:
   description: |
     继承apiController
     消息模块
+- name: socialDynamics
+  description: |
+    朋友圈模块
