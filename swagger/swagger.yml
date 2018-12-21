@@ -964,7 +964,6 @@ tags:
     用户模块
 - name: message
   description: |
-    继承apiController
     消息模块
 - name: socialDynamics
   description: |

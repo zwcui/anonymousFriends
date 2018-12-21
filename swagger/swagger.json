@@ -1371,7 +1371,7 @@
         },
         {
             "name": "message",
-            "description": "继承apiController\n消息模块\n"
+            "description": "消息模块\n"
         },
         {
             "name": "socialDynamics",

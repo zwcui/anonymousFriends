@@ -7,7 +7,6 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-//继承apiController
 //消息模块
 type MessageController struct {
 	apiController
