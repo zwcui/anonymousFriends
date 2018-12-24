@@ -674,6 +674,11 @@ paths:
         name: birthday
         description: 出生年月
         type: string
+      - in: formData
+        name: status
+        description: 在线状态，0离线，1在线，2隐身，3Q我吧
+        required: true
+        type: string
       responses:
         "200":
           schema:

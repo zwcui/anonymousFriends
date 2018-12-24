@@ -194,6 +194,7 @@ func (this *UserController) GetUserAccountInfo() {
 // @Param	phoneNumber		formData		string  		false		"手机号"
 // @Param	gender			formData		int		  		false		"性别,1 男, 2 女"
 // @Param	birthday		formData		string  		false		"出生年月"
+// @Param	status			formData		string  		true		"在线状态，0离线，1在线，2隐身，3Q我吧"
 // @Success 200 {object} models.UserInfo
 // @router /updateUserInfo [patch]
 func (this *UserController) UpdateUserInfo() {
@@ -203,6 +204,7 @@ func (this *UserController) UpdateUserInfo() {
 	phoneNumber := this.GetString("phoneNumber", "")
 	birthday := this.GetString("birthday", "")
 	gender, _ := this.GetInt("gender", 0)
+	status := this.MustInt("status")
 
 	//昵称唯一
 	if nickName != "" && checkSameNickName(nickName) {
@@ -227,7 +229,9 @@ func (this *UserController) UpdateUserInfo() {
 	if gender != 0 {
 		user.Gender = gender
 	}
-	base.DBEngine.Table("user").Where("u_id=?", uId).Cols("avatar", "nick_name", "phone_number", "birthday", "gender").Update(&user)
+
+	user.Status = status
+	base.DBEngine.Table("user").Where("u_id=?", uId).Cols("avatar", "nick_name", "phone_number", "birthday", "gender", "status").Update(&user)
 
 	this.ReturnData = models.UserInfo{user}
 }
