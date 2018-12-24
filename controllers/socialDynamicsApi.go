@@ -104,8 +104,8 @@ func (this *SocialDynamicsController) GetSocialDynamicList() {
 	pageTime, _ := this.GetInt64("pageTime", util.UnixOfBeijingTime())
 	pageSize := this.GetPageSize("pageSize")
 
-	totalSql := "select count(1) from social_dynamics where 1=1 "
-	dataSql := "select social_dynamics.*, case when exists(select 1 from `like` where `like`.id=social_dynamics.id and `like`.u_id='"+strconv.FormatInt(currentUid, 10)+"' and `like`.type=1) then 1 else 0 end as is_like from social_dynamics where 1=1 "
+	totalSql := "select count(1) from social_dynamics where deleted_at is null "
+	dataSql := "select social_dynamics.*, case when exists(select 1 from `like` where `like`.id=social_dynamics.id and `like`.u_id='"+strconv.FormatInt(currentUid, 10)+"' and `like`.type=1) then 1 else 0 end as is_like from social_dynamics where deleted_at is null "
 	if uId != 0 {
 		totalSql += " and social_dynamics.u_id='"+strconv.FormatInt(uId, 10)+"' "
 		dataSql += " and social_dynamics.u_id='"+strconv.FormatInt(uId, 10)+"' "

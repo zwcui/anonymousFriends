@@ -19,7 +19,7 @@ type User struct {
 	Salt	 			string			`description:"密码" json:"salt" xorm:"notnull"`
 	Gender        		int    			`description:"性别,1 男, 2 女" json:"gender" xorm:"notnull default 0"`
 	Birthday        	string			`description:"出生年月" json:"birthday"`
-	Status	        	int				`description:"在线状态，0离线，1在线，2隐身" json:"status"`
+	Status	        	int				`description:"在线状态，0离线，1在线，2隐身，3Q我吧" json:"status"`
 	Province        	string			`description:"省" json:"province"`
 	City	        	string			`description:"市" json:"city"`
 	Area	        	string			`description:"区" json:"area"`

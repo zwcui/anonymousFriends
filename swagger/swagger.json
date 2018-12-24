@@ -15,6 +15,102 @@
     },
     "basePath": "/v1",
     "paths": {
+        "/friend/getFriendList": {
+            "get": {
+                "tags": [
+                    "friend"
+                ],
+                "description": "获取好友列表",
+                "operationId": "FriendController.获取好友列表",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "uId",
+                        "description": "uId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "sortType",
+                        "description": "排序类型，1按成为朋友倒序，2按活跃倒序",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "pageNum",
+                        "description": "page num start from 1",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "pageTime",
+                        "description": "page time should be empty when pagenum == 1",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "pageSize",
+                        "description": "page size default is 15",
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "schema": {
+                            "$ref": "#/definitions/models.FriendListContainer"
+                        }
+                    }
+                }
+            }
+        },
+        "/friend/handleFriend": {
+            "patch": {
+                "tags": [
+                    "friend"
+                ],
+                "description": "处理好友关系",
+                "operationId": "FriendController.处理好友关系",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "currentUid",
+                        "description": "当前uid",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "friendUid",
+                        "description": "好友uid",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "result",
+                        "description": "处理结果，1删除（单方删除） 2加入黑名单（双方删除）",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} success"
+                    }
+                }
+            }
+        },
         "/friend/handleMakeFriendsRequest": {
             "patch": {
                 "tags": [
@@ -1002,6 +1098,34 @@
             "title": "BaseListContainer",
             "type": "object",
             "properties": {
+                "pageNum": {
+                    "description": "当前页数",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "pageTime": {
+                    "description": "查询时间",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "totalCount": {
+                    "description": "总数",
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
+        "models.FriendListContainer": {
+            "title": "BaseListContainer",
+            "type": "object",
+            "properties": {
+                "friendList": {
+                    "description": "好友列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UserShort"
+                    }
+                },
                 "pageNum": {
                     "description": "当前页数",
                     "type": "integer",
