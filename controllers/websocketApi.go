@@ -219,7 +219,7 @@ func handleUserChatMessage(socketMessage *models.SocketMessage, reply string, co
 	}
 
 	//转发
-	if err := websocket.Message.Send(UserSocketConnections[socketMessage.MessageSenderUid].Conn, reply); err != nil {
+	if err := websocket.Message.Send(UserSocketConnections[socketMessage.MessageReceiverUid].Conn, reply); err != nil {
 		util.Logger.Info("----handleUserChatMessage--转发 err:", err.Error())
 	}
 }

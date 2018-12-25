@@ -11,6 +11,7 @@ import (
 	"anonymousFriends/util"
 )
 
+//每次定时任务更新几条朋友圈
 const AutoZombieSocialDynamicsNUmber = 5
 
 //定时任务增加僵尸账户的朋友圈
