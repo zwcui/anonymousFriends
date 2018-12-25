@@ -32,7 +32,19 @@ type Like struct {
 
 //僵尸账户的朋友圈
 type ZombieSocialDynamics struct {
-
+	Id       			int64			`description:"id" json:"id" xorm:"pk autoincr"`
+	Content				string			`description:"文字内容" json:"content"`
+	Picture				string			`description:"图片内容，多个英文逗号隔开" json:"picture"`
+	Position        	string			`description:"位置名称，如全家创意产业园店" json:"province"`
+	Province        	string			`description:"省" json:"province"`
+	City	        	string			`description:"市" json:"city"`
+	Area	        	string			`description:"区" json:"area"`
+	Longitude			float64			`description:"经度" json:"longitude"`
+	Latitude			float64			`description:"纬度" json:"latitude"`
+	Status				int				`description:"状态，0未使用，1已使用" json:"status"`
+	Created           	int64  			`description:"注册时间" json:"created" xorm:"created"`
+	Updated           	int64  			`description:"修改时间" json:"updated" xorm:"updated"`
+	DeletedAt         	int64  			`description:"删除时间" json:"deleted" xorm:"deleted"`
 }
 
 //--------------结构体-----------------

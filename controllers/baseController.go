@@ -118,7 +118,7 @@ func (this *apiController) bathAuth(){
 				base.RedisCache.Put(REDIS_BATHAUTH+nickName, encryptedPassword, 60*60*2*time.Second)
 			}
 		} else {
-			if encryptedPassword != redisTemp {
+			if encryptedPassword != string(redisTemp.([]byte)) {
 				w := this.Ctx.ResponseWriter
 				w.Header().Set("WWW-Authenticate", `Base Auth failed : "`+"password redis error"+`"`)
 				w.WriteHeader(401)
