@@ -168,7 +168,7 @@ func initDB(dbConfig databaseConfig){
 	//同步表结构
 	err = DBEngine.Sync2(new(models.User), new(models.UserSignInDeviceInfo), new(models.UserAccount), new(models.AccountTransactionRecord), new(models.DefaultNickName),
 		new(models.Group), new(models.Member),
-		new(models.SocialDynamics), new(models.Like),
+		new(models.SocialDynamics), new(models.Like), new(models.ZombieSocialDynamics),
 		new(models.FriendRequest), new(models.Friend),
 		new(models.Comment),
 		new(models.Role), new(models.UserRole))

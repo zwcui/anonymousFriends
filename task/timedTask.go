@@ -20,5 +20,10 @@ func init() {
 		ZombieMoveTask()
 	})
 
+	//每12小时增加僵尸账户的朋友圈
+	c.AddFunc("@every 12h", func() {
+		addZombieSocialDynamics()
+	})
+
 	c.Start()
 }

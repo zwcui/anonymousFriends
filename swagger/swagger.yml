@@ -932,7 +932,7 @@ definitions:
         description: 文字内容
         type: string
       created:
-        description: 注册时间
+        description: 创建时间
         type: integer
         format: int64
       deleted:
@@ -1008,7 +1008,7 @@ definitions:
         description: 文字内容
         type: string
       created:
-        description: 注册时间
+        description: 创建时间
         type: integer
         format: int64
       deleted:

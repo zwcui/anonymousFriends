@@ -18,7 +18,7 @@ type SocialDynamics struct {
 	Area	        	string			`description:"区" json:"area"`
 	Longitude			float64			`description:"经度" json:"longitude"`
 	Latitude			float64			`description:"纬度" json:"latitude"`
-	Created           	int64  			`description:"注册时间" json:"created" xorm:"created"`
+	Created           	int64  			`description:"创建时间" json:"created" xorm:"created"`
 	Updated           	int64  			`description:"修改时间" json:"updated" xorm:"updated"`
 	DeletedAt         	int64  			`description:"删除时间" json:"deleted" xorm:"deleted"`
 }
@@ -42,7 +42,7 @@ type ZombieSocialDynamics struct {
 	Longitude			float64			`description:"经度" json:"longitude"`
 	Latitude			float64			`description:"纬度" json:"latitude"`
 	Status				int				`description:"状态，0未使用，1已使用" json:"status"`
-	Created           	int64  			`description:"注册时间" json:"created" xorm:"created"`
+	Created           	int64  			`description:"创建时间" json:"created" xorm:"created"`
 	Updated           	int64  			`description:"修改时间" json:"updated" xorm:"updated"`
 	DeletedAt         	int64  			`description:"删除时间" json:"deleted" xorm:"deleted"`
 }

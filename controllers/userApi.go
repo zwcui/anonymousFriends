@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"math/rand"
 	"github.com/satori/go.uuid"
+	"time"
 )
 
 //用户模块
@@ -212,10 +213,14 @@ func (this *UserController) UpdateUserInfo() {
 		return
 	}
 
-	var user models.UserShort
+	var user models.User
 	base.DBEngine.Table("user").Where("u_id=?", uId).Get(&user)
 	if nickName != "" {
+		oldNickName := user.NickName
 		user.NickName = nickName
+
+		base.RedisCache.Delete(REDIS_BATHAUTH + oldNickName)
+		base.RedisCache.Put(REDIS_BATHAUTH + user.NickName, user.Password, 60*60*2*time.Second)
 	}
 	if avatar != "" {
 		user.Avatar = avatar
@@ -233,7 +238,8 @@ func (this *UserController) UpdateUserInfo() {
 	user.Status = status
 	base.DBEngine.Table("user").Where("u_id=?", uId).Cols("avatar", "nick_name", "phone_number", "birthday", "gender", "status").Update(&user)
 
-	this.ReturnData = models.UserInfo{user}
+	userShort, _ := user.UsetToUserShort()
+	this.ReturnData = models.UserInfo{*userShort}
 }
 
 // @Title 更新用户密码
@@ -265,6 +271,8 @@ func (this *UserController) UpdateUserPassword() {
 	user.Password = hashedPassword
 	user.Salt = salt
 	base.DBEngine.Table("user").Where("u_id=?", uId).Cols("password", "salt").Update(&user)
+
+	base.RedisCache.Put(REDIS_BATHAUTH + user.NickName, user.Password, 60*60*2*time.Second)
 
 	this.ReturnData = "success"
 }
