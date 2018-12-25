@@ -18,7 +18,11 @@ type FriendController struct {
 }
 
 func (this *FriendController) Prepare(){
-	this.NeedBaseAuthList = []RequestPathAndMethod{}
+	this.NeedBaseAuthList = []RequestPathAndMethod{
+		{"/makeFriends", "post"},
+		{"/handleMakeFriendsRequest", "patch"},
+		{"/getFriendList", "get"},
+		{"/handleFriend", "patch"}}
 	this.bathAuth()
 }
 

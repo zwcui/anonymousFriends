@@ -9,7 +9,7 @@ import (
 	"github.com/astaxie/beego/cache"
 	"anonymousFriends/models"
 	"gopkg.in/mgo.v2"
-	"github.com/garyburd/redigo/redis"
+	//"github.com/garyburd/redigo/redis"
 	"anonymousFriends/util"
 	"strconv"
 )
@@ -53,7 +53,7 @@ var DBEngine *xorm.Engine
 
 //Redis
 var RedisCache cache.Cache
-var redisPool *redis.Pool
+//var redisPool *redis.Pool
 
 //MongoDB
 var MongoDBSession *mgo.Session
@@ -170,6 +170,7 @@ func initDB(dbConfig databaseConfig){
 		new(models.Group), new(models.Member),
 		new(models.SocialDynamics), new(models.Like),
 		new(models.FriendRequest), new(models.Friend),
+		new(models.Comment),
 		new(models.Role), new(models.UserRole))
 	if err != nil {
 		panic("同步表结构失败! err:"+err.Error())

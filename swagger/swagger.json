@@ -15,6 +15,68 @@
     },
     "basePath": "/v1",
     "paths": {
+        "/comment/": {
+            "post": {
+                "tags": [
+                    "comment"
+                ],
+                "description": "新增评论",
+                "operationId": "CommentController.新增评论",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "type",
+                        "description": "类型，1是朋友圈评论",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "typeId",
+                        "description": "类型id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "replyId",
+                        "description": "回复id",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "content",
+                        "description": "评论内容",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "senderUid",
+                        "description": "评论发送人",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "receiverUid",
+                        "description": "评论接收人",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} success"
+                    }
+                }
+            }
+        },
         "/friend/getFriendList": {
             "get": {
                 "tags": [
@@ -1122,6 +1184,61 @@
                 }
             }
         },
+        "models.Comment": {
+            "title": "Comment",
+            "type": "object",
+            "properties": {
+                "content": {
+                    "description": "评论内容",
+                    "type": "string"
+                },
+                "created": {
+                    "description": "注册时间",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "deleted": {
+                    "description": "删除时间",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "id": {
+                    "description": "id",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "receiverUid": {
+                    "description": "评论接收人",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "replyId": {
+                    "description": "回复id",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "senderUid": {
+                    "description": "评论发送人",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "type": {
+                    "description": "类型，1是朋友圈评论",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "typeId": {
+                    "description": "类型id",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "updated": {
+                    "description": "修改时间",
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
         "models.FriendListContainer": {
             "title": "BaseListContainer",
             "type": "object",
@@ -1216,6 +1333,13 @@
                 "city": {
                     "description": "市",
                     "type": "string"
+                },
+                "commentList": {
+                    "description": "评论列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Comment"
+                    }
                 },
                 "content": {
                     "description": "文字内容",
@@ -1571,6 +1695,10 @@
         {
             "name": "socialDynamics",
             "description": "朋友圈模块\n"
+        },
+        {
+            "name": "comment",
+            "description": "评论模块\n"
         },
         {
             "name": "friend",

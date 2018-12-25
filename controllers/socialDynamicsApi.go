@@ -158,7 +158,18 @@ func (this *SocialDynamicsController) GetSocialDynamicList() {
 		socialDynamicList = make([]models.SocialDynamicInfo, 0)
 	}
 
-	this.ReturnData = models.SocialDynamicListContainer{models.BaseListContainer{total, pageNum, pageTime}, socialDynamicList}
+	var resultSocialDynamicList []models.SocialDynamicInfo
+	for _, socialDynamic := range socialDynamicList {
+		var result models.SocialDynamicInfo
+		result.SocialDynamics = socialDynamic.SocialDynamics
+		result.IsLike = socialDynamic.IsLike
+		var commentList []models.Comment
+		base.DBEngine.Table("comment").Where("type=1 and type_id=?", result.Id).Find(&commentList)
+		result.CommentList = commentList
+		resultSocialDynamicList = append(resultSocialDynamicList, result)
+	}
+
+	this.ReturnData = models.SocialDynamicListContainer{models.BaseListContainer{total, pageNum, pageTime}, resultSocialDynamicList}
 }
 
 // @Title 朋友圈点赞

@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "github.com/astaxie/beego/cache/redis"
 	_ "anonymousFriends/routers"
 	"github.com/astaxie/beego"
 	_ "anonymousFriends/models"
