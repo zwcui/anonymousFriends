@@ -267,7 +267,7 @@ func umengPushToUsersForiOS(deviceTokens, msg, actionUrl, sound string, badge in
 		payload["cmd"] = cmd
 	}
 	params["payload"] = payload
-	if beego.BConfig.RunMode == "models.RUN_MODE_DEV" {
+	if beego.BConfig.RunMode == base.RUN_MODE_DEV {
 		params["production_mode"] = "false"
 	} else {
 		params["production_mode"] = "true"
@@ -309,7 +309,7 @@ func umengPushToUsersFoAndroid(deviceTokens, title, msg, actionUrl, sound string
 	payload["display_type"] = "message"
 
 	params["payload"] = payload
-	if beego.BConfig.RunMode == "models.RUN_MODE_DEV" {
+	if beego.BConfig.RunMode == base.RUN_MODE_DEV {
 		params["production_mode"] = "false"
 	} else {
 		params["production_mode"] = "true"

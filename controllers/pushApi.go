@@ -5,7 +5,10 @@
 */
 package controllers
 
-import "anonymousFriends/models"
+import (
+	"anonymousFriends/models"
+	"anonymousFriends/util"
+)
 
 //推送模块
 type PushController struct {
@@ -32,7 +35,13 @@ func (this *PushController) PushCommonMessage() {
 	message.SenderUid = 0
 	message.ReceiverUid = uId
 	message.Type = 1
-	PushCommonMessageToUser(uId, &message, "", 0, "push")
+	ok, err := PushCommonMessageToUser(uId, &message, "", 0, "push")
+	if !ok {
+		util.Logger.Info("普通推送 失败 err:")
+		if err != nil {
+			util.Logger.Info(err.Error())
+		}
+	}
 
 	this.ReturnData = "success"
 }
@@ -52,7 +61,13 @@ func (this *PushController) PushSocketMessage() {
 	message.SenderUid = 0
 	message.ReceiverUid = uId
 	message.Type = 1
-	PushSocketMessageToUser(uId, &message, "", 0, "", 3)
+	ok, err := PushSocketMessageToUser(uId, &message, "", 0, "", 3)
+	if !ok {
+		util.Logger.Info("普通推送 失败 err:")
+		if err != nil {
+			util.Logger.Info(err.Error())
+		}
+	}
 
 	this.ReturnData = "success"
 }

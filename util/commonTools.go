@@ -36,3 +36,12 @@ func GenerateRangeNum(min, max int) int {
 	randNum := rand.Intn(max - min) + min
 	return randNum
 }
+
+//过滤不良内容
+func FilterContent(){
+
+	//filter := util.New()
+	//filter.NewLoadWordDict("https://api.zhanglv.mobi/backend/dict.txt")
+	//filter.Replace(issueDTO.Content, 42)
+
+}
