@@ -13,6 +13,27 @@ func init() {
 			AllowHTTPMethods: []string{"post"},
 			Params: nil})
 
+	beego.GlobalControllerRouter["anonymousFriends/controllers:DriftBottleController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:DriftBottleController"],
+		beego.ControllerComments{
+			Method: "ThrowDriftBottle",
+			Router: `/throwDriftBottle`,
+			AllowHTTPMethods: []string{"post"},
+			Params: nil})
+
+	beego.GlobalControllerRouter["anonymousFriends/controllers:DriftBottleController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:DriftBottleController"],
+		beego.ControllerComments{
+			Method: "PickUpDriftBottle",
+			Router: `/pickUpDriftBottle`,
+			AllowHTTPMethods: []string{"get"},
+			Params: nil})
+
+	beego.GlobalControllerRouter["anonymousFriends/controllers:DriftBottleController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:DriftBottleController"],
+		beego.ControllerComments{
+			Method: "HandleDriftBottle",
+			Router: `/handleDriftBottle`,
+			AllowHTTPMethods: []string{"get"},
+			Params: nil})
+
 	beego.GlobalControllerRouter["anonymousFriends/controllers:FriendController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:FriendController"],
 		beego.ControllerComments{
 			Method: "MakeFriends",

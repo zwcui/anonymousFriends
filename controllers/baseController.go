@@ -65,9 +65,9 @@ func (this *apiController) Prepare(){
 //对路径进行校验
 func (this *apiController) bathAuth(){
 
-	//if 1==1 {
-	//	return
-	//}
+	if 1==1 {
+		return
+	}
 
 	pathNeedAuth := false
 	for _, value := range this.NeedBaseAuthList {

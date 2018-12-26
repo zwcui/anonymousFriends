@@ -13,7 +13,7 @@ type SocialDynamics struct {
 	Picture				string			`description:"图片内容，多个英文逗号隔开" json:"picture"`
 	LikeNum				int				`description:"点赞数" json:"likeNum"`
 	CommentNum			int				`description:"评论数" json:"commentNum"`
-	Position        	string			`description:"位置名称，如全家创意产业园店" json:"province"`
+	Position        	string			`description:"位置名称，如全家创意产业园店" json:"position"`
 	Weather        		string			`description:"天气，如'阵雨转多云 19~25摄氏度'" json:"weather"`
 	Province        	string			`description:"省" json:"province"`
 	City	        	string			`description:"市" json:"city"`
@@ -37,7 +37,7 @@ type ZombieSocialDynamics struct {
 	Id       			int64			`description:"id" json:"id" xorm:"pk autoincr"`
 	Content				string			`description:"文字内容" json:"content"`
 	Picture				string			`description:"图片内容，多个英文逗号隔开" json:"picture"`
-	Position        	string			`description:"位置名称，如全家创意产业园店" json:"province"`
+	Position        	string			`description:"位置名称，如全家创意产业园店" json:"position"`
 	Weather        		string			`description:"天气，如'阵雨转多云 19~25摄氏度'" json:"weather"`
 	Province        	string			`description:"省" json:"province"`
 	City	        	string			`description:"市" json:"city"`

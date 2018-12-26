@@ -1,12 +1,17 @@
 package util
 
 import (
-	"io/ioutil"
 	"regexp"
 	"strings"
+	"anonymousFriends/models"
 )
 
+var ContentFilter *Filter
 
+func init(){
+	ContentFilter = NewFilter()
+	ContentFilter.LoadWordDict()
+}
 
 // Filter 敏感词过滤器
 type Filter struct {
@@ -15,7 +20,7 @@ type Filter struct {
 }
 
 // New 返回一个敏感词过滤器
-func New() *Filter {
+func NewFilter() *Filter {
 	return &Filter{
 		trie:  NewTrie(),
 		noise: regexp.MustCompile(`[\s&%$@*]+`),
@@ -28,12 +33,12 @@ func (filter *Filter) UpdateNoisePattern(pattern string) {
 }
 
 // LoadWordDict 加载敏感词字典
-func (filter *Filter) LoadWordDict(path string) error {
-	content, err := ioutil.ReadFile(path)
-	if err != nil {
-		return err
-	}
-	words := strings.Split(string(content), "\n")
+func (filter *Filter) LoadWordDict() error {
+	//content, err := ioutil.ReadFile(path)
+	//if err != nil {
+	//	return err
+	//}
+	words := strings.Split(models.SensitiveWords, "\n")
 	filter.trie.Add(words...)
 	return nil
 }

@@ -16,7 +16,8 @@ const (
 	UserError101 		= "User101###密码加密失败"
 	UserError102 		= "User102###未找到该用户，请检查昵称是否正确"
 	UserError103 		= "User103###密码错误，请重新输入"
-	UserError104 		= "User103###密码长度需在6-30之间"
+	UserError104 		= "User104###密码长度需在6-30之间"
+	UserError105 		= "User105###昵称包含敏感词，请重新输入"
 
 	WebsocketError100 	= "Websocket100###您的账户已在其他地方登陆"
 
@@ -26,6 +27,10 @@ const (
 	FriendError400 		= "Friend400###您已处理该条申请哦~"
 
 	SocialDynamicsError100		= "SocialDynamics100###该动态已被删除"
+	SocialDynamicsError101		= "SocialDynamics101###该动态包含敏感词"
+	SocialDynamicsError102		= "SocialDynamics102###该动态位置信息包含敏感词"
+
+	DriftBottleError100 = "DriftBottleError100###该瓶子不存在"
 
 )
 

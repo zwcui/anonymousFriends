@@ -41,6 +41,7 @@ func (this *SocialDynamicsController) PostSocialDynamic() {
 	content := this.GetString("content")
 	picture := this.GetString("picture", "")
 	position := this.GetString("position", "")
+	weather := this.GetString("weather", "")
 	province := this.GetString("province", "")
 	city := this.GetString("city", "")
 	area := this.GetString("area", "")
@@ -53,6 +54,7 @@ func (this *SocialDynamicsController) PostSocialDynamic() {
 	socialDynamics.Picture = picture
 	socialDynamics.LikeNum = 0
 	socialDynamics.Position = position
+	socialDynamics.Weather = weather
 	socialDynamics.Province = province
 	socialDynamics.City = city
 	socialDynamics.Area = area
@@ -162,6 +164,8 @@ func (this *SocialDynamicsController) GetSocialDynamicList() {
 	var resultSocialDynamicList []models.SocialDynamicInfo
 	for _, socialDynamic := range socialDynamicList {
 		var result models.SocialDynamicInfo
+		_, socialDynamic.Content = util.FilterContent(socialDynamic.Content)
+		_, socialDynamic.Position = util.FilterContent(socialDynamic.Position)
 		result.SocialDynamics = socialDynamic.SocialDynamics
 		result.IsLike = socialDynamic.IsLike
 		var commentList []models.Comment

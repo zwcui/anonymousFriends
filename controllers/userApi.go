@@ -57,7 +57,12 @@ func (this *UserController) SignUp() {
 	manufacturers, _ := this.GetInt("manufacturers", 0)
 
 	//昵称唯一
-	if checkSameNickName(nickName) {
+	isSensitive, hasSameNickNameUser := checkSameNickName(nickName)
+	if isSensitive {
+		this.ReturnData = util.GenerateAlertMessage(models.UserError105)
+		return
+	}
+	if hasSameNickNameUser {
 		this.ReturnData = util.GenerateAlertMessage(models.UserError100)
 		return
 	}
@@ -208,9 +213,16 @@ func (this *UserController) UpdateUserInfo() {
 	status := this.MustInt("status")
 
 	//昵称唯一
-	if nickName != "" && checkSameNickName(nickName) {
-		this.ReturnData = util.GenerateAlertMessage(models.UserError100)
-		return
+	if nickName != "" {
+		isSensitive, hasSameNickNameUser := checkSameNickName(nickName)
+		if isSensitive {
+			this.ReturnData = util.GenerateAlertMessage(models.UserError105)
+			return
+		}
+		if hasSameNickNameUser {
+			this.ReturnData = util.GenerateAlertMessage(models.UserError100)
+			return
+		}
 	}
 
 	var user models.User
@@ -463,9 +475,10 @@ func UserWithNickName(nickName string) (user models.User, err error) {
 }
 
 //检查昵称是否唯一
-func checkSameNickName(nickName string) bool {
-	hasSameNickNameUser, _ := base.DBEngine.Table("user").Where("nick_name=?", nickName).Get(new(models.User))
-	return hasSameNickNameUser
+func checkSameNickName(nickName string) (isSensitive bool, hasSameNickNameUser bool) {
+	isSensitive, _ = util.FilterContent(nickName)
+	hasSameNickNameUser, _ = base.DBEngine.Table("user").Where("nick_name=?", nickName).Get(new(models.User))
+	return isSensitive, hasSameNickNameUser
 }
 
 //创建僵尸用户，如果用户退出则还原僵尸账户位置

@@ -38,10 +38,10 @@ func GenerateRangeNum(min, max int) int {
 }
 
 //过滤不良内容
-func FilterContent(){
-
-	//filter := util.New()
-	//filter.NewLoadWordDict("https://api.zhanglv.mobi/backend/dict.txt")
-	//filter.Replace(issueDTO.Content, 42)
-
+func FilterContent(content string) (find bool, filterContent string) {
+	find, _ = ContentFilter.FindIn(content)
+	if find {
+		filterContent = ContentFilter.Replace(content, 42)
+	}
+	return find, filterContent
 }

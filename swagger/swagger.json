@@ -1307,6 +1307,109 @@
                 }
             }
         },
+        "models.DriftBottle": {
+            "title": "DriftBottle",
+            "type": "object",
+            "properties": {
+                "area": {
+                    "description": "区",
+                    "type": "string"
+                },
+                "bottleId": {
+                    "description": "bottleId",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "bottleType": {
+                    "description": "类型，1普通瓶、2传递瓶、3同城瓶、4真话瓶、5暗号瓶、6提问瓶、7交往瓶、8祝愿瓶、9发泄瓶、10生日瓶、11表白瓶",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "city": {
+                    "description": "市",
+                    "type": "string"
+                },
+                "content": {
+                    "description": "内容",
+                    "type": "string"
+                },
+                "created": {
+                    "description": "创建时间",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "deleted": {
+                    "description": "删除时间",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "expiryTime": {
+                    "description": "到期时间",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "latitude": {
+                    "description": "纬度",
+                    "type": "number",
+                    "format": "double"
+                },
+                "longitude": {
+                    "description": "经度",
+                    "type": "number",
+                    "format": "double"
+                },
+                "picture": {
+                    "description": "图片内容，多个英文逗号隔开",
+                    "type": "string"
+                },
+                "position": {
+                    "description": "位置名称，如全家创意产业园店",
+                    "type": "string"
+                },
+                "province": {
+                    "description": "省",
+                    "type": "string"
+                },
+                "receiverUid": {
+                    "description": "拾瓶人",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "senderUid": {
+                    "description": "抛瓶人",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "status": {
+                    "description": "状态，0未抛出，1已抛出，2已接收，3已失效",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "updated": {
+                    "description": "修改时间",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "weather": {
+                    "description": "天气，如'阵雨转多云 19~25摄氏度'",
+                    "type": "string"
+                }
+            }
+        },
+        "models.DriftBottleInfo": {
+            "title": "DriftBottleInfo",
+            "type": "object",
+            "properties": {
+                "driftBottle": {
+                    "$ref": "#/definitions/models.DriftBottle",
+                    "description": "漂流瓶信息"
+                }
+            }
+        },
         "models.FriendListContainer": {
             "title": "BaseListContainer",
             "type": "object",
@@ -1457,6 +1560,10 @@
                     "description": "图片内容，多个英文逗号隔开",
                     "type": "string"
                 },
+                "position": {
+                    "description": "位置名称，如全家创意产业园店",
+                    "type": "string"
+                },
                 "province": {
                     "description": "省",
                     "type": "string"
@@ -1558,6 +1665,10 @@
                 },
                 "picture": {
                     "description": "图片内容，多个英文逗号隔开",
+                    "type": "string"
+                },
+                "position": {
+                    "description": "位置名称，如全家创意产业园店",
                     "type": "string"
                 },
                 "province": {
