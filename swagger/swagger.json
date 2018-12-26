@@ -77,6 +77,174 @@
                 }
             }
         },
+        "/driftBottle/handleDriftBottle": {
+            "patch": {
+                "tags": [
+                    "driftBottle"
+                ],
+                "description": "处理漂流瓶",
+                "operationId": "DriftBottleController.处理漂流瓶",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "bottleId",
+                        "description": "bottleId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "uId",
+                        "description": "uId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "result",
+                        "description": "处理，1回复，2扔回大海",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "content",
+                        "description": "回复内容",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} success"
+                    }
+                }
+            }
+        },
+        "/driftBottle/pickUpDriftBottle": {
+            "get": {
+                "tags": [
+                    "driftBottle"
+                ],
+                "description": "拾漂流瓶",
+                "operationId": "DriftBottleController.拾漂流瓶",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "uId",
+                        "description": "uId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "schema": {
+                            "$ref": "#/definitions/models.DriftBottleInfo"
+                        }
+                    }
+                }
+            }
+        },
+        "/driftBottle/throwDriftBottle": {
+            "post": {
+                "tags": [
+                    "driftBottle"
+                ],
+                "description": "扔漂流瓶",
+                "operationId": "DriftBottleController.扔漂流瓶",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "uId",
+                        "description": "uId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "bottleType",
+                        "description": "类型，1普通瓶、2传递瓶、3同城瓶、4真话瓶、5暗号瓶、6提问瓶、7交往瓶、8祝愿瓶、9发泄瓶、10生日瓶、11表白瓶",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "content",
+                        "description": "文字内容",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "picture",
+                        "description": "图片内容，多个英文逗号隔开",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "position",
+                        "description": "位置名称，如全家创意产业园店",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "weather",
+                        "description": "天气",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "province",
+                        "description": "省",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "city",
+                        "description": "市",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "area",
+                        "description": "区",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "longitude",
+                        "description": "经度",
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "latitude",
+                        "description": "纬度",
+                        "type": "number",
+                        "format": "double"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "status",
+                        "description": "状态，0未抛出暂存，1抛出",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} success"
+                    }
+                }
+            }
+        },
         "/friend/getFriendList": {
             "get": {
                 "tags": [
@@ -1291,7 +1459,7 @@
                     "format": "int64"
                 },
                 "type": {
-                    "description": "类型，1是朋友圈评论",
+                    "description": "类型，1是朋友圈评论，2是漂流瓶回复",
                     "type": "integer",
                     "format": "int64"
                 },
@@ -1378,6 +1546,11 @@
                 "remark": {
                     "description": "备注",
                     "type": "string"
+                },
+                "replyNum": {
+                    "description": "回复数",
+                    "type": "integer",
+                    "format": "int64"
                 },
                 "senderUid": {
                     "description": "抛瓶人",
@@ -1904,6 +2077,10 @@
         {
             "name": "push",
             "description": "推送模块\n"
+        },
+        {
+            "name": "driftBottle",
+            "description": "漂流瓶模块\n"
         }
     ]
 }

@@ -26,6 +26,7 @@ type DriftBottle struct {
 	Status						int				`description:"状态，0未抛出，1已抛出，2已接收，3已失效" json:"status"`
 	ExpiryTime					int64			`description:"到期时间" json:"expiryTime"`
 	Remark						string			`description:"备注" json:"remark"`
+	ReplyNum					int				`description:"回复数" json:"replyNum"`
 	Created           			int64  			`description:"创建时间" json:"created" xorm:"created"`
 	Updated           			int64  			`description:"修改时间" json:"updated" xorm:"updated"`
 	DeletedAt         			int64  			`description:"删除时间" json:"deleted" xorm:"deleted"`

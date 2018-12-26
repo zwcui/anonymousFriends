@@ -30,7 +30,7 @@ type Message struct {
 	ActionUrl   string `description:"跳转url" json:"actionUrl" xorm:"text"`
 	Content     string `description:"内容" json:"content"`
 	Detail      string `description:"详情" json:"detail"`
-	Type        int    `description:"消息类型 1:好友请求消息 2:评论回复消息 " json:"type" xorm:"index(msgTypeUid)"`
+	Type        int    `description:"消息类型 1:好友请求消息 2:评论回复消息 3:漂流瓶回复消息 " json:"type" xorm:"index(msgTypeUid)"`
 	Created     int64  `description:"创建时间" json:"created" xorm:"created"`
 	DeletedAt   int64  `description:"删除时间" json:"-" xorm:"deleted"`
 }
@@ -52,6 +52,7 @@ const (
 	RejectFriendRequest 	= "对方拒绝了您的好友请求"
 
 	CommentOnSocialDynamics = "您收到一个朋友圈评论~"
+	CommentOnDriftBottle	= "您收到一个漂流瓶回复~"
 )
 
 

@@ -42,6 +42,8 @@ func FilterContent(content string) (find bool, filterContent string) {
 	find, _ = ContentFilter.FindIn(content)
 	if find {
 		filterContent = ContentFilter.Replace(content, 42)
+	} else {
+		filterContent = content
 	}
 	return find, filterContent
 }

@@ -9,6 +9,7 @@ import (
 	"anonymousFriends/models"
 	"anonymousFriends/util"
 	"anonymousFriends/base"
+	"strconv"
 )
 
 //漂流瓶模块
@@ -99,31 +100,52 @@ func (this *DriftBottleController) PickUpDriftBottle() {
 // @Param	result				formData		int		  		true		"处理，1回复，2扔回大海"
 // @Param	content				formData		string  		false		"回复内容"
 // @Success 200 {string} success
-// @router /handleDriftBottle [get]
+// @router /handleDriftBottle [patch]
 func (this *DriftBottleController) HandleDriftBottle() {
-	//bottleId := this.MustInt64("bottleId")
-	//uId := this.MustInt64("uId")
-	//result := this.MustInt("result")
-	//content := this.GetString("content", "")
-	//
-	//var driftBottle models.DriftBottle
-	//hasDriftBottle, _ := base.DBEngine.Table("drift_bottle").Where("bottle_id=?", bottleId).Get(&driftBottle)
-	//if !hasDriftBottle {
-	//	this.ReturnData = util.GenerateAlertMessage(models.DriftBottleError100)
-	//	return
-	//}
-	//
-	//if result == 1 {
-	//	var comm
-	//
-	//
-	//
-	//} else if result == 2 {
-	//
-	//}
+	bottleId := this.MustInt64("bottleId")
+	uId := this.MustInt64("uId")
+	result := this.MustInt("result")
+	content := this.GetString("content", "")
 
+	var driftBottle models.DriftBottle
+	hasDriftBottle, _ := base.DBEngine.Table("drift_bottle").Where("bottle_id=?", bottleId).Get(&driftBottle)
+	if !hasDriftBottle {
+		this.ReturnData = util.GenerateAlertMessage(models.DriftBottleError100)
+		return
+	}
 
+	if result == 1 {
+		if driftBottle.ReceiverUid == 0 {
+			driftBottle.ReceiverUid = uId
+		}
 
+		var comment models.Comment
+		comment.Type = 2
+		comment.TypeId = driftBottle.BottleId
+		comment.Content = content
+		comment.SenderUid = uId
+		if uId == driftBottle.SenderUid {
+			comment.ReceiverUid = driftBottle.ReceiverUid
+		} else {
+			comment.ReceiverUid = driftBottle.SenderUid
+		}
+		base.DBEngine.Table("comment").InsertOne(&comment)
 
+		driftBottle.ReplyNum += 1
+		driftBottle.Status = 2
+		base.DBEngine.Table("drift_bottle").Where("bottle_id=?", bottleId).Cols("receiver_uid", "reply_num", "status").Update(&driftBottle)
 
+		var message models.Message
+		message.SenderUid = uId
+		message.ReceiverUid = comment.ReceiverUid
+		message.Content = models.CommentOnDriftBottle
+		message.Type = 3
+		PushCommonMessageToUser(comment.ReceiverUid, &message, "", 0, "")
+	} else if result == 2 {
+		driftBottle.Remark += "被uId:"+strconv.FormatInt(uId, 10)+"抛回;"
+		base.DBEngine.Table("drift_bottle").Where("bottle_id=?", bottleId).Cols("remark").Update(&driftBottle)
+	}
+
+	this.ReturnData = "success"
 }
+

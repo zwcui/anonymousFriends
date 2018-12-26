@@ -50,6 +50,11 @@ func init() {
 				&controllers.PushController{},
 			),
 		),
+		beego.NSNamespace("/driftBottle",
+			beego.NSInclude(
+				&controllers.DriftBottleController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }
