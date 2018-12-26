@@ -77,68 +77,6 @@
                 }
             }
         },
-        "/comment/pushCommonMessage": {
-            "post": {
-                "tags": [
-                    "comment"
-                ],
-                "description": "普通推送",
-                "operationId": "CommentController.普通推送",
-                "parameters": [
-                    {
-                        "in": "formData",
-                        "name": "uId",
-                        "description": "uId",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    {
-                        "in": "formData",
-                        "name": "content",
-                        "description": "内容",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{string} success"
-                    }
-                }
-            }
-        },
-        "/comment/pushSocketMessage": {
-            "post": {
-                "tags": [
-                    "comment"
-                ],
-                "description": "socket推送",
-                "operationId": "CommentController.socket推送",
-                "parameters": [
-                    {
-                        "in": "formData",
-                        "name": "uId",
-                        "description": "uId",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    {
-                        "in": "formData",
-                        "name": "content",
-                        "description": "内容",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{string} success"
-                    }
-                }
-            }
-        },
         "/friend/getFriendList": {
             "get": {
                 "tags": [
@@ -502,6 +440,68 @@
                 }
             }
         },
+        "/push/pushCommonMessage": {
+            "post": {
+                "tags": [
+                    "push"
+                ],
+                "description": "普通推送",
+                "operationId": "PushController.普通推送",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "uId",
+                        "description": "uId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "content",
+                        "description": "内容",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} success"
+                    }
+                }
+            }
+        },
+        "/push/pushSocketMessage": {
+            "post": {
+                "tags": [
+                    "push"
+                ],
+                "description": "socket推送",
+                "operationId": "PushController.socket推送",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "uId",
+                        "description": "uId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "content",
+                        "description": "内容",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} success"
+                    }
+                }
+            }
+        },
         "/socialDynamics/deleteSocialDynamic": {
             "delete": {
                 "tags": [
@@ -691,6 +691,12 @@
                         "in": "formData",
                         "name": "position",
                         "description": "位置名称，如全家创意产业园店",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "weather",
+                        "description": "天气",
                         "type": "string"
                     },
                     {
@@ -1255,7 +1261,7 @@
                     "type": "string"
                 },
                 "created": {
-                    "description": "注册时间",
+                    "description": "创建时间",
                     "type": "integer",
                     "format": "int64"
                 },
@@ -1464,6 +1470,10 @@
                     "description": "修改时间",
                     "type": "integer",
                     "format": "int64"
+                },
+                "weather": {
+                    "description": "天气，如'阵雨转多云 19~25摄氏度'",
+                    "type": "string"
                 }
             }
         },
@@ -1563,6 +1573,10 @@
                     "description": "修改时间",
                     "type": "integer",
                     "format": "int64"
+                },
+                "weather": {
+                    "description": "天气，如'阵雨转多云 19~25摄氏度'",
+                    "type": "string"
                 }
             }
         },

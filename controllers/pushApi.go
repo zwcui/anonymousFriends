@@ -23,7 +23,7 @@ func (this *PushController) Prepare(){
 // @Param	content			formData		string  		true		"内容"
 // @Success 200 {string} success
 // @router /pushCommonMessage [post]
-func (this *CommentController) PushCommonMessage() {
+func (this *PushController) PushCommonMessage() {
 	uId := this.MustInt64("uId")
 	content := this.MustString("content")
 
@@ -32,7 +32,7 @@ func (this *CommentController) PushCommonMessage() {
 	message.SenderUid = 0
 	message.ReceiverUid = uId
 	message.Type = 1
-	PushCommonMessageToUser(uId, &message, "", 0, "")
+	PushCommonMessageToUser(uId, &message, "", 0, "push")
 
 	this.ReturnData = "success"
 }
@@ -43,7 +43,7 @@ func (this *CommentController) PushCommonMessage() {
 // @Param	content			formData		string  		true		"内容"
 // @Success 200 {string} success
 // @router /pushSocketMessage [post]
-func (this *CommentController) PushSocketMessage() {
+func (this *PushController) PushSocketMessage() {
 	uId := this.MustInt64("uId")
 	content := this.MustString("content")
 

@@ -28,6 +28,7 @@ func (this *SocialDynamicsController) Prepare(){
 // @Param	content				formData		string  		false		"文字内容"
 // @Param	picture				formData		string  		false		"图片内容，多个英文逗号隔开"
 // @Param	position			formData		string  		false		"位置名称，如全家创意产业园店"
+// @Param   weather	        	formData        string  		false       "天气"
 // @Param   province        	formData        string  		false       "省"
 // @Param   city    			formData        string  		false       "市"
 // @Param	area				formData		string	  		false		"区"

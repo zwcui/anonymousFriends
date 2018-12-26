@@ -14,7 +14,7 @@ type Comment struct {
 	Content    			string 			`description:"评论内容" json:"content"`
 	SenderUid  			int64 			`description:"评论发送人" json:"senderUid"`
 	ReceiverUid			int64 			`description:"评论接收人" json:"receiverUid"`
-	Created           	int64  			`description:"注册时间" json:"created" xorm:"created"`
+	Created           	int64  			`description:"创建时间" json:"created" xorm:"created"`
 	Updated           	int64  			`description:"修改时间" json:"updated" xorm:"updated"`
 	DeletedAt         	int64  			`description:"删除时间" json:"deleted" xorm:"deleted"`
 }
