@@ -55,7 +55,7 @@ type ZombieSocialDynamics struct {
 type SocialDynamicInfo struct {
 	SocialDynamics								`description:"社交动态" xorm:"extends"`
 	IsLike				int						`description:"是否点赞，1是0否" json:"isLike"`
-	CommentList			[]Comment				`description:"评论列表" json:"commentList"`
+	CommentList			[]CommentInfo			`description:"评论列表" json:"commentList"`
 }
 
 type SocialDynamicListContainer struct {

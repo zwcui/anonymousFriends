@@ -18,3 +18,12 @@ type Comment struct {
 	Updated           	int64  			`description:"修改时间" json:"updated" xorm:"updated"`
 	DeletedAt         	int64  			`description:"删除时间" json:"deleted" xorm:"deleted"`
 }
+
+//---------------------结构体如下------------------------------
+type CommentInfo struct {
+	Comment								`description:"社交动态" xorm:"extends"`
+	SenderNickName		string			`description:"评论发送人" json:"senderNickName"`
+	SenderUid			int64			`description:"评论发送人" json:"senderUid"`
+	ReceiverNickName	string			`description:"评论接收人" json:"receiverNickName"`
+	ReceiverUid			int64			`description:"评论接收人" json:"receiverUid"`
+}

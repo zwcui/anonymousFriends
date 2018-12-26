@@ -1012,6 +1012,55 @@ definitions:
         description: 修改时间
         type: integer
         format: int64
+  models.CommentInfo:
+    title: Comment
+    type: object
+    properties:
+      content:
+        description: 评论内容
+        type: string
+      created:
+        description: 创建时间
+        type: integer
+        format: int64
+      deleted:
+        description: 删除时间
+        type: integer
+        format: int64
+      id:
+        description: id
+        type: integer
+        format: int64
+      receiverNickName:
+        description: 评论接收人
+        type: string
+      receiverUid:
+        description: 评论接收人
+        type: integer
+        format: int64
+      replyCommentId:
+        description: 回复评论id
+        type: integer
+        format: int64
+      senderNickName:
+        description: 评论发送人
+        type: string
+      senderUid:
+        description: 评论发送人
+        type: integer
+        format: int64
+      type:
+        description: 类型，1是朋友圈评论，2是漂流瓶回复
+        type: integer
+        format: int64
+      typeId:
+        description: 类型id
+        type: integer
+        format: int64
+      updated:
+        description: 修改时间
+        type: integer
+        format: int64
   models.DriftBottle:
     title: DriftBottle
     type: object
@@ -1171,7 +1220,7 @@ definitions:
         description: 评论列表
         type: array
         items:
-          $ref: '#/definitions/models.Comment'
+          $ref: '#/definitions/models.CommentInfo'
       commentNum:
         description: 评论数
         type: integer

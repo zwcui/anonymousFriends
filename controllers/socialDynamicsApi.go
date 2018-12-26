@@ -168,8 +168,11 @@ func (this *SocialDynamicsController) GetSocialDynamicList() {
 		_, socialDynamic.Position = util.FilterContent(socialDynamic.Position)
 		result.SocialDynamics = socialDynamic.SocialDynamics
 		result.IsLike = socialDynamic.IsLike
-		var commentList []models.Comment
-		base.DBEngine.Table("comment").Where("type=1 and type_id=?", result.Id).Find(&commentList)
+		var commentList []models.CommentInfo
+		base.DBEngine.Table("comment").Select("comment.*, sender.nick_name as sender_nick_name, sender.u_id as sender_uid, receiver.nick_name as receiver_nick_name, receiver.u_id as receiver_uid").Join("LEFT OUTER", "user sender", "sender.u_id=comment.sender_uid").Join("LEFT OUTER", "user receiver", "receiver.u_id=comment.receiver_uid").Where("comment.type=1 and comment.type_id=?", result.Id).Find(&commentList)
+		if commentList == nil {
+			commentList = make([]models.CommentInfo, 0)
+		}
 		result.CommentList = commentList
 		resultSocialDynamicList = append(resultSocialDynamicList, result)
 	}
