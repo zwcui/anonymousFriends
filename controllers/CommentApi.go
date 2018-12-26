@@ -8,6 +8,7 @@ package controllers
 import (
 	"anonymousFriends/models"
 	"anonymousFriends/base"
+	"anonymousFriends/util"
 )
 
 //评论模块
@@ -24,7 +25,7 @@ func (this *CommentController) Prepare(){
 // @Description 新增评论
 // @Param	type			formData		int		  		true		"类型，1是朋友圈评论"
 // @Param	typeId			formData		int64	  		true		"类型id"
-// @Param	replyId			formData		int64	  		false		"回复id"
+// @Param	replyCommentId	formData		int64	  		false		"回复评论id"
 // @Param	content			formData		string  		true		"评论内容"
 // @Param	senderUid		formData		int64	  		true		"评论发送人"
 // @Param   receiverUid     formData        int64	  		true        "评论接收人"
@@ -33,19 +34,53 @@ func (this *CommentController) Prepare(){
 func (this *CommentController) AddComment() {
 	commentType := this.MustInt("type")
 	typeId := this.MustInt64("typeId")
-	replyId, _ := this.GetInt64("replyId", 0)
+	replyCommentId, _ := this.GetInt64("replyCommentId", 0)
 	content := this.MustString("content")
 	senderUid := this.MustInt64("senderUid")
 	receiverUid := this.MustInt64("receiverUid")
 
+	var socialDynamics models.SocialDynamics
+	hasSocialDynamics, _ := base.DBEngine.Table("social_dynamics").Where("id=?", typeId).Get(&socialDynamics)
+	if !hasSocialDynamics {
+		this.ReturnData = util.GenerateAlertMessage(models.SocialDynamicsError100)
+		return
+	}
+
+	if commentType == 1 {
+		CommentOnSocialDynamics(&socialDynamics, replyCommentId, content, senderUid, receiverUid)
+	}
+
+	this.ReturnData = "success"
+}
+
+
+
+
+//评论朋友圈
+func CommentOnSocialDynamics(socialDynamics *models.SocialDynamics, replyCommentId int64, content string, senderUid int64, receiverUid int64){
 	var comment models.Comment
-	comment.Type = commentType
-	comment.TypeId = typeId
-	comment.ReplyId = replyId
+	comment.Type = 1
+	comment.TypeId = socialDynamics.Id
+	comment.ReplyCommentId = replyCommentId
 	comment.SenderUid = senderUid
 	comment.ReceiverUid = receiverUid
 	comment.Content = content
 	base.DBEngine.Table("comment").InsertOne(&comment)
 
-	this.ReturnData = "success"
+	socialDynamics.CommentNum += 1
+	base.DBEngine.Table("social_dynamics").Where("id=?", socialDynamics.Id).Cols("comment_num").Update(&socialDynamics)
+
+	var message models.Message
+	message.Content = models.CommentOnSocialDynamics
+	message.SenderUid = senderUid
+	message.ReceiverUid = receiverUid
+	message.Type = 2
+	PushSocketMessageToUser(receiverUid, &message, "", 0, "", 3)
 }
+
+
+
+
+
+
+

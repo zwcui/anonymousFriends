@@ -8,6 +8,20 @@ func init() {
 
 	beego.GlobalControllerRouter["anonymousFriends/controllers:CommentController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:CommentController"],
 		beego.ControllerComments{
+			Method: "PushCommonMessage",
+			Router: `/pushCommonMessage`,
+			AllowHTTPMethods: []string{"post"},
+			Params: nil})
+
+	beego.GlobalControllerRouter["anonymousFriends/controllers:CommentController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:CommentController"],
+		beego.ControllerComments{
+			Method: "PushSocketMessage",
+			Router: `/pushSocketMessage`,
+			AllowHTTPMethods: []string{"post"},
+			Params: nil})
+
+	beego.GlobalControllerRouter["anonymousFriends/controllers:CommentController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:CommentController"],
+		beego.ControllerComments{
 			Method: "AddComment",
 			Router: `/`,
 			AllowHTTPMethods: []string{"post"},

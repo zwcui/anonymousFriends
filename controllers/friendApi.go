@@ -67,7 +67,12 @@ func (this *FriendController) MakeFriends() {
 	base.DBEngine.Table("friend_request").InsertOne(&friendRequest)
 
 	//推送
-	PushCommonMessageToUser()
+	var message models.Message
+	message.Content = models.SendFriendRequest
+	message.SenderUid = senderUid
+	message.ReceiverUid = receiverUid
+	message.Type = 1
+	PushSocketMessageToUser(receiverUid, &message, "", 0, "", 3)
 
 	this.ReturnData = "success"
 }
@@ -110,9 +115,19 @@ func (this *FriendController) HandleMakeFriendsRequest() {
 
 	//推送
 	if result == 1 {
-		PushCommonMessageToUser()
+		var message models.Message
+		message.Content = models.AcceptFriendRequest
+		message.SenderUid = friendRequest.ReceiverUid
+		message.ReceiverUid = friendRequest.SenderUid
+		message.Type = 1
+		PushSocketMessageToUser(friendRequest.SenderUid, &message, "", 0, "", 3)
 	} else if result == 2 {
-		PushCommonMessageToUser()
+		var message models.Message
+		message.Content = models.RejectFriendRequest
+		message.SenderUid = friendRequest.ReceiverUid
+		message.ReceiverUid = friendRequest.SenderUid
+		message.Type = 1
+		PushSocketMessageToUser(friendRequest.SenderUid, &message, "", 0, "", 3)
 	}
 
 	this.ReturnData = "success"

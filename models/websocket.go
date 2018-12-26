@@ -6,7 +6,7 @@ import (
 
 //socket统一结构
 type SocketMessage struct {
-	MessageType				int					`description:"消息类型，-1为后台建立连接，0为前台建立连接，1为普通聊天，2为被挤下线，3刷新标识，4客户端自定义" json:"messageType" `
+	MessageType				int					`description:"消息类型，-1为后台建立连接，0为前台建立连接，1为普通聊天，2为被挤下线，3普通推送，4刷新标识，5客户端自定义" json:"messageType" `
 	MessageSendTime			int64				`description:"消息发送时间" json:"messageSendTime" `
 	MessageSenderUid		int64				`description:"消息发送uid" json:"messageSenderUid" `
 	MessageReceiverUid		int64				`description:"消息接受uid" json:"messageReceiverUid" `

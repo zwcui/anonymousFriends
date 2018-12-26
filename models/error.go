@@ -10,7 +10,7 @@ const (
 )
 
 const (
-	CommonError100 		= "common100###服务器出错"
+	CommonError100 		= "Common100###服务器出错"
 
 	UserError100 		= "User100###昵称重复，请重新输入"
 	UserError101 		= "User101###密码加密失败"
@@ -24,6 +24,8 @@ const (
 	FriendError200 		= "Friend200###你们已经成为好友了哦~"
 	FriendError300 		= "Friend300###对方也向您发起了好友申请，请先接收哦~"
 	FriendError400 		= "Friend400###您已处理该条申请哦~"
+
+	SocialDynamicsError100		= "SocialDynamics100###该动态已被删除"
 
 )
 

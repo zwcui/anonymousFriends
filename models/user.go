@@ -10,6 +10,9 @@ import "encoding/json"
 
 const ZOMBIE_USER_NUMBER = 100
 
+const SYSTEM_ANDROID = 1
+const SYSTEM_IOS = 2
+
 type User struct {
 	UId       			int64			`description:"uId" json:"uId" xorm:"pk autoincr"`
 	Avatar				string			`description:"头像" json:"avatar"`

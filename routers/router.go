@@ -45,6 +45,11 @@ func init() {
 				&controllers.FriendController{},
 			),
 		),
+		beego.NSNamespace("/push",
+			beego.NSInclude(
+				&controllers.PushController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }

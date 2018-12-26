@@ -1,17 +1,5 @@
 package models
 
-//存入MongoDB的聊天记录
-//type MongoDBMessage struct {
-//	GroupId				int64			`description:"聊天组id" json:"groupId" `
-//	SenderUid			int64			`description:"发送人id" json:"senderUid" `
-//	ReceiverUid			int64			`description:"接受人id" json:"receiverUid" `
-//	ContentType			int				`description:"聊天类型，1为文本，2为语音" json:"contentType" `
-//	Content				string			`description:"聊天内容" json:"content" `
-//	Created           	int64  			`description:"消息时间" json:"created"`
-//	ImageWidth     		string 				`description:"图片宽度,客户端根据这个显示图片宽度" json:"imageWidth"`
-//	ImageHeight     	string 				`description:"图片高度,客户端根据这个显示图片高度" json:"imageHeight"`
-//}
-
 //聊天组
 type Group struct {
 	GroupId				int64			`description:"聊天组id" json:"groupId" xorm:"pk autoincr"`
@@ -34,7 +22,36 @@ type Member struct {
 	DeletedAt         	int64  			`description:"删除时间" json:"deleted" xorm:"deleted"`
 }
 
+//系统消息、推送
+type Message struct {
+	MId         int64  `description:"消息id" json:"mId" xorm:"pk autoincr"`
+	SenderUid   int64  `description:"发送者uid 0则是系统发送的" json:"senderUid" xorm:"index(msgSenderUid)"`
+	ReceiverUid int64  `description:"接收者uid 为0则是推送给所有人" json:"receiverUid" xorm:"index(msgReceiverUid)"`
+	ActionUrl   string `description:"跳转url" json:"actionUrl" xorm:"text"`
+	Content     string `description:"内容" json:"content"`
+	Detail      string `description:"详情" json:"detail"`
+	Type        int    `description:"消息类型 1:好友请求消息 2:评论回复消息 " json:"type" xorm:"index(msgTypeUid)"`
+	Created     int64  `description:"创建时间" json:"created" xorm:"created"`
+	DeletedAt   int64  `description:"删除时间" json:"-" xorm:"deleted"`
+}
+
 //-----------------结构体如下----------------------
 type GroupInfo struct {
 	Group				Group			`description:"聊天组" json:"group" `
 }
+
+type PushSocketMessage struct {
+	Message				`description:"消息" xorm:"extends"`
+	Sound		string	`description:"声音" json:"sound"`
+}
+
+//-------------------推送消息文案----------------------
+const (
+	SendFriendRequest 		= "您收到一个好友请求，尽快处理哦~"
+	AcceptFriendRequest 	= "对方已接收您的好友请求，快开始聊天吧~"
+	RejectFriendRequest 	= "对方拒绝了您的好友请求"
+
+	CommentOnSocialDynamics = "您收到一个朋友圈评论~"
+)
+
+

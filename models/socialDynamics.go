@@ -12,6 +12,7 @@ type SocialDynamics struct {
 	Content				string			`description:"文字内容" json:"content"`
 	Picture				string			`description:"图片内容，多个英文逗号隔开" json:"picture"`
 	LikeNum				int				`description:"点赞数" json:"likeNum"`
+	CommentNum			int				`description:"评论数" json:"commentNum"`
 	Position        	string			`description:"位置名称，如全家创意产业园店" json:"province"`
 	Province        	string			`description:"省" json:"province"`
 	City	        	string			`description:"市" json:"city"`

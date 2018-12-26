@@ -41,8 +41,8 @@
                     },
                     {
                         "in": "formData",
-                        "name": "replyId",
-                        "description": "回复id",
+                        "name": "replyCommentId",
+                        "description": "回复评论id",
                         "type": "integer",
                         "format": "int64"
                     },
@@ -68,6 +68,68 @@
                         "required": true,
                         "type": "integer",
                         "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} success"
+                    }
+                }
+            }
+        },
+        "/comment/pushCommonMessage": {
+            "post": {
+                "tags": [
+                    "comment"
+                ],
+                "description": "普通推送",
+                "operationId": "CommentController.普通推送",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "uId",
+                        "description": "uId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "content",
+                        "description": "内容",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} success"
+                    }
+                }
+            }
+        },
+        "/comment/pushSocketMessage": {
+            "post": {
+                "tags": [
+                    "comment"
+                ],
+                "description": "socket推送",
+                "operationId": "CommentController.socket推送",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "uId",
+                        "description": "uId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "content",
+                        "description": "内容",
+                        "required": true,
+                        "type": "string"
                     }
                 ],
                 "responses": {
@@ -1212,8 +1274,8 @@
                     "type": "integer",
                     "format": "int64"
                 },
-                "replyId": {
-                    "description": "回复id",
+                "replyCommentId": {
+                    "description": "回复评论id",
                     "type": "integer",
                     "format": "int64"
                 },
@@ -1341,6 +1403,11 @@
                         "$ref": "#/definitions/models.Comment"
                     }
                 },
+                "commentNum": {
+                    "description": "评论数",
+                    "type": "integer",
+                    "format": "int64"
+                },
                 "content": {
                     "description": "文字内容",
                     "type": "string"
@@ -1439,6 +1506,11 @@
                 "city": {
                     "description": "市",
                     "type": "string"
+                },
+                "commentNum": {
+                    "description": "评论数",
+                    "type": "integer",
+                    "format": "int64"
                 },
                 "content": {
                     "description": "文字内容",
@@ -1703,6 +1775,10 @@
         {
             "name": "friend",
             "description": "好友模块\n"
+        },
+        {
+            "name": "push",
+            "description": "推送模块\n"
         }
     ]
 }
