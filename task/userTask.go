@@ -50,11 +50,10 @@ func createZombie(){
 		for i:=0;i<int(ZombieLimit-zombieTotal);i++{
 			var zombie models.User
 			zombie.NickName = controllers.GetDefaultNickName()
-			zombie.Avatar = controllers.GetRandomAvatar()
+			zombie.Gender, zombie.Avatar = controllers.GetRandomGenderAndAvatar()
 			hashedPassword, salt, _ := util.EncryptPassword("iamzombie")
 			zombie.Password = hashedPassword
 			zombie.Salt = salt
-			zombie.Gender = controllers.GetRandomGender()
 			zombie.Birthday = controllers.GetRandomBirthday()
 			zombie.Status = 1
 			zombie.IsZombie = 1
@@ -71,11 +70,10 @@ func createSuZhouZombie(){
 		for i:=0;i<int(ZombieLimit-zombieTotal);i++{
 			var zombie models.User
 			zombie.NickName = controllers.GetDefaultNickName()
-			zombie.Avatar = controllers.GetRandomAvatar()
+			zombie.Gender, zombie.Avatar = controllers.GetRandomGenderAndAvatar()
 			hashedPassword, salt, _ := util.EncryptPassword("iamzombie")
 			zombie.Password = hashedPassword
 			zombie.Salt = salt
-			zombie.Gender = controllers.GetRandomGender()
 			zombie.Birthday = controllers.GetRandomBirthday()
 			zombie.Status = 1
 			zombie.IsZombie = 1

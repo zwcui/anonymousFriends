@@ -118,6 +118,11 @@ type UserAccountInfo struct {
 	UserAccount			UserAccount		`description:"用户账户信息" json:"userAccount"`
 }
 
+type GenderAndAvatar struct {
+	Gender				int				`description:"性别，1男2女" json:"gender"`
+	Avatar				string			`description:"头像" json:"avatar"`
+}
+
 //-------------user方法如下--------------
 
 func (u *User) UsetToUserShort() (userDTO *UserShort, error error) {
@@ -135,11 +140,6 @@ func (u *User) UsetToUserShort() (userDTO *UserShort, error error) {
 }
 
 //--------------默认参数----------------
-
-var DefaultGender = []int{
-	1,	//男
-	2,	//女
-}
 
 var DefaultBirthday = []string{
 	"199301",
@@ -159,10 +159,10 @@ var DefaultDirection = []float64{
 	-1.0,
 }
 
-var DefaultAvatar = []string{
-	"da1",
-	"da2",
-	"da3",
+var DefaultGenderAndAvatar = []GenderAndAvatar{
+	GenderAndAvatar{2, "/578be4e3/2580/4c4e/aa31/9eb21c1ed301.jpg"},
+	GenderAndAvatar{1, "/b3190056/dda5/4455/a779/05fa76f330a4.jpeg"},
+	GenderAndAvatar{2, "/e3c2262f/32fe/427e/b40a/8b490e9ffb74.jpg"},
 }
 
 var ZombieMoveFlagRatio = []int{

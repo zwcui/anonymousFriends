@@ -513,11 +513,10 @@ func createZombieUser(user models.User, number int) []models.UserShort {
 		for i:=0; i< (number-storedUnuseZombieNumber);i++ {
 			var zombie models.User
 			zombie.NickName = GetDefaultNickName()
-			zombie.Avatar = GetRandomAvatar()
+			zombie.Gender, zombie.Avatar = GetRandomGenderAndAvatar()
 			hashedPassword, salt, _ := util.EncryptPassword("iamzombie")
 			zombie.Password = hashedPassword
 			zombie.Salt = salt
-			zombie.Gender = GetRandomGender()
 			zombie.Birthday = GetRandomBirthday()
 			zombie.Status = 1
 			zombie.IsZombie = 1
@@ -566,21 +565,15 @@ func GetDefaultNickName() string {
 }
 
 //获得随机性别
-func GetRandomGender() int {
-	sIndex := rand.Intn(len(models.DefaultGender))
-	return models.DefaultGender[sIndex]
-}
-
-//获得随机性别
 func GetRandomBirthday() string {
 	sIndex := rand.Intn(len(models.DefaultBirthday))
 	return models.DefaultBirthday[sIndex]
 }
 
-//获得随机头像
-func GetRandomAvatar() string {
-	sIndex := rand.Intn(len(models.DefaultAvatar))
-	return models.DefaultAvatar[sIndex]
+//获得随机性别和头像
+func GetRandomGenderAndAvatar() (gender int, avatar string) {
+	sIndex := rand.Intn(len(models.DefaultGenderAndAvatar))
+	return models.DefaultGenderAndAvatar[sIndex].Gender, models.DefaultGenderAndAvatar[sIndex].Avatar
 }
 
 //获得随机经纬度加减

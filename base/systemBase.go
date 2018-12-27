@@ -58,6 +58,11 @@ var RedisCache cache.Cache
 //MongoDB
 var MongoDBSession *mgo.Session
 
+//文件服务器
+//上传地址：http://106.14.202.179:8088/
+//上传接口：http://106.14.202.179:8088/uploadFile?fileType=image
+//查看：http://106.14.202.179/file+url
+
 //系统初始化
 func init(){
 
