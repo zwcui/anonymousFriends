@@ -36,4 +36,10 @@ type DriftBottle struct {
 
 type DriftBottleInfo struct {
 	DriftBottle					DriftBottle		`description:"漂流瓶信息" json:"driftBottle"`
+	CommentList					[]CommentInfo	`description:"评论列表" json:"commentList"`
+}
+
+type DriftBottleListContainer struct {
+	BaseListContainer
+	DriftBottleList 			[]DriftBottle 	`description:"漂流瓶列表" json:"driftBottleList"`
 }

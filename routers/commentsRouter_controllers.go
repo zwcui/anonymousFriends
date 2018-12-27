@@ -34,6 +34,13 @@ func init() {
 			AllowHTTPMethods: []string{"patch"},
 			Params: nil})
 
+	beego.GlobalControllerRouter["anonymousFriends/controllers:DriftBottleController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:DriftBottleController"],
+		beego.ControllerComments{
+			Method: "GetMyDriftBottleList",
+			Router: `/getMyDriftBottleList`,
+			AllowHTTPMethods: []string{"get"},
+			Params: nil})
+
 	beego.GlobalControllerRouter["anonymousFriends/controllers:FriendController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:FriendController"],
 		beego.ControllerComments{
 			Method: "MakeFriends",

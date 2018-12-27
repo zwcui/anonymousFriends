@@ -77,6 +77,63 @@
                 }
             }
         },
+        "/driftBottle/getMyDriftBottleList": {
+            "get": {
+                "tags": [
+                    "driftBottle"
+                ],
+                "description": "我的漂流瓶",
+                "operationId": "DriftBottleController.我的漂流瓶",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "uId",
+                        "description": "uId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "type",
+                        "description": "类型，1为我抛出的，2为我拾起的",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "pageNum",
+                        "description": "page num start from 1",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "pageTime",
+                        "description": "page time should be empty when pagenum == 1",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "pageSize",
+                        "description": "page size default is 15",
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "schema": {
+                            "$ref": "#/definitions/models.DriftBottleListContainer"
+                        }
+                    }
+                }
+            }
+        },
         "/driftBottle/handleDriftBottle": {
             "patch": {
                 "tags": [
@@ -128,14 +185,21 @@
                 "tags": [
                     "driftBottle"
                 ],
-                "description": "拾漂流瓶",
-                "operationId": "DriftBottleController.拾漂流瓶",
+                "description": "拾漂流瓶或查看漂流瓶",
+                "operationId": "DriftBottleController.拾漂流瓶或查看漂流瓶",
                 "parameters": [
                     {
-                        "in": "formData",
+                        "in": "query",
                         "name": "uId",
                         "description": "uId",
                         "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "bottleId",
+                        "description": "漂流瓶id，有则查看详情，无则拾起漂流瓶",
                         "type": "integer",
                         "format": "int64"
                     }
@@ -1640,9 +1704,44 @@
             "title": "DriftBottleInfo",
             "type": "object",
             "properties": {
+                "commentList": {
+                    "description": "评论列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CommentInfo"
+                    }
+                },
                 "driftBottle": {
                     "$ref": "#/definitions/models.DriftBottle",
                     "description": "漂流瓶信息"
+                }
+            }
+        },
+        "models.DriftBottleListContainer": {
+            "title": "BaseListContainer",
+            "type": "object",
+            "properties": {
+                "driftBottleList": {
+                    "description": "漂流瓶列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DriftBottle"
+                    }
+                },
+                "pageNum": {
+                    "description": "当前页数",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "pageTime": {
+                    "description": "查询时间",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "totalCount": {
+                    "description": "总数",
+                    "type": "integer",
+                    "format": "int64"
                 }
             }
         },

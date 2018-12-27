@@ -74,23 +74,39 @@ func (this *DriftBottleController) ThrowDriftBottle() {
 	this.ReturnData = "success"
 }
 
-// @Title 拾漂流瓶
-// @Description 拾漂流瓶
-// @Param	uId					formData		int64	  		true		"uId"
+// @Title 拾漂流瓶或查看漂流瓶
+// @Description 拾漂流瓶或查看漂流瓶
+// @Param	uId					query			int64	  		true		"uId"
+// @Param	bottleId			query			int64	  		false		"漂流瓶id，有则查看详情，无则拾起漂流瓶"
 // @Success 200 {object} models.DriftBottleInfo
 // @router /pickUpDriftBottle [get]
 func (this *DriftBottleController) PickUpDriftBottle() {
 	uId := this.MustInt64("uId")
+	bottleId, _ := this.GetInt64("bottleId", 0)
 
 	var driftBottle models.DriftBottle
-	randomSql := "SELECT * FROM drift_bottle WHERE bottle_id >= ((SELECT MAX(bottle_id) FROM drift_bottle)-(SELECT MIN(bottle_id) FROM drift_bottle)) * RAND() + (SELECT MIN(bottle_id) FROM drift_bottle)  LIMIT 1"
-	base.DBEngine.SQL(randomSql).Get(&driftBottle)
+	if bottleId == 0 {
+		randomSql := "SELECT * FROM drift_bottle WHERE bottle_id >= ((SELECT MAX(bottle_id) FROM drift_bottle)-(SELECT MIN(bottle_id) FROM drift_bottle)) * RAND() + (SELECT MIN(bottle_id) FROM drift_bottle)  LIMIT 1"
+		base.DBEngine.SQL(randomSql).Get(&driftBottle)
 
-	driftBottle.ReceiverUid = uId
-	driftBottle.Status = 2
-	base.DBEngine.Table("drift_bottle").Where("bottle_id=?", driftBottle.BottleId).Cols("receiver_uid", "status").Update(&driftBottle)
+		driftBottle.ReceiverUid = uId
+		driftBottle.Status = 2
+		base.DBEngine.Table("drift_bottle").Where("bottle_id=?", driftBottle.BottleId).Cols("receiver_uid", "status").Update(&driftBottle)
+	} else {
+		base.DBEngine.Table("drift_bottle").Where("bottle_id=?", bottleId).Get(&driftBottle)
+	}
 
-	this.ReturnData = models.DriftBottleInfo{driftBottle}
+	var commentList []models.CommentInfo
+	err := base.DBEngine.Table("comment").Select("comment.*, sender.nick_name as sender_nick_name, sender.u_id as sender_uid, receiver.nick_name as receiver_nick_name, receiver.u_id as receiver_uid").Join("LEFT OUTER", "user sender", "sender.u_id=comment.sender_uid").Join("LEFT OUTER", "user receiver", "receiver.u_id=comment.receiver_uid").Where("comment.type=2 and comment.type_id=?", bottleId).Desc("created").Find(&commentList)
+	if err != nil {
+		this.ReturnData = util.GenerateAlertMessage(models.CommonError100)
+		return
+	}
+	if commentList == nil {
+		commentList = make([]models.CommentInfo, 0)
+	}
+
+	this.ReturnData = models.DriftBottleInfo{driftBottle, commentList}
 }
 
 // @Title 处理漂流瓶
@@ -149,3 +165,54 @@ func (this *DriftBottleController) HandleDriftBottle() {
 	this.ReturnData = "success"
 }
 
+// @Title 我的漂流瓶
+// @Description 我的漂流瓶
+// @Param	uId					query			int64	  		true		"uId"
+// @Param	type				query			int64	  		true		"类型，1为我抛出的，2为我拾起的"
+// @Param	pageNum				query 			int				true		"page num start from 1"
+// @Param	pageTime			query 			int64			true		"page time should be empty when pagenum == 1"
+// @Param	pageSize			query 			int				false		"page size default is 15"
+// @Success 200 {object} models.DriftBottleListContainer
+// @router /getMyDriftBottleList [get]
+func (this *DriftBottleController) GetMyDriftBottleList() {
+	uId := this.MustInt64("uId")
+	queryType := this.MustInt("type")
+	pageNum := this.MustInt("pageNum")
+	pageTime, _ := this.GetInt64("pageTime", util.UnixOfBeijingTime())
+	pageSize := this.GetPageSize("pageSize")
+
+	totalSql := "select count(1) from drift_bottle where drift_bottle.deleted_at is null "
+	dataSql := "select drift_bottle.* from drift_bottle where drift_bottle.deleted_at is null "
+	if queryType == 1 {
+		totalSql += " and drift_bottle.sender_uid='"+strconv.FormatInt(uId, 10)+"' "
+		dataSql += " and drift_bottle.sender_uid='"+strconv.FormatInt(uId, 10)+"' "
+	} else if queryType == 2 {
+		totalSql += " and drift_bottle.receiver_uid='"+strconv.FormatInt(uId, 10)+"' "
+		dataSql += " and drift_bottle.receiver_uid='"+strconv.FormatInt(uId, 10)+"' "
+	}
+
+	dataSql += " order by drift_bottle.created desc limit "+strconv.Itoa(pageSize*(pageNum-1))+" , "+strconv.Itoa(pageSize)
+
+	total, totalErr := base.DBEngine.SQL(totalSql).Count(new(models.DriftBottle))
+	if totalErr != nil {
+		util.Logger.Info("----totalErr---"+totalErr.Error())
+		this.ReturnData = util.GenerateAlertMessage(models.CommonError100)
+		return
+	}
+
+	var driftBottleList []models.DriftBottle
+	if total > 0 {
+		err := base.DBEngine.SQL(dataSql).Find(&driftBottleList)
+		if err != nil {
+			util.Logger.Info("----err---"+err.Error())
+			this.ReturnData = util.GenerateAlertMessage(models.CommonError100)
+			return
+		}
+	}
+
+	if driftBottleList == nil {
+		driftBottleList = make([]models.DriftBottle, 0)
+	}
+
+	this.ReturnData = models.DriftBottleListContainer{models.BaseListContainer{total, pageNum, pageTime}, driftBottleList}
+}
