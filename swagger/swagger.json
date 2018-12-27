@@ -239,6 +239,13 @@
                     },
                     {
                         "in": "formData",
+                        "name": "bottleName",
+                        "description": "类型名称，1普通瓶、2传递瓶、3同城瓶、4真话瓶、5暗号瓶、6提问瓶、7交往瓶、8祝愿瓶、9发泄瓶、10生日瓶、11表白瓶",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
                         "name": "content",
                         "description": "文字内容",
                         "type": "string"
@@ -1612,6 +1619,11 @@
                 },
                 "bottleId": {
                     "description": "bottleId",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "bottleName": {
+                    "description": "类型名称，1普通瓶、2传递瓶、3同城瓶、4真话瓶、5暗号瓶、6提问瓶、7交往瓶、8祝愿瓶、9发泄瓶、10生日瓶、11表白瓶",
                     "type": "integer",
                     "format": "int64"
                 },

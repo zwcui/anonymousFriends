@@ -25,5 +25,16 @@ func init() {
 		addZombieSocialDynamics()
 	})
 
+	//每24小时检查是否有过期的漂流瓶，设置为已失效
+	c.AddFunc("@every 24h", func() {
+		checkDriftBottleExpiryTime()
+	})
+
+	//每1分钟检查是否有过期的漂流瓶，设置为已失效
+	c.AddFunc("@every 1m", func() {
+		throwZombieDriftBottle()
+	})
+
+
 	c.Start()
 }

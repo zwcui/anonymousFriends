@@ -18,7 +18,12 @@ type DriftBottleController struct {
 }
 
 func (this *DriftBottleController) Prepare(){
-	this.NeedBaseAuthList = []RequestPathAndMethod{}
+	this.NeedBaseAuthList = []RequestPathAndMethod{
+		{"/throwDriftBottle", "post"},
+		{"/pickUpDriftBottle", "get"},
+		{"/handleDriftBottle", "patch"},
+		{"/getMyDriftBottleList", "get"},
+	}
 	this.bathAuth()
 }
 
@@ -26,6 +31,7 @@ func (this *DriftBottleController) Prepare(){
 // @Description 扔漂流瓶
 // @Param	uId					formData		int64	  		true		"uId"
 // @Param	bottleType			formData		int		  		true		"类型，1普通瓶、2传递瓶、3同城瓶、4真话瓶、5暗号瓶、6提问瓶、7交往瓶、8祝愿瓶、9发泄瓶、10生日瓶、11表白瓶"
+// @Param	bottleName			formData		string	  		true		"类型名称，1普通瓶、2传递瓶、3同城瓶、4真话瓶、5暗号瓶、6提问瓶、7交往瓶、8祝愿瓶、9发泄瓶、10生日瓶、11表白瓶"
 // @Param	content				formData		string  		false		"文字内容"
 // @Param	picture				formData		string  		false		"图片内容，多个英文逗号隔开"
 // @Param	position			formData		string  		false		"位置名称，如全家创意产业园店"
@@ -41,6 +47,7 @@ func (this *DriftBottleController) Prepare(){
 func (this *DriftBottleController) ThrowDriftBottle() {
 	uId := this.MustInt64("uId")
 	bottleType := this.MustInt("bottleType")
+	bottleName := this.MustInt("bottleName")
 	content := this.GetString("content")
 	picture := this.GetString("picture", "")
 	position := this.GetString("position", "")
@@ -54,6 +61,7 @@ func (this *DriftBottleController) ThrowDriftBottle() {
 
 	var driftBottle models.DriftBottle
 	driftBottle.BottleType = bottleType
+	driftBottle.BottleName = bottleName
 	driftBottle.SenderUid = uId
 	driftBottle.Content = content
 	driftBottle.Picture = picture

@@ -18,7 +18,11 @@ type SocialDynamicsController struct {
 }
 
 func (this *SocialDynamicsController) Prepare(){
-	this.NeedBaseAuthList = []RequestPathAndMethod{{"/postSocialDynamic", "post"}, {"/deleteSocialDynamic", "delete"}, {"/getSocialDynamicList", "get"}, {"/likeSocialDynamic", "post"}}
+	this.NeedBaseAuthList = []RequestPathAndMethod{
+		{"/postSocialDynamic", "post"},
+		{"/deleteSocialDynamic", "delete"},
+		{"/getSocialDynamicList", "get"},
+		{"/likeSocialDynamic", "post"}}
 	this.bathAuth()
 }
 
@@ -112,6 +116,9 @@ func (this *SocialDynamicsController) GetSocialDynamicList() {
 	if uId != 0 {
 		totalSql += " and social_dynamics.u_id='"+strconv.FormatInt(uId, 10)+"' "
 		dataSql += " and social_dynamics.u_id='"+strconv.FormatInt(uId, 10)+"' "
+	} else {
+		totalSql += " and (social_dynamics.u_id in (select friend_uid from friend where owner_uid='"+strconv.FormatInt(currentUid, 10)+"' or social_dynamics.u_id='"+strconv.FormatInt(currentUid, 10)+"' )) "
+		dataSql += " and (social_dynamics.u_id in (select friend_uid from friend where owner_uid='"+strconv.FormatInt(currentUid, 10)+"' or social_dynamics.u_id='"+strconv.FormatInt(currentUid, 10)+"' )) "
 	}
 	if position != "" {
 		totalSql += " and social_dynamics.position='"+position+"' "

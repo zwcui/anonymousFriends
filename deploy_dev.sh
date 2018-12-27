@@ -51,7 +51,9 @@ fi
 
 ssh  root@106.14.202.179 version=$version apiport=$apiport socketport=$socketport runmode=$runmode 'bash -se' <<'ENDSSH'
 cd ~/app/api/anonymousFriends/dev/anonymousFriends
+echo git pull start...
 git pull;
+echo git pull finish...
 echo anonymousfriends\_$runmode
 #go clean;
 if docker build -t anonymousfriends\_$runmode:$version .
