@@ -494,13 +494,13 @@ func createZombieUser(user models.User, number int) []models.UserShort {
 	if number > len(zombieList) {
 		for i:=0; i< (number-storedUnuseZombieNumber);i++ {
 			var zombie models.User
-			zombie.NickName = getDefaultNickName()
-			zombie.Avatar = getRandomAvatar()
+			zombie.NickName = GetDefaultNickName()
+			zombie.Avatar = GetRandomAvatar()
 			hashedPassword, salt, _ := util.EncryptPassword("iamzombie")
 			zombie.Password = hashedPassword
 			zombie.Salt = salt
-			zombie.Gender = getRandomGender()
-			zombie.Birthday = getRandomBirthday()
+			zombie.Gender = GetRandomGender()
+			zombie.Birthday = GetRandomBirthday()
 			zombie.Status = 1
 			zombie.IsZombie = 1
 			base.DBEngine.Table("user").InsertOne(&zombie)
@@ -512,7 +512,7 @@ func createZombieUser(user models.User, number int) []models.UserShort {
 		zombie.Province = user.Province
 		zombie.City = user.City
 		zombie.Area = user.Area
-		zombie.Longitude, zombie.Latitude = calcZombiePositionByUserPosition(user.Longitude, user.Latitude)
+		zombie.Longitude, zombie.Latitude = CalcZombiePositionByRangeMeter(user.Longitude, user.Latitude, 300)
 		base.DBEngine.Table("user").Where("u_id=?", zombie.UId).Cols("province", "city", "area", "longitude", "latitude").Update(&zombie)
 
 		user, _ := zombie.UsetToUserShort()
@@ -525,14 +525,15 @@ func createZombieUser(user models.User, number int) []models.UserShort {
 //纬度每差1度，实际距离为111千米
 //在纬线上，经度每差1度，实际距离为111×cos(角)千米
 //300米范围随机加减
-func calcZombiePositionByUserPosition(longitude float64, latitude float64) (float64, float64) {
-	zombieLongitudeChange := float64(util.GenerateRangeNum(0, 300))/1000000.0 * GetRandomChange()
-	zombieLatitudeChange := float64(util.GenerateRangeNum(0, 300))/1000000.0 * GetRandomChange()
+//考虑不能移动的地方，如河海
+func CalcZombiePositionByRangeMeter(longitude float64, latitude float64, rangeMeter int) (float64, float64) {
+	zombieLongitudeChange := float64(util.GenerateRangeNum(0, rangeMeter))/1000000.0 * GetRandomChange()
+	zombieLatitudeChange := float64(util.GenerateRangeNum(0, rangeMeter))/1000000.0 * GetRandomChange()
 	return longitude + zombieLongitudeChange, latitude + zombieLatitudeChange
 }
 
 //获得默认昵称
-func getDefaultNickName() string {
+func GetDefaultNickName() string {
 	var defaultNickName models.DefaultNickName
 	hasDefaultNickName, _ := base.DBEngine.Table("default_nick_name").Where("status=0").Asc("id").Limit(1, 0).Get(&defaultNickName)
 	if hasDefaultNickName {
@@ -547,19 +548,19 @@ func getDefaultNickName() string {
 }
 
 //获得随机性别
-func getRandomGender() int {
+func GetRandomGender() int {
 	sIndex := rand.Intn(len(models.DefaultGender))
 	return models.DefaultGender[sIndex]
 }
 
 //获得随机性别
-func getRandomBirthday() string {
+func GetRandomBirthday() string {
 	sIndex := rand.Intn(len(models.DefaultBirthday))
 	return models.DefaultBirthday[sIndex]
 }
 
 //获得随机头像
-func getRandomAvatar() string {
+func GetRandomAvatar() string {
 	sIndex := rand.Intn(len(models.DefaultAvatar))
 	return models.DefaultAvatar[sIndex]
 }
