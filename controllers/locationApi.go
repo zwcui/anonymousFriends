@@ -14,23 +14,33 @@ import (
 )
 
 //获取随机地址
-func GetRandomLocation() (provinceName, cityName, areaName string, longitude, latitude float64) {
+func GetRandomLocation(provinceId, cityId, areaId int64) (provinceName, cityName, areaName string, longitude, latitude float64) {
 	//随机省
 	var province models.Location
-	randomProvinceSql := "select * from location WHERE level=1 ORDER BY RAND() limit 1"
-	base.DBEngine.SQL(randomProvinceSql).Get(&province)
+	if provinceId == 0 {
+		randomProvinceSql := "select * from location WHERE level=1 ORDER BY RAND() limit 1"
+		base.DBEngine.SQL(randomProvinceSql).Get(&province)
+	} else {
+		base.DBEngine.Table("location").Where("area_id=?", provinceId).Get(&province)
+	}
 
 	//随机市
 	var city models.Location
-	randomCitySql := "select * from location WHERE level=2 and parent_id='"+strconv.FormatInt(province.AreaId, 10)+"' ORDER BY RAND() limit 1"
-	base.DBEngine.SQL(randomCitySql).Get(&city)
+	if cityId == 0 {
+		randomCitySql := "select * from location WHERE level=2 and parent_id='"+strconv.FormatInt(province.AreaId, 10)+"' ORDER BY RAND() limit 1"
+		base.DBEngine.SQL(randomCitySql).Get(&city)
+	} else {
+		base.DBEngine.Table("location").Where("area_id=?", cityId).Get(&city)
+	}
+
 
 	//随机区
 	var area models.Location
-	randomAreaSql := "select * from location WHERE level=3 and parent_id='"+strconv.FormatInt(city.AreaId, 10)+"' ORDER BY RAND() limit 1"
-	_, err := base.DBEngine.SQL(randomAreaSql).Get(&area)
-	if err != nil {
-		util.Logger.Info(err.Error())
+	if areaId == 0 {
+		randomAreaSql := "select * from location WHERE level=3 and parent_id='" + strconv.FormatInt(city.AreaId, 10) + "' ORDER BY RAND() limit 1"
+		base.DBEngine.SQL(randomAreaSql).Get(&area)
+	} else {
+		base.DBEngine.Table("location").Where("area_id=?", areaId).Get(&area)
 	}
 
 	//所在区的移动坐标

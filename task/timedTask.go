@@ -36,12 +36,12 @@ func init() {
 	})
 
 	//每10分钟增加僵尸账户，位置随机
-	//c.AddFunc("@every 10m", func() {
-	//	createZombie()
+	//c.AddFunc("0 0,36 17 * * ", func() {
+	//	createSuZhouZombie()
 	//})
 
 	//c.AddFunc("@every 1s", func() {
-	//	provinceName, cityName, areaName, longitude, latitude := controllers.GetRandomLocation()
+	//	provinceName, cityName, areaName, longitude, latitude := controllers.GetRandomLocation(810, 849, 0)
 	//	util.Logger.Info(provinceName+" "+cityName+" "+areaName+" "+strconv.FormatFloat(longitude, 'f', 6, 64)+" "+strconv.FormatFloat(latitude, 'f', 6, 64))
 	//})
 

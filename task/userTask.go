@@ -14,7 +14,7 @@ func TestTimedTask(){
 }
 
 //僵尸账户定时任务主动生成总数
-const ZombieLimit = 100
+const ZombieLimit = 200
 
 //僵尸账户移动
 //选取未更新的僵尸账户中前50条
@@ -58,8 +58,30 @@ func createZombie(){
 			zombie.Birthday = controllers.GetRandomBirthday()
 			zombie.Status = 1
 			zombie.IsZombie = 1
-			zombie.Province, zombie.City, zombie.Area, zombie.Longitude, zombie.Latitude = controllers.GetRandomLocation()
+			zombie.Province, zombie.City, zombie.Area, zombie.Longitude, zombie.Latitude = controllers.GetRandomLocation(0, 0, 0)
 			base.DBEngine.Table("user").InsertOne(&zombie)
 		}
 	}
+}
+
+func createSuZhouZombie(){
+	util.Logger.Info("定时任务：增加僵尸账户，位置随机 start")
+	zombieTotal, _ := base.DBEngine.Table("user").Where("is_zombie=1").Count(new(models.User))
+	if zombieTotal < ZombieLimit {
+		for i:=0;i<int(ZombieLimit-zombieTotal);i++{
+			var zombie models.User
+			zombie.NickName = controllers.GetDefaultNickName()
+			zombie.Avatar = controllers.GetRandomAvatar()
+			hashedPassword, salt, _ := util.EncryptPassword("iamzombie")
+			zombie.Password = hashedPassword
+			zombie.Salt = salt
+			zombie.Gender = controllers.GetRandomGender()
+			zombie.Birthday = controllers.GetRandomBirthday()
+			zombie.Status = 1
+			zombie.IsZombie = 1
+			zombie.Province, zombie.City, zombie.Area, zombie.Longitude, zombie.Latitude = controllers.GetRandomLocation(810, 849, 0)
+			base.DBEngine.Table("user").InsertOne(&zombie)
+		}
+	}
+	util.Logger.Info("定时任务：增加僵尸账户，位置随机 finish")
 }
