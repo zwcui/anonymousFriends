@@ -97,16 +97,22 @@ func (this *FriendController) HandleMakeFriendsRequest() {
 	if result == 1 {
 		friendRequest.Status = 1
 		var senderFriend models.Friend
-		senderFriend.OwnerUid = friendRequest.SenderUid
-		senderFriend.FriendUid = friendRequest.ReceiverUid
-		senderFriend.Status = 1
-		base.DBEngine.Table("friend").InsertOne(&senderFriend)
+		hasSenderFriend, _ := base.DBEngine.Table("friend").Where("owner_uid=? and friend_uid=?", friendRequest.SenderUid, friendRequest.ReceiverUid).And("status=1").Get(new(models.Friend))
+		if !hasSenderFriend {
+			senderFriend.OwnerUid = friendRequest.SenderUid
+			senderFriend.FriendUid = friendRequest.ReceiverUid
+			senderFriend.Status = 1
+			base.DBEngine.Table("friend").InsertOne(&senderFriend)
+		}
 
 		var receiverFriend models.Friend
-		receiverFriend.OwnerUid = friendRequest.ReceiverUid
-		receiverFriend.FriendUid = friendRequest.SenderUid
-		receiverFriend.Status = 1
-		base.DBEngine.Table("friend").InsertOne(&receiverFriend)
+		hasReceiverFriend, _ := base.DBEngine.Table("friend").Where("owner_uid=? and friend_uid=?", friendRequest.ReceiverUid, friendRequest.SenderUid).And("status=1").Get(new(models.Friend))
+		if !hasReceiverFriend {
+			receiverFriend.OwnerUid = friendRequest.ReceiverUid
+			receiverFriend.FriendUid = friendRequest.SenderUid
+			receiverFriend.Status = 1
+			base.DBEngine.Table("friend").InsertOne(&receiverFriend)
+		}
 	} else if result == 2 {
 		friendRequest.Status = 2
 	}
