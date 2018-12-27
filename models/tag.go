@@ -9,10 +9,17 @@ package models
 type Tag struct {
 	TagId       				int64			`description:"tagId" json:"tagId" xorm:"pk autoincr"`
 	TagName			       		string			`description:"标签名称" json:"tagName"`
+	TagImage      				string 			`description:"标签图片" json:"tagImage"`
 	TagOrder					string			`description:"标签排序" json:"tagOrder"`
-
-
+	ParentTagId       			int64			`description:"父标签id" json:"parentTagId"`
+	Status		       			int				`description:"状态，1正常，2隐藏" json:"status"`
 	Created           			int64  			`description:"创建时间" json:"created" xorm:"created"`
 	Updated           			int64  			`description:"修改时间" json:"updated" xorm:"updated"`
 	DeletedAt         			int64  			`description:"删除时间" json:"deleted" xorm:"deleted"`
+}
+
+//--------------------结构体--------------------------
+
+type TagList struct {
+	TagList						[]Tag			`description:"标签列表" json:"tagList"`
 }

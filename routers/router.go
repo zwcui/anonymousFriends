@@ -55,6 +55,11 @@ func init() {
 				&controllers.DriftBottleController{},
 			),
 		),
+		beego.NSNamespace("/tag",
+			beego.NSInclude(
+				&controllers.TagController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }

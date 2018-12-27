@@ -172,6 +172,7 @@ func initDB(dbConfig databaseConfig){
 		new(models.FriendRequest), new(models.Friend),
 		new(models.Comment),
 		new(models.DriftBottle), new(models.ZombieDriftBottle),
+		new(models.Tag),
 		new(models.Role), new(models.UserRole))
 	if err != nil {
 		panic("同步表结构失败! err:"+err.Error())

@@ -672,6 +672,49 @@ paths:
       responses:
         "200":
           description: '{string} success'
+  /tag/addTag:
+    post:
+      tags:
+      - tag
+      description: 新增标签
+      operationId: TagController.新增标签
+      parameters:
+      - in: formData
+        name: tagName
+        description: 标签名称
+        required: true
+        type: string
+      - in: formData
+        name: tagImage
+        description: 标签图片
+        type: string
+      - in: formData
+        name: tagOrder
+        description: 标签排序
+        type: string
+      - in: formData
+        name: parentTagId
+        description: 父标签id
+        type: integer
+        format: int64
+      - in: formData
+        name: status
+        description: 状态，1正常，2隐藏
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: '{string} success'
+  /tag/getTagList:
+    get:
+      tags:
+      - tag
+      description: 获取所有标签
+      operationId: TagController.获取所有标签
+      responses:
+        "200":
+          schema:
+            $ref: '#/definitions/models.TagList'
   /user/getUserAccountInfo:
     get:
       tags:
@@ -930,6 +973,14 @@ paths:
         description: 出生年月
         type: string
       - in: formData
+        name: tagNames
+        description: 标签名称，多个,分隔
+        type: string
+      - in: formData
+        name: tagIds
+        description: 标签id，多个,分隔
+        type: string
+      - in: formData
         name: status
         description: 在线状态，0离线，1在线，2隐身，3Q我吧
         required: true
@@ -1124,8 +1175,7 @@ definitions:
         format: int64
       bottleName:
         description: 类型名称，1普通瓶、2传递瓶、3同城瓶、4真话瓶、5暗号瓶、6提问瓶、7交往瓶、8祝愿瓶、9发泄瓶、10生日瓶、11表白瓶
-        type: integer
-        format: int64
+        type: string
       bottleType:
         description: 类型，1普通瓶、2传递瓶、3同城瓶、4真话瓶、5暗号瓶、6提问瓶、7交往瓶、8祝愿瓶、9发泄瓶、10生日瓶、11表白瓶
         type: integer
@@ -1438,6 +1488,52 @@ definitions:
       weather:
         description: 天气，如'阵雨转多云 19~25摄氏度'
         type: string
+  models.Tag:
+    title: Tag
+    type: object
+    properties:
+      created:
+        description: 创建时间
+        type: integer
+        format: int64
+      deleted:
+        description: 删除时间
+        type: integer
+        format: int64
+      parentTagId:
+        description: 父标签id
+        type: integer
+        format: int64
+      status:
+        description: 状态，1正常，2隐藏
+        type: integer
+        format: int64
+      tagId:
+        description: tagId
+        type: integer
+        format: int64
+      tagImage:
+        description: 标签图片
+        type: string
+      tagName:
+        description: 标签名称
+        type: string
+      tagOrder:
+        description: 标签排序
+        type: string
+      updated:
+        description: 修改时间
+        type: integer
+        format: int64
+  models.TagList:
+    title: TagList
+    type: object
+    properties:
+      tagList:
+        description: 标签列表
+        type: array
+        items:
+          $ref: '#/definitions/models.Tag'
   models.UserAccount:
     title: UserAccount
     type: object
@@ -1569,6 +1665,12 @@ definitions:
         description: 在线状态，0离线，1在线，2隐身
         type: integer
         format: int64
+      tagIds:
+        description: 标签id，多个,分隔
+        type: string
+      tagNames:
+        description: 标签名称，多个,分隔
+        type: string
       uId:
         description: 注册时间
         type: integer
@@ -1602,3 +1704,6 @@ tags:
 - name: driftBottle
   description: |
     漂流瓶模块
+- name: tag
+  description: |
+    用户模块

@@ -200,6 +200,8 @@ func (this *UserController) GetUserAccountInfo() {
 // @Param	phoneNumber		formData		string  		false		"手机号"
 // @Param	gender			formData		int		  		false		"性别,1 男, 2 女"
 // @Param	birthday		formData		string  		false		"出生年月"
+// @Param	tagNames		formData		string  		false		"标签名称，多个,分隔"
+// @Param	tagIds			formData		string  		false		"标签id，多个,分隔"
 // @Param	status			formData		string  		true		"在线状态，0离线，1在线，2隐身，3Q我吧"
 // @Success 200 {object} models.UserInfo
 // @router /updateUserInfo [patch]
@@ -209,6 +211,8 @@ func (this *UserController) UpdateUserInfo() {
 	nickName := this.GetString("nickName", "")
 	phoneNumber := this.GetString("phoneNumber", "")
 	birthday := this.GetString("birthday", "")
+	tagNames := this.GetString("tagNames", "")
+	tagIds := this.GetString("tagIds", "")
 	gender, _ := this.GetInt("gender", 0)
 	status := this.MustInt("status")
 
@@ -246,9 +250,15 @@ func (this *UserController) UpdateUserInfo() {
 	if gender != 0 {
 		user.Gender = gender
 	}
+	if tagNames != "" {
+		user.TagNames = tagNames
+	}
+	if tagIds != "" {
+		user.TagIds = tagIds
+	}
 
 	user.Status = status
-	base.DBEngine.Table("user").Where("u_id=?", uId).Cols("avatar", "nick_name", "phone_number", "birthday", "gender", "status").Update(&user)
+	base.DBEngine.Table("user").Where("u_id=?", uId).Cols("avatar", "nick_name", "phone_number", "birthday", "gender", "status", "tag_names", "tag_ids").Update(&user)
 
 	userShort, _ := user.UsetToUserShort()
 	this.ReturnData = models.UserInfo{*userShort}

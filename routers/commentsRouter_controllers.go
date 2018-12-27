@@ -139,6 +139,20 @@ func init() {
 			AllowHTTPMethods: []string{"post"},
 			Params: nil})
 
+	beego.GlobalControllerRouter["anonymousFriends/controllers:TagController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:TagController"],
+		beego.ControllerComments{
+			Method: "GetTagList",
+			Router: `/getTagList`,
+			AllowHTTPMethods: []string{"get"},
+			Params: nil})
+
+	beego.GlobalControllerRouter["anonymousFriends/controllers:TagController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:TagController"],
+		beego.ControllerComments{
+			Method: "AddTag",
+			Router: `/addTag`,
+			AllowHTTPMethods: []string{"post"},
+			Params: nil})
+
 	beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"],
 		beego.ControllerComments{
 			Method: "SignUp",

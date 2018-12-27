@@ -10,6 +10,7 @@ import (
 	"anonymousFriends/util"
 	"anonymousFriends/base"
 	"strconv"
+	"math/rand"
 )
 
 //漂流瓶模块
@@ -47,7 +48,7 @@ func (this *DriftBottleController) Prepare(){
 func (this *DriftBottleController) ThrowDriftBottle() {
 	uId := this.MustInt64("uId")
 	bottleType := this.MustInt("bottleType")
-	bottleName := this.MustInt("bottleName")
+	bottleName := this.MustString("bottleName")
 	content := this.GetString("content")
 	picture := this.GetString("picture", "")
 	position := this.GetString("position", "")
@@ -94,6 +95,17 @@ func (this *DriftBottleController) PickUpDriftBottle() {
 
 	var driftBottle models.DriftBottle
 	if bottleId == 0 {
+		success := getPickUpDriftBottleFlag()
+		if success != 1 {
+			var driftBottle models.DriftBottle
+			driftBottle.BottleType = 0
+			driftBottle.BottleName = "其他"
+			driftBottle.Content = getPickUpOther()
+			commentList := make([]models.CommentInfo, 0)
+			this.ReturnData = models.DriftBottleInfo{driftBottle, commentList}
+			return
+		}
+
 		randomSql := "SELECT * FROM drift_bottle WHERE bottle_id >= ((SELECT MAX(bottle_id) FROM drift_bottle)-(SELECT MIN(bottle_id) FROM drift_bottle)) * RAND() + (SELECT MIN(bottle_id) FROM drift_bottle)  LIMIT 1"
 		base.DBEngine.SQL(randomSql).Get(&driftBottle)
 
@@ -223,4 +235,16 @@ func (this *DriftBottleController) GetMyDriftBottleList() {
 	}
 
 	this.ReturnData = models.DriftBottleListContainer{models.BaseListContainer{total, pageNum, pageTime}, driftBottleList}
+}
+
+//获得拾起漂流瓶可能性
+func getPickUpDriftBottleFlag() int {
+	sIndex := rand.Intn(len(models.PickUpDriftBottleRatio))
+	return models.PickUpDriftBottleRatio[sIndex]
+}
+
+//获得非漂流瓶的东西
+func getPickUpOther() string {
+	sIndex := rand.Intn(len(models.PickUpOther))
+	return models.PickUpOther[sIndex]
 }
