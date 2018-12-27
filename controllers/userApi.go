@@ -104,6 +104,14 @@ func (this *UserController) SignUp() {
 	userAccount.CashBalance = 0
 	base.DBEngine.Table("user_account").InsertOne(&userAccount)
 
+	//用户注册通知管理员
+	var adminNotice models.AdminNotice
+	adminNotice.Type = 2
+	adminNotice.TypeId = user.UId
+	adminNotice.Content = "新用户注册："+user.NickName+"(uId:"+strconv.FormatInt(user.UId, 10)+")"
+	adminNotice.Status = 0
+	base.DBEngine.Table("admin_notice").InsertOne(&adminNotice)
+
 	userShort, _ := user.UsetToUserShort()
 	this.ReturnData = models.UserInfo{*userShort}
 }
