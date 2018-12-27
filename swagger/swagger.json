@@ -15,6 +15,79 @@
     },
     "basePath": "/v1",
     "paths": {
+        "/adminNotice/getAdminNoticeList": {
+            "get": {
+                "tags": [
+                    "adminNotice"
+                ],
+                "description": "获取所有管理员通知",
+                "operationId": "AdminNoticeController.获取所有管理员通知",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "pageNum",
+                        "description": "page num start from 1",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "pageTime",
+                        "description": "page time should be empty when pagenum == 1",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "pageSize",
+                        "description": "page size default is 15",
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "schema": {
+                            "$ref": "#/definitions/models.AdminNoticeListContainer"
+                        }
+                    }
+                }
+            }
+        },
+        "/adminNotice/updateAdminNoticeStatus": {
+            "patch": {
+                "tags": [
+                    "adminNotice"
+                ],
+                "description": "更新管理员通知状态",
+                "operationId": "AdminNoticeController.更新管理员通知状态",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "id",
+                        "description": "id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "status",
+                        "description": "状态，0未处理，1已处理，2已忽略",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} success"
+                    }
+                }
+            }
+        },
         "/comment/": {
             "post": {
                 "tags": [
@@ -1547,6 +1620,79 @@
         }
     },
     "definitions": {
+        "models.AdminNotice": {
+            "title": "AdminNotice",
+            "type": "object",
+            "properties": {
+                "content": {
+                    "description": "内容",
+                    "type": "string"
+                },
+                "created": {
+                    "description": "注册时间",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "deleted": {
+                    "description": "删除时间",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "id": {
+                    "description": "Id",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "status": {
+                    "description": "状态，0未处理，1已处理，2已忽略",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "type": {
+                    "description": "类型，1用户与僵尸账户聊天 2有用户注册",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "typeId": {
+                    "description": "类型id",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "updated": {
+                    "description": "修改时间",
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
+        "models.AdminNoticeListContainer": {
+            "title": "BaseListContainer",
+            "type": "object",
+            "properties": {
+                "adminNoticeList": {
+                    "description": "管理员通知列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AdminNotice"
+                    }
+                },
+                "pageNum": {
+                    "description": "当前页数",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "pageTime": {
+                    "description": "查询时间",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "totalCount": {
+                    "description": "总数",
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
         "models.BaseListContainer": {
             "title": "BaseListContainer",
             "type": "object",
@@ -2355,6 +2501,10 @@
                     "description": "标签名称，多个,分隔",
                     "type": "string"
                 },
+                "type": {
+                    "description": "类型，0为普通用户，1为管理员，2为客服",
+                    "type": "string"
+                },
                 "uId": {
                     "description": "注册时间",
                     "type": "integer",
@@ -2404,6 +2554,10 @@
         {
             "name": "tag",
             "description": "用户模块\n"
+        },
+        {
+            "name": "adminNotice",
+            "description": "管理员通知模块\n"
         }
     ]
 }

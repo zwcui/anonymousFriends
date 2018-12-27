@@ -60,6 +60,11 @@ func init() {
 				&controllers.TagController{},
 			),
 		),
+		beego.NSNamespace("/adminNotice",
+			beego.NSInclude(
+				&controllers.AdminNoticeController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }

@@ -31,6 +31,7 @@ type User struct {
 	IsZombie			int				`description:"是否僵尸账户，1是0否" json:"isZombie"`
 	TagNames			string			`description:"标签名称" json:"tagNames"`
 	TagIds				string			`description:"标签id" json:"tagIds"`
+	Type				string			`description:"类型，0为普通用户，1为管理员" json:"type"`
 	Created           	int64  			`description:"注册时间" json:"created" xorm:"created"`
 	Updated           	int64  			`description:"修改时间" json:"updated" xorm:"updated"`
 	DeletedAt         	int64  			`description:"删除时间" json:"deleted" xorm:"deleted"`
@@ -95,6 +96,7 @@ type UserShort struct {
 	Latitude			float64			`description:"纬度" json:"latitude"`
 	TagNames			string			`description:"标签名称，多个,分隔" json:"tagNames"`
 	TagIds				string			`description:"标签id，多个,分隔" json:"tagIds"`
+	Type				string			`description:"类型，0为普通用户，1为管理员，2为客服" json:"type"`
 	Created           	int64  			`description:"注册时间" json:"created" xorm:"created"`
 	Updated           	int64  			`description:"修改时间" json:"updated" xorm:"updated"`
 	DeletedAt         	int64  			`description:"删除时间" json:"deleted" xorm:"deleted"`

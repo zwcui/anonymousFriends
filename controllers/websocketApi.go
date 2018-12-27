@@ -222,6 +222,45 @@ func handleUserChatMessage(socketMessage *models.SocketMessage, reply string, co
 	if err := websocket.Message.Send(UserSocketConnections[socketMessage.MessageReceiverUid].Conn, reply); err != nil {
 		util.Logger.Info("----handleUserChatMessage--转发 err:", err.Error())
 	}
+
+
+	//如果用户跟僵尸账户聊天，通知管理员登录僵尸账户聊天
+	var zombie models.User
+	base.DBEngine.Table("user").Where("u_id=?", socketMessage.MessageReceiverUid).Get(&zombie)
+	if zombie.IsZombie == 1 {
+		var user models.UserShort
+		base.DBEngine.Table("user").Where("u_id=?", socketMessage.MessageSenderUid).Get(&user)
+
+		var storedNotice models.AdminNotice
+		has, _ := base.DBEngine.Table("admin_notice").Where("type=1 and type_id=?", user.UId).Get(&storedNotice)
+		pushFlag := false
+		if has {
+			if storedNotice.Status == 1 || storedNotice.Status == 2 {
+				pushFlag = true
+			}
+			storedNotice.Content = "用户"+user.NickName+"(uId:"+strconv.FormatInt(user.UId, 10)+")与僵尸账户"+user.NickName+"(uId:"+strconv.FormatInt(user.UId, 10)+" phone:"+user.PhoneNumber+")聊天："+userMessage.Content
+			storedNotice.Status = 0
+			base.DBEngine.Table("admin_notice").Where("id=?", storedNotice.Id).Cols("status", "content").Update(&storedNotice)
+		} else {
+			storedNotice.Type = 1
+			storedNotice.TypeId = zombie.UId
+			storedNotice.Content = "用户"+user.NickName+"(uId:"+strconv.FormatInt(user.UId, 10)+")与僵尸账户"+user.NickName+"(uId:"+strconv.FormatInt(user.UId, 10)+" phone:"+user.PhoneNumber+")聊天："+userMessage.Content
+			storedNotice.Status = 0
+			base.DBEngine.Table("admin_notice").InsertOne(&storedNotice)
+			pushFlag = true
+		}
+
+		if pushFlag {
+			var adminList []models.UserShort
+			base.DBEngine.Table("user").Where("type=1").Find(&adminList)
+			var message models.Message
+			for _, admin := range adminList {
+				message.ReceiverUid = admin.UId
+				message.Content = storedNotice.Content
+				PushCommonMessageToUser(admin.UId, &message, "", 0, "")
+			}
+		}
+	}
 }
 
 

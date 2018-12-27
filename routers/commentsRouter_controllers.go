@@ -6,6 +6,20 @@ import (
 
 func init() {
 
+	beego.GlobalControllerRouter["anonymousFriends/controllers:AdminNoticeController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:AdminNoticeController"],
+		beego.ControllerComments{
+			Method: "GetAdminNoticeList",
+			Router: `/getAdminNoticeList`,
+			AllowHTTPMethods: []string{"get"},
+			Params: nil})
+
+	beego.GlobalControllerRouter["anonymousFriends/controllers:AdminNoticeController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:AdminNoticeController"],
+		beego.ControllerComments{
+			Method: "UpdateAdminNoticeStatus",
+			Router: `/updateAdminNoticeStatus`,
+			AllowHTTPMethods: []string{"patch"},
+			Params: nil})
+
 	beego.GlobalControllerRouter["anonymousFriends/controllers:CommentController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:CommentController"],
 		beego.ControllerComments{
 			Method: "AddComment",
