@@ -30,6 +30,10 @@ type User struct {
 	Longitude			float64			`description:"经度" json:"longitude"`
 	Latitude			float64			`description:"纬度" json:"latitude"`
 	IsZombie			int				`description:"是否僵尸账户，1是0否" json:"isZombie"`
+	ZombieLongitudeMax  float64			`description:"僵尸账户移动经度最大值，0为不限制" json:"zombieLongitudeMax"`
+	ZombieLongitudeMin  float64			`description:"僵尸账户移动经度最小值，0为不限制" json:"zombieLongitudeMin"`
+	ZombieLatitudeMax	float64			`description:"僵尸账户移动纬度最大值，0为不限制" json:"zombieLatitudeMax"`
+	ZombieLatitudeMin	float64			`description:"僵尸账户移动纬度最小值，0为不限制" json:"zombieLatitudeMin"`
 	TagNames			string			`description:"标签名称" json:"tagNames"`
 	TagIds				string			`description:"标签id" json:"tagIds"`
 	Type				string			`description:"类型，0为普通用户，1为管理员" json:"type"`

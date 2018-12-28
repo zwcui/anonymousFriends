@@ -537,7 +537,7 @@ func createZombieUser(user models.User, number int) []models.UserShort {
 		zombie.Province = user.Province
 		zombie.City = user.City
 		zombie.Area = user.Area
-		zombie.Longitude, zombie.Latitude = CalcZombiePositionByRangeMeter(user.Longitude, user.Latitude, 300)
+		zombie.Longitude, zombie.Latitude = CalcZombiePositionByRangeMeter(user.Longitude, user.Latitude, 0, 0,0 ,0 , 300)
 		base.DBEngine.Table("user").Where("u_id=?", zombie.UId).Cols("province", "city", "area", "longitude", "latitude").Update(&zombie)
 
 		user, _ := zombie.UsetToUserShort()
@@ -551,9 +551,32 @@ func createZombieUser(user models.User, number int) []models.UserShort {
 //在纬线上，经度每差1度，实际距离为111×cos(角)千米
 //300米范围随机加减
 //考虑不能移动的地方，如河海
-func CalcZombiePositionByRangeMeter(longitude float64, latitude float64, rangeMeter int) (float64, float64) {
-	zombieLongitudeChange := float64(util.GenerateRangeNum(0, rangeMeter))/1000000.0 * GetRandomChange()
-	zombieLatitudeChange := float64(util.GenerateRangeNum(0, rangeMeter))/1000000.0 * GetRandomChange()
+func CalcZombiePositionByRangeMeter(longitude float64, latitude float64, longitudeMax float64, longitudeMin float64, latitudeMax float64, latitudeMin float64, rangeMeter int) (float64, float64) {
+	//经度常识判断-180<longitude<180
+	if longitudeMax == 0 {
+		longitudeMax = 180
+	}
+	if longitudeMin == 0 {
+		longitudeMin = -180
+	}
+	//纬度常识判断-90<latitude<90
+	if latitudeMax == 0 {
+		latitudeMax = 90
+	}
+	if latitudeMin == 0 {
+		latitudeMin = -90
+	}
+	var zombieLongitudeChange float64
+	var zombieLatitudeChange float64
+	for count := 0; count < 100;count++  {
+		zombieLongitudeChange = float64(util.GenerateRangeNum(0, rangeMeter))/1000000.0 * GetRandomChange()
+		zombieLatitudeChange = float64(util.GenerateRangeNum(0, rangeMeter))/1000000.0 * GetRandomChange()
+		if longitude + zombieLongitudeChange >= longitudeMax || longitude + zombieLongitudeChange <= longitudeMin || latitude + zombieLatitudeChange >= latitudeMax || latitude + zombieLatitudeChange <= latitudeMin {
+			continue
+		} else {
+			break
+		}
+	}
 	return longitude + zombieLongitudeChange, latitude + zombieLatitudeChange
 }
 

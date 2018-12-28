@@ -21,14 +21,14 @@ const ZombieLimit = 200
 //按比例（1：1）选取进行更新位置
 func ZombieMoveTask(){
 	util.Logger.Info("定时任务：僵尸账户位置移动")
-	var zombieList []models.UserShort
+	var zombieList []models.User
 	base.DBEngine.Table("user").Where("is_zombie=1").And("status=1").And("longitude !=0 and latitude != 0").Asc("updated").Limit(50, 0).Find(&zombieList)
 
 	for _, zombie := range zombieList {
 		moveFlag := getRandomZombieMoveFlag()
 		if moveFlag == 1 {
 			//util.Logger.Info("定时任务：僵尸账户位置移动前-->"+strconv.FormatInt(zombie.UId, 10)+"："+strconv.FormatFloat(zombie.Longitude, 'f', 6, 64)+", "+strconv.FormatFloat(zombie.Latitude, 'f', 6, 64))
-			zombie.Longitude, zombie.Latitude = controllers.CalcZombiePositionByRangeMeter(zombie.Longitude, zombie.Latitude, 50)
+			zombie.Longitude, zombie.Latitude = controllers.CalcZombiePositionByRangeMeter(zombie.Longitude, zombie.Latitude, zombie.ZombieLongitudeMax, zombie.ZombieLongitudeMin, zombie.ZombieLatitudeMax, zombie.ZombieLatitudeMin, 50)
 			base.DBEngine.Table("user").Where("u_id=?", zombie.UId).Cols("longitude", "latitude").Update(&zombie)
 			//util.Logger.Info("定时任务：僵尸账户位置移动后-->"+strconv.FormatInt(zombie.UId, 10)+"："+strconv.FormatFloat(zombie.Longitude, 'f', 6, 64)+", "+strconv.FormatFloat(zombie.Latitude, 'f', 6, 64))
 		}

@@ -35,9 +35,14 @@ func init() {
 		throwZombieDriftBottle()
 	})
 
+	//每天检查特殊地址加僵尸账户
+	c.AddFunc("@every 24h", func() {
+		createZombieAtSpecialLocation()
+	})
 
-	//c.AddFunc("0 56 14 * * ", func() {
-	//	updateZombieNickName()
+
+	//c.AddFunc("0 54 16 * * ", func() {
+	//	createZombieAtSpecialLocation()
 	//})
 
 	//c.AddFunc("@every 1s", func() {

@@ -64,7 +64,7 @@ func GetRandomLocation(provinceId, cityId, areaId int64) (provinceName, cityName
 	if err != nil {
 		util.Logger.Info(area.AreaName + "  strconv.ParseFloat(centerLatitudeStr, 64) err:"+err.Error())
 	}
-	longitude, latitude = CalcZombiePositionByRangeMeter(centerLongitude, centerLatitude, 500)
+	longitude, latitude = CalcZombiePositionByRangeMeter(centerLongitude, centerLatitude, 0, 0, 0, 0, 500)
 
 	return province.AreaName, city.AreaName, area.AreaName, longitude, latitude
 }

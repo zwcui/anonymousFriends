@@ -178,6 +178,7 @@ func initDB(dbConfig databaseConfig){
 		new(models.Comment),
 		new(models.DriftBottle), new(models.ZombieDriftBottle),
 		new(models.Tag),
+		new(models.Location), new(models.SpecialLocation),
 		new(models.AdminNotice),
 		new(models.Role), new(models.UserRole))
 	if err != nil {
