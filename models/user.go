@@ -161,3 +161,7 @@ var ZombieMoveFlagRatio = []int{
 	1,
 	0,
 }
+
+var DefaulNickNames = []string{
+
+}

@@ -35,9 +35,9 @@ func init() {
 		throwZombieDriftBottle()
 	})
 
-	//每10分钟增加僵尸账户，位置随机
-	//c.AddFunc("0 0,36 17 * * ", func() {
-	//	createSuZhouZombie()
+
+	//c.AddFunc("0 45 14 * * ", func() {
+	//	createDefaultNickName()
 	//})
 
 	//c.AddFunc("@every 1s", func() {

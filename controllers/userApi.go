@@ -33,6 +33,7 @@ func (this *UserController) Prepare(){
 // @Param   needVeriCode    formData        string  		false       "是否需要验证码，需要为1，不需要为0"
 // @Param	gender			formData		int		  		false		"性别,1 男, 2 女"
 // @Param	birthday		formData		string  		false		"出生年月"
+// @Param	constellation	formData		string  		false		"星座"
 // @Param   system         	formData        int     		false       "系统类型 1:android 2:ios 3:h5"
 // @Param   deviceToken     formData    	string  		false       "deviceToken"
 // @Param   deviceModel     formData    	string  		false       "设备型号"
@@ -49,6 +50,7 @@ func (this *UserController) SignUp() {
 	password := this.MustString("password")
 	gender, _ := this.GetInt("gender", 2)
 	birthday := this.GetString("birthday", "")
+	constellation := this.GetString("constellation", "")
 	system, _ := this.GetInt("system", 0)
 	deviceToken := this.GetString("deviceToken", "")
 	deviceModel := this.GetString("deviceModel", "")
@@ -78,6 +80,7 @@ func (this *UserController) SignUp() {
 	user.PhoneNumber = phoneNumber
 	user.Gender = gender
 	user.Birthday = birthday
+	user.Constellation = constellation
 	user.Status = 1
 	hashedPassword, salt, err := util.EncryptPassword(password)
 	if err != nil {
@@ -208,6 +211,7 @@ func (this *UserController) GetUserAccountInfo() {
 // @Param	phoneNumber		formData		string  		false		"手机号"
 // @Param	gender			formData		int		  		false		"性别,1 男, 2 女"
 // @Param	birthday		formData		string  		false		"出生年月"
+// @Param	constellation	formData		string  		false		"星座"
 // @Param	tagNames		formData		string  		false		"标签名称，多个,分隔"
 // @Param	tagIds			formData		string  		false		"标签id，多个,分隔"
 // @Param	status			formData		string  		true		"在线状态，0离线，1在线，2隐身，3Q我吧"
@@ -219,6 +223,7 @@ func (this *UserController) UpdateUserInfo() {
 	nickName := this.GetString("nickName", "")
 	phoneNumber := this.GetString("phoneNumber", "")
 	birthday := this.GetString("birthday", "")
+	constellation := this.GetString("constellation", "")
 	tagNames := this.GetString("tagNames", "")
 	tagIds := this.GetString("tagIds", "")
 	gender, _ := this.GetInt("gender", 0)
@@ -255,6 +260,9 @@ func (this *UserController) UpdateUserInfo() {
 	if birthday != "" {
 		user.Birthday = birthday
 	}
+	if constellation != "" {
+		user.Constellation = constellation
+	}
 	if gender != 0 {
 		user.Gender = gender
 	}
@@ -266,7 +274,7 @@ func (this *UserController) UpdateUserInfo() {
 	}
 
 	user.Status = status
-	base.DBEngine.Table("user").Where("u_id=?", uId).Cols("avatar", "nick_name", "phone_number", "birthday", "gender", "status", "tag_names", "tag_ids").Update(&user)
+	base.DBEngine.Table("user").Where("u_id=?", uId).Cols("avatar", "nick_name", "phone_number", "birthday", "gender", "status", "tag_names", "tag_ids", "constellation").Update(&user)
 
 	userShort, _ := user.UsetToUserShort()
 	this.ReturnData = models.UserInfo{*userShort}

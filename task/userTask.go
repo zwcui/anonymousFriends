@@ -83,3 +83,14 @@ func createSuZhouZombie(){
 	}
 	util.Logger.Info("定时任务：增加僵尸账户，位置随机 finish")
 }
+
+func createDefaultNickName(){
+	util.Logger.Info("定时任务：增加默认昵称 start")
+	for _, nickName := range models.DefaulNickNames {
+		var defaultNickName models.DefaultNickName
+		defaultNickName.NickName = nickName
+		defaultNickName.Status = 0
+		base.DBEngine.Table("default_nick_name").InsertOne(&defaultNickName)
+	}
+	util.Logger.Info("定时任务：增加默认昵称 finish")
+}
