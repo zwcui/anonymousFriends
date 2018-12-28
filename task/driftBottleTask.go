@@ -40,7 +40,8 @@ func throwZombieDriftBottle(){
 		for _, zombieDriftBottle := range zombieDriftBottleList {
 			//随机一个僵尸
 			var zombie models.UserShort
-			randomSql := "SELECT * FROM user WHERE is_zombie=1 and u_id >= ((SELECT MAX(u_id) FROM user where is_zombie=1)-(SELECT MIN(u_id) FROM user where is_zombie=1)) * RAND() + (SELECT MIN(u_id) FROM user where is_zombie=1)  LIMIT 1"
+			//randomSql := "SELECT * FROM user WHERE is_zombie=1 and u_id >= ((SELECT MAX(u_id) FROM user where is_zombie=1)-(SELECT MIN(u_id) FROM user where is_zombie=1)) * RAND() + (SELECT MIN(u_id) FROM user where is_zombie=1)  LIMIT 1"
+			randomSql := "SELECT * FROM user WHERE is_zombie=1 and deleted_at is null order by RAND() LIMIT 1"
 			base.DBEngine.SQL(randomSql).Get(&zombie)
 
 			var driftBottle models.DriftBottle

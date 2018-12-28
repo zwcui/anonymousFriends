@@ -106,7 +106,8 @@ func (this *DriftBottleController) PickUpDriftBottle() {
 			return
 		}
 
-		randomSql := "SELECT * FROM drift_bottle WHERE bottle_id >= ((SELECT MAX(bottle_id) FROM drift_bottle)-(SELECT MIN(bottle_id) FROM drift_bottle)) * RAND() + (SELECT MIN(bottle_id) FROM drift_bottle)  LIMIT 1"
+		//randomSql := "SELECT * FROM drift_bottle WHERE bottle_id >= ((SELECT MAX(bottle_id) FROM drift_bottle)-(SELECT MIN(bottle_id) FROM drift_bottle)) * RAND() + (SELECT MIN(bottle_id) FROM drift_bottle)  LIMIT 1"
+		randomSql := "SELECT * FROM drift_bottle WHERE deleted_at is null and status=1 order by RAND() LIMIT 1"
 		base.DBEngine.SQL(randomSql).Get(&driftBottle)
 
 		driftBottle.ReceiverUid = uId
