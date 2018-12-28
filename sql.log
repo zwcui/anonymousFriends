@@ -1,5 +1,0 @@
-[xorm] [warn]  2018/12/28 16:55:35.159536 Table location column area_id db type is INT(20), struct type is BIGINT(20)
-[xorm] [warn]  2018/12/28 16:55:35.159575 Table location column level db type is TINYINT(4), struct type is INT
-[xorm] [warn]  2018/12/28 16:55:35.159581 Table location Column level db default is -1, struct default is 
-[xorm] [warn]  2018/12/28 16:55:35.159586 Table location column parent_id db type is INT(20), struct type is BIGINT(20)
-[xorm] [warn]  2018/12/28 16:55:35.159590 Table location Column parent_id db default is -1, struct default is 

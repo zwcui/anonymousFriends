@@ -27,6 +27,7 @@ type SpecialLocation struct {
 	Longitude				float64				`description:"经度" json:"longitude"`
 	Latitude				float64				`description:"纬度" json:"latitude"`
 	Status					int					`description:"状态，1正常，0不使用" json:"status"`
+	RangeMemter				float64				`description:"范围，单位米" json:"rangeMemter"`
 	Created           		int64  				`description:"注册时间" json:"created" xorm:"created"`
 	Updated           		int64  				`description:"修改时间" json:"updated" xorm:"updated"`
 	DeletedAt         		int64  				`description:"删除时间" json:"deleted" xorm:"deleted"`

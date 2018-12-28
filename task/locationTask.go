@@ -13,8 +13,6 @@ import (
 	"github.com/satori/go.uuid"
 )
 
-//公里范围
-const AreaRange = 1000.0
 //特殊区域人数下限
 const SpecialLocationUserNum = 10
 
@@ -27,10 +25,10 @@ func createZombieAtSpecialLocation(){
 		specialLocationList = make([]models.SpecialLocation, 0)
 	}
 	for _, specialLocation := range specialLocationList {
-		longitudeMax := specialLocation.Longitude + AreaRange / 1000000.0
-		longitudeMin := specialLocation.Longitude - AreaRange / 1000000.0
-		latitudeMax := specialLocation.Latitude + AreaRange / 1000000.0
-		latitudeMin := specialLocation.Latitude - AreaRange / 1000000.0
+		longitudeMax := specialLocation.Longitude + specialLocation.RangeMemter / 1000000.0
+		longitudeMin := specialLocation.Longitude - specialLocation.RangeMemter / 1000000.0
+		latitudeMax := specialLocation.Latitude + specialLocation.RangeMemter / 1000000.0
+		latitudeMin := specialLocation.Latitude - specialLocation.RangeMemter / 1000000.0
 
 
 		userNum, _ := base.DBEngine.Table("user").Where("longitude >= ? and longitude <= ? and latitude >= ? and latitude <= ?", longitudeMin, longitudeMax, latitudeMin, latitudeMax).Count(new(models.User))
@@ -54,7 +52,7 @@ func createZombieAtSpecialLocation(){
 				zombie.ZombieLongitudeMin = longitudeMin
 				zombie.ZombieLatitudeMax = latitudeMax
 				zombie.ZombieLatitudeMin = latitudeMin
-				zombie.Longitude, zombie.Latitude = controllers.CalcZombiePositionByRangeMeter(specialLocation.Longitude, specialLocation.Latitude, zombie.ZombieLongitudeMax, zombie.ZombieLongitudeMin, zombie.ZombieLatitudeMax, zombie.ZombieLatitudeMin, int(AreaRange))
+				zombie.Longitude, zombie.Latitude = controllers.CalcZombiePositionByRangeMeter(specialLocation.Longitude, specialLocation.Latitude, zombie.ZombieLongitudeMax, zombie.ZombieLongitudeMin, zombie.ZombieLatitudeMax, zombie.ZombieLatitudeMin, int(specialLocation.RangeMemter))
 				base.DBEngine.Table("user").InsertOne(&zombie)
 			}
 		}
