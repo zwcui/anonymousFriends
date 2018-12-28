@@ -36,8 +36,8 @@ func init() {
 	})
 
 
-	//c.AddFunc("0 45 14 * * ", func() {
-	//	createDefaultNickName()
+	//c.AddFunc("0 56 14 * * ", func() {
+	//	updateZombieNickName()
 	//})
 
 	//c.AddFunc("@every 1s", func() {

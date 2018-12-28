@@ -94,3 +94,14 @@ func createDefaultNickName(){
 	}
 	util.Logger.Info("定时任务：增加默认昵称 finish")
 }
+
+func updateZombieNickName(){
+	util.Logger.Info("定时任务：更新僵尸账户昵称 start")
+	var zombibeList []models.UserShort
+	base.DBEngine.Table("user").Where("is_zombie=1 and nick_name like '匿名%'").Find(&zombibeList)
+	for _, zombie := range zombibeList {
+		zombie.NickName = controllers.GetDefaultNickName()
+		base.DBEngine.Table("user").Where("u_id=?", zombie.UId).Cols("nick_name").Update(&zombie)
+	}
+	util.Logger.Info("定时任务：更新僵尸账户昵称 finish")
+}
