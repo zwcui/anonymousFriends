@@ -565,9 +565,15 @@ func GetDefaultNickName() string {
 }
 
 //获得随机性别
-func GetRandomBirthday() string {
-	sIndex := rand.Intn(len(models.DefaultBirthday))
-	return models.DefaultBirthday[sIndex]
+func GetRandomBirthday() (birthday string) {
+	year := util.GenerateRangeNum(models.DefaultBirthdayMin, models.DefaultBirthdayMax)
+	month := util.GenerateRangeNum(1, 12)
+	if month < 10 {
+		birthday = strconv.Itoa(year)+"0"+strconv.Itoa(month)
+	} else {
+		birthday = strconv.Itoa(year)+strconv.Itoa(month)
+	}
+	return birthday
 }
 
 //获得随机性别和头像

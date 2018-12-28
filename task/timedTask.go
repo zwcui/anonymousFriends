@@ -41,6 +41,9 @@ func init() {
 	//})
 
 	//c.AddFunc("@every 1s", func() {
+		//birthday := controllers.GetRandomBirthday()
+		//util.Logger.Info(birthday)
+
 	//	provinceName, cityName, areaName, longitude, latitude := controllers.GetRandomLocation(810, 849, 0)
 	//	util.Logger.Info(provinceName+" "+cityName+" "+areaName+" "+strconv.FormatFloat(longitude, 'f', 6, 64)+" "+strconv.FormatFloat(latitude, 'f', 6, 64))
 	//})

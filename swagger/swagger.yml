@@ -1738,6 +1738,9 @@ definitions:
       city:
         description: 市
         type: string
+      constellation:
+        description: 星座
+        type: string
       created:
         description: 注册时间
         type: integer

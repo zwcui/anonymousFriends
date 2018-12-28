@@ -18,6 +18,7 @@ type User struct {
 	Avatar				string			`description:"头像" json:"avatar"`
 	PhoneNumber			string			`description:"手机号" json:"phoneNumber"`
 	NickName 			string			`description:"昵称" json:"nickName" xorm:"notnull "`		//string类型默认映射为varchar(255)
+	Constellation 		string			`description:"星座" json:"constellation" xorm:"notnull "`
 	Password 			string			`description:"密码" json:"password" xorm:"notnull"`
 	Salt	 			string			`description:"密码" json:"salt" xorm:"notnull"`
 	Gender        		int    			`description:"性别,1 男, 2 女" json:"gender" xorm:"notnull default 0"`
@@ -86,6 +87,7 @@ type UserShort struct {
 	Avatar				string			`description:"头像" json:"avatar"`
 	PhoneNumber			string			`description:"手机号" json:"phoneNumber"`
 	NickName 			string			`description:"昵称" json:"nickName" xorm:"notnull "`		//string类型默认映射为varchar(255)
+	Constellation 		string			`description:"星座" json:"constellation" xorm:"notnull "`
 	Gender        		int    			`description:"性别,1 男, 2 女" json:"gender" xorm:"notnull default 0"`
 	Birthday        	string			`description:"出生年月" json:"birthday"`
 	Status	        	int				`description:"在线状态，0离线，1在线，2隐身" json:"status"`
@@ -141,18 +143,8 @@ func (u *User) UsetToUserShort() (userDTO *UserShort, error error) {
 
 //--------------默认参数----------------
 
-var DefaultBirthday = []string{
-	"199301",
-	"199503",
-	"199002",
-	"198808",
-	"198011",
-	"198606",
-	"198209",
-	"198910",
-	"199011",
-	"199412",
-}
+var DefaultBirthdayMin = 1980
+var DefaultBirthdayMax = 1999
 
 var DefaultDirection = []float64{
 	1.0,
