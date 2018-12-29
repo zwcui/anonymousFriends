@@ -13,9 +13,6 @@ import (
 	"github.com/satori/go.uuid"
 )
 
-//特殊区域人数下限
-const SpecialLocationUserNum = 10
-
 //特殊地址加僵尸账户
 func createZombieAtSpecialLocation(){
 	util.Logger.Info("定时任务：特殊位置创建僵尸 start")
@@ -32,8 +29,8 @@ func createZombieAtSpecialLocation(){
 
 
 		userNum, _ := base.DBEngine.Table("user").Where("longitude >= ? and longitude <= ? and latitude >= ? and latitude <= ?", longitudeMin, longitudeMax, latitudeMin, latitudeMax).Count(new(models.User))
-		if userNum < SpecialLocationUserNum {
-			for i:=0; i< int(SpecialLocationUserNum-userNum);i++ {
+		if int(userNum) < specialLocation.UserNumber {
+			for i:=0; i< specialLocation.UserNumber-int(userNum);i++ {
 				var zombie models.User
 				//zombie.NickName = controllers.GetDefaultNickName()
 				randomUUId, _ := uuid.NewV4()

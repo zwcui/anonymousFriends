@@ -309,6 +309,40 @@ paths:
         "200":
           schema:
             $ref: '#/definitions/models.FriendListContainer'
+  /friend/getFriendRequestList:
+    get:
+      tags:
+      - friend
+      description: 获取好友请求列表
+      operationId: FriendController.获取好友请求列表
+      parameters:
+      - in: query
+        name: uId
+        description: uId
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: pageNum
+        description: page num start from 1
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: pageTime
+        description: page time should be empty when pagenum == 1
+        required: true
+        type: integer
+        format: int64
+      - in: query
+        name: pageSize
+        description: page size default is 15
+        type: integer
+        format: int64
+      responses:
+        "200":
+          schema:
+            $ref: '#/definitions/models.FriendRequestListContainer'
   /friend/handleFriend:
     patch:
       tags:
@@ -1397,6 +1431,102 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/models.UserShort'
+      pageNum:
+        description: 当前页数
+        type: integer
+        format: int64
+      pageTime:
+        description: 查询时间
+        type: integer
+        format: int64
+      totalCount:
+        description: 总数
+        type: integer
+        format: int64
+  models.FriendRequest:
+    title: FriendRequest
+    type: object
+    properties:
+      created:
+        description: 注册时间
+        type: integer
+        format: int64
+      deleted:
+        description: 删除时间
+        type: integer
+        format: int64
+      id:
+        description: id
+        type: integer
+        format: int64
+      receiverUid:
+        description: 接收人
+        type: integer
+        format: int64
+      rejectReason:
+        description: 拒绝原因
+        type: integer
+        format: int64
+      senderUid:
+        description: 发送人
+        type: integer
+        format: int64
+      status:
+        description: 状态，0未处理请求，1已接收请求，2已拒绝请求
+        type: integer
+        format: int64
+      updated:
+        description: 修改时间
+        type: integer
+        format: int64
+  models.FriendRequestInfo:
+    title: FriendRequest
+    type: object
+    properties:
+      created:
+        description: 注册时间
+        type: integer
+        format: int64
+      deleted:
+        description: 删除时间
+        type: integer
+        format: int64
+      id:
+        description: id
+        type: integer
+        format: int64
+      receiverUid:
+        description: 接收人
+        type: integer
+        format: int64
+      rejectReason:
+        description: 拒绝原因
+        type: integer
+        format: int64
+      senderNickName:
+        description: 申请人昵称
+        type: string
+      senderUid:
+        description: 发送人
+        type: integer
+        format: int64
+      status:
+        description: 状态，0未处理请求，1已接收请求，2已拒绝请求
+        type: integer
+        format: int64
+      updated:
+        description: 修改时间
+        type: integer
+        format: int64
+  models.FriendRequestListContainer:
+    title: BaseListContainer
+    type: object
+    properties:
+      friendRequestList:
+        description: 好友申请列表
+        type: array
+        items:
+          $ref: '#/definitions/models.FriendRequestInfo'
       pageNum:
         description: 当前页数
         type: integer

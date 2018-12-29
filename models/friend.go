@@ -35,13 +35,21 @@ type Friend struct {
 
 //----------------结构体-----------------
 
-
-
 type FriendListContainer struct {
 	BaseListContainer
 	FriendList 					[]UserShort 	`description:"好友列表" json:"friendList"`
 }
 
+
+type FriendRequestInfo struct {
+	FriendRequest								`description:"社交动态" xorm:"extends"`
+	SenderNickName				string			`description:"申请人昵称" json:"senderNickName"`
+}
+
+type FriendRequestListContainer struct {
+	BaseListContainer
+	FriendRequestInfoList 		[]FriendRequestInfo 	`description:"好友申请列表" json:"friendRequestList"`
+}
 
 
 

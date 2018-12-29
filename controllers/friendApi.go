@@ -22,6 +22,7 @@ func (this *FriendController) Prepare(){
 		{"/makeFriends", "post"},
 		{"/handleMakeFriendsRequest", "patch"},
 		{"/getFriendList", "get"},
+		{"/getFriendRequestList", "get"},
 		{"/handleFriend", "patch"}}
 	this.bathAuth()
 }
@@ -220,6 +221,47 @@ func (this *FriendController) HandleFriend() {
 	this.ReturnData = "success"
 }
 
+// @Title 获取好友请求列表
+// @Description 获取好友请求列表
+// @Param	uId					query 			int64			true		"uId"
+// @Param	pageNum				query 			int				true		"page num start from 1"
+// @Param	pageTime			query 			int64			true		"page time should be empty when pagenum == 1"
+// @Param	pageSize			query 			int				false		"page size default is 15"
+// @Success 200 {object} models.FriendRequestListContainer
+// @router /getFriendRequestList [get]
+func (this *FriendController) GetFriendRequestList() {
+	uId := this.MustInt64("uId")
+	pageNum := this.MustInt("pageNum")
+	pageTime, _ := this.GetInt64("pageTime", util.UnixOfBeijingTime())
+	pageSize := this.GetPageSize("pageSize")
 
+	totalSql := "select count(1) from friend_request where deleted_at is null and receiver_uid='"+strconv.FormatInt(uId, 10)+"' "
+	dataSql := "select friend_request.*, user.nick_name as sender_nick_name from friend_request left join user on friend_request.sender_uid=user.u_id where user.u_id is not null and friend_request.deleted_at is null and friend_request.receiver_uid='"+strconv.FormatInt(uId, 10)+"' "
+	dataSql += " order by friend_request.created desc "
+	dataSql += " limit "+strconv.Itoa(pageSize*(pageNum-1))+" , "+strconv.Itoa(pageSize)
+
+	total, totalErr := base.DBEngine.SQL(totalSql).Count(new(models.FriendRequest))
+	if totalErr != nil {
+		util.Logger.Info("----totalErr---"+totalErr.Error())
+		this.ReturnData = util.GenerateAlertMessage(models.CommonError100)
+		return
+	}
+
+	var friendRequestList []models.FriendRequestInfo
+	if total > 0 {
+		err := base.DBEngine.SQL(dataSql).Find(&friendRequestList)
+		if err != nil {
+			util.Logger.Info("----err---"+err.Error())
+			this.ReturnData = util.GenerateAlertMessage(models.CommonError100)
+			return
+		}
+	}
+
+	if friendRequestList == nil {
+		friendRequestList = make([]models.FriendRequestInfo, 0)
+	}
+
+	this.ReturnData = models.FriendRequestListContainer{models.BaseListContainer{total, pageNum, pageTime}, friendRequestList}
+}
 
 

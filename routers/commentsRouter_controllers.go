@@ -83,6 +83,13 @@ func init() {
 			AllowHTTPMethods: []string{"patch"},
 			Params: nil})
 
+	beego.GlobalControllerRouter["anonymousFriends/controllers:FriendController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:FriendController"],
+		beego.ControllerComments{
+			Method: "GetFriendRequestList",
+			Router: `/getFriendRequestList`,
+			AllowHTTPMethods: []string{"get"},
+			Params: nil})
+
 	beego.GlobalControllerRouter["anonymousFriends/controllers:MessageController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:MessageController"],
 		beego.ControllerComments{
 			Method: "Post",
