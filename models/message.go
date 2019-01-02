@@ -32,7 +32,7 @@ type Message struct {
 	ActionUrl   		string 			`description:"跳转url" json:"actionUrl" xorm:"text"`
 	Content     		string 			`description:"内容" json:"content"`
 	Detail      		string 			`description:"详情" json:"detail"`
-	Type        		int    			`description:"消息类型 1:好友请求消息 2:评论回复消息 3:漂流瓶回复消息 " json:"type" xorm:"index(msgTypeUid)"`
+	Type        		int    			`description:"消息类型 1:好友请求消息 2:评论回复消息 3:漂流瓶回复消息 4:共享位置请求消息 " json:"type" xorm:"index(msgTypeUid)"`
 	Created     		int64  			`description:"创建时间" json:"created" xorm:"created"`
 	DeletedAt   		int64  			`description:"删除时间" json:"-" xorm:"deleted"`
 }
@@ -80,6 +80,8 @@ const (
 
 	CommentOnSocialDynamics = "您收到一个朋友圈评论~"
 	CommentOnDriftBottle	= "您收到一个漂流瓶回复~"
+
+	SharePositionRequest	= "正在向您发起位置共享，请点击查看~"
 )
 
 //每次接口获取未读消息的条数

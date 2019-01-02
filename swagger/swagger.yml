@@ -615,6 +615,51 @@ paths:
       responses:
         "200":
           description: '{string} success'
+  /sharePosition/getSharePositionRequest:
+    get:
+      tags:
+      - sharePosition
+      description: 查看位置共享请求
+      operationId: SharePositionController.查看位置共享请求
+      parameters:
+      - in: formData
+        name: uId
+        description: 用户id
+        required: true
+        type: integer
+        format: int64
+      - in: formData
+        name: groupId
+        description: 组id
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          schema:
+            $ref: '#/definitions/models.SharePositionInfoContainer'
+  /sharePosition/sendSharePositionRequest:
+    post:
+      tags:
+      - sharePosition
+      description: 发送位置共享请求
+      operationId: SharePositionController.发送位置共享请求
+      parameters:
+      - in: formData
+        name: uId
+        description: 用户id
+        required: true
+        type: integer
+        format: int64
+      - in: formData
+        name: groupId
+        description: 组id
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: '{string} success'
   /socialDynamics/deleteSocialDynamic:
     delete:
       tags:
@@ -1524,6 +1569,9 @@ definitions:
         description: 拒绝原因
         type: integer
         format: int64
+      senderAvatar:
+        description: 申请人头像
+        type: string
       senderNickName:
         description: 申请人昵称
         type: string
@@ -1602,6 +1650,89 @@ definitions:
       group:
         $ref: '#/definitions/models.Group'
         description: 聊天组
+  models.SharePositionGroup:
+    title: SharePositionGroup
+    type: object
+    properties:
+      created:
+        description: 创建时间
+        type: integer
+        format: int64
+      deleted:
+        description: 删除时间
+        type: integer
+        format: int64
+      groupId:
+        description: 聊天组id
+        type: integer
+        format: int64
+      id:
+        description: 记录id
+        type: integer
+        format: int64
+      originator:
+        description: 发起人
+        type: integer
+        format: int64
+      remark:
+        description: 备注
+        type: string
+      status:
+        description: 状态，0等待接收，1进行中，2已关闭
+        type: integer
+        format: int64
+      updated:
+        description: 修改时间
+        type: integer
+        format: int64
+  models.SharePositionInfo:
+    title: SharePositionGroup
+    type: object
+    properties:
+      created:
+        description: 创建时间
+        type: integer
+        format: int64
+      deleted:
+        description: 删除时间
+        type: integer
+        format: int64
+      groupId:
+        description: 聊天组id
+        type: integer
+        format: int64
+      id:
+        description: 记录id
+        type: integer
+        format: int64
+      originator:
+        description: 发起人
+        type: integer
+        format: int64
+      remark:
+        description: 备注
+        type: string
+      senderAvatar:
+        description: 申请人头像
+        type: string
+      senderNickName:
+        description: 申请人昵称
+        type: string
+      status:
+        description: 状态，0等待接收，1进行中，2已关闭
+        type: integer
+        format: int64
+      updated:
+        description: 修改时间
+        type: integer
+        format: int64
+  models.SharePositionInfoContainer:
+    title: SharePositionInfoContainer
+    type: object
+    properties:
+      sharePositionInfo:
+        $ref: '#/definitions/models.SharePositionInfo'
+        description: 登录用户信息
   models.SignInUser:
     title: SignInUser
     type: object
@@ -1995,3 +2126,6 @@ tags:
 - name: adminNotice
   description: |
     管理员通知模块
+- name: sharePosition
+  description: |
+    共享地理位置模块

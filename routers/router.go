@@ -65,6 +65,11 @@ func init() {
 				&controllers.AdminNoticeController{},
 			),
 		),
+		beego.NSNamespace("/sharePosition",
+			beego.NSInclude(
+				&controllers.SharePositionController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }

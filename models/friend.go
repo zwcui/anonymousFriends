@@ -44,6 +44,7 @@ type FriendListContainer struct {
 type FriendRequestInfo struct {
 	FriendRequest								`description:"社交动态" xorm:"extends"`
 	SenderNickName				string			`description:"申请人昵称" json:"senderNickName"`
+	SenderAvatar				string			`description:"申请人头像" json:"senderAvatar"`
 }
 
 type FriendRequestListContainer struct {

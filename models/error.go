@@ -30,7 +30,10 @@ const (
 	SocialDynamicsError101		= "SocialDynamics101###该动态包含敏感词"
 	SocialDynamicsError102		= "SocialDynamics102###该动态位置信息包含敏感词"
 
-	DriftBottleError100 = "DriftBottleError100###该瓶子不存在"
+	DriftBottleError100 	= "DriftBottleError100###该瓶子不存在"
+
+	SharePositionError100 	= "SharePositionError100###现在有正在进行中的位置共享哦"
+
 
 )
 

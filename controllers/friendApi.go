@@ -236,7 +236,7 @@ func (this *FriendController) GetFriendRequestList() {
 	pageSize := this.GetPageSize("pageSize")
 
 	totalSql := "select count(1) from friend_request where deleted_at is null and receiver_uid='"+strconv.FormatInt(uId, 10)+"' and exists(select 1 from user where user.u_id=friend_request.sender_uid and user.deleted_at is null) "
-	dataSql := "select friend_request.*, user.nick_name as sender_nick_name from friend_request left join user on friend_request.sender_uid=user.u_id where user.u_id is not null and friend_request.deleted_at is null and friend_request.receiver_uid='"+strconv.FormatInt(uId, 10)+"' "
+	dataSql := "select friend_request.*, user.nick_name as sender_nick_name, user.avatar as sender_avatar from friend_request left join user on friend_request.sender_uid=user.u_id where user.u_id is not null and friend_request.deleted_at is null and friend_request.receiver_uid='"+strconv.FormatInt(uId, 10)+"' "
 	dataSql += " order by friend_request.created desc "
 	dataSql += " limit "+strconv.Itoa(pageSize*(pageNum-1))+" , "+strconv.Itoa(pageSize)
 
