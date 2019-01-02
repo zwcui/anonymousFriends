@@ -452,6 +452,10 @@ paths:
         type: integer
         format: int64
       - in: formData
+        name: groupName
+        description: 聊天话题，群聊名称
+        type: string
+      - in: formData
         name: uId1
         description: 聊天人1
         required: true
@@ -1813,7 +1817,7 @@ definitions:
         description: content
         type: string
       contentType:
-        description: 消息内容类型 0:文本 1:图片 2:语音 3:视频
+        description: 消息内容类型 0:文本 1:图片 2:语音 3:视频 4:位置，经纬度，英文逗号,隔开
         type: integer
         format: int64
       fromNickName:

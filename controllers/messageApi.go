@@ -61,6 +61,7 @@ func (this *MessageController) Post() {
 // @Description 加入聊天组，包括一对一和群聊
 // @Param	groupId				formData		int64	  		false		"聊天组id"
 // @Param	groupType			formData		int		  		true		"组类型 1:一对一 2:一对多"
+// @Param	groupName			formData		string	  		false		"聊天话题，群聊名称"
 // @Param	uId1				formData		int64  			true		"聊天人1"
 // @Param	uId2				formData		int64  			false		"聊天人2，一对一时必传"
 // @Success 200 {object} models.GroupInfo
@@ -68,6 +69,7 @@ func (this *MessageController) Post() {
 func (this *MessageController) AddGroup() {
 	groupId, _ := this.GetInt64("groupId", 0)
 	groupType := this.MustInt("groupType")
+	groupName := this.GetString("groupName")
 	uId1 := this.MustInt64("uId1")
 	uId2, _ := this.GetInt64("uId2", 0)
 
@@ -76,9 +78,14 @@ func (this *MessageController) AddGroup() {
 	if groupId == 0 {
 		addGroupFlag = true
 		group.GroupType = groupType
+		group.GroupName = groupName
 		base.DBEngine.Table("group").InsertOne(&group)
 	} else {
 		base.DBEngine.Table("group").Where("group_id=?", groupId).Get(&group)
+		if group.GroupName != groupName {
+			group.GroupName = groupName
+			base.DBEngine.Table("group").Where("group_id=?", groupId).Cols("group_name").Update(&group)
+		}
 	}
 
 	if addGroupFlag {
