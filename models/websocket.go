@@ -26,12 +26,14 @@ type HeartBeatSocketMessage struct {
 	ChangeFlag				int					`description:"是否需要变更，1是0否" json:"changeFlag"`
 }
 
-//聊天结构体，存入mongodb结构体
+//聊天结构体
 type UserChatSocketMessage struct {
 	FromNickName  			string 	 			`description:"fromNickName" json:"fromNickName" `
 	FromUid       			int64 	 			`description:"fromUid" json:"fromUid" `
+	FromAvatar     			string 	 			`description:"fromAvatar" json:"fromAvatar" `
 	ToNickName         		string 	 			`description:"toNickName" json:"toNickName" `
 	ToUid         			int64 	 			`description:"toUid" json:"toUid" `
+	ToAvatar     			string 	 			`description:"toAvatar" json:"toAvatar" `
 	GroupId           		int64	  			`description:"groupId" json:"groupId" `
 	GroupType        		int    				`description:"组类型 1:一对一 2:一对多 " json:"groupType"`
 	Content           		string  			`description:"content" json:"content" `
@@ -44,6 +46,9 @@ type UserChatSocketMessage struct {
 type RefreshSocketMessage struct {
 	Position				int    				`description:"刷新位置 1首页 " json:"position"`
 }
+
+
+//--------------------
 
 //socket签名key
 const SOCKET_MESSAGE_SIGN_KEY string = "anonymousfriends123socketmessage"

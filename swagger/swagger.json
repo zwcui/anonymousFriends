@@ -680,6 +680,32 @@
                 }
             }
         },
+        "/message/getUnreadUserChatMessageList": {
+            "get": {
+                "tags": [
+                    "message"
+                ],
+                "description": "获取离线消息",
+                "operationId": "MessageController.获取离线消息",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "uId",
+                        "description": "uId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "schema": {
+                            "$ref": "#/definitions/models.GroupInfo"
+                        }
+                    }
+                }
+            }
+        },
         "/public/sendSocketMessage": {
             "post": {
                 "tags": [
@@ -2226,6 +2252,16 @@
                     "type": "integer",
                     "format": "int64"
                 },
+                "receiverUid": {
+                    "description": "注册时间",
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "senderUid": {
+                    "description": "注册时间",
+                    "type": "integer",
+                    "format": "int64"
+                },
                 "updated": {
                     "description": "修改时间",
                     "type": "integer",
@@ -2561,6 +2597,10 @@
                     "type": "integer",
                     "format": "int64"
                 },
+                "fromAvatar": {
+                    "description": "fromAvatar",
+                    "type": "string"
+                },
                 "fromNickName": {
                     "description": "fromNickName",
                     "type": "string"
@@ -2586,6 +2626,10 @@
                 },
                 "imageWidth": {
                     "description": "图片宽度,客户端根据这个显示图片宽度",
+                    "type": "string"
+                },
+                "toAvatar": {
+                    "description": "toAvatar",
                     "type": "string"
                 },
                 "toNickName": {

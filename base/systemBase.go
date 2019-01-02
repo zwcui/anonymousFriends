@@ -180,7 +180,8 @@ func initDB(dbConfig databaseConfig){
 		new(models.Tag),
 		new(models.Location), new(models.SpecialLocation),
 		new(models.AdminNotice),
-		new(models.SharePositionMember),
+		new(models.SharePositionGroup), new(models.SharePositionMember),
+		new(models.UserUnsentChatMessage),
 		new(models.Role), new(models.UserRole))
 	if err != nil {
 		panic("同步表结构失败! err:"+err.Error())

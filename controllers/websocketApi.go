@@ -209,18 +209,49 @@ func handleUserChatMessage(socketMessage *models.SocketMessage, reply string, co
 		return
 	}
 
+	var userStoreMessage models.UserChatSocketMessage
+	mysqlStoredFlag := false
+
+	receiverSocketConnection, ok := UserSocketConnections[socketMessage.MessageReceiverUid]
+	if ok {
+		//转发
+		if err := websocket.Message.Send(receiverSocketConnection.Conn, reply); err != nil {
+			util.Logger.Info("----handleUserChatMessage--转发 err:", err.Error())
+			mysqlStoredFlag = true
+		} else {
+			mysqlStoredFlag = false
+		}
+	} else {
+		mysqlStoredFlag = true
+	}
+
 	//存入mongoDB
 	session, mongoDB := base.MongoDB()
 	defer session.Close()
 	c := mongoDB.C("userChatMessage")
-	err = c.Insert(&userMessage)
+	err = c.Insert(&userStoreMessage)
 	if err != nil {
 		util.Logger.Info("Insert err:"+err.Error())
 	}
 
-	//转发
-	if err := websocket.Message.Send(UserSocketConnections[socketMessage.MessageReceiverUid].Conn, reply); err != nil {
-		util.Logger.Info("----handleUserChatMessage--转发 err:", err.Error())
+	//未读消息存mysql
+	if mysqlStoredFlag {
+		var userUnreadChatMessage models.UserUnsentChatMessage
+		userUnreadChatMessage.FromNickName = userMessage.FromNickName
+		userUnreadChatMessage.FromUid = userMessage.FromUid
+		userUnreadChatMessage.FromAvatar = userMessage.FromAvatar
+		userUnreadChatMessage.ToNickName = userMessage.ToNickName
+		userUnreadChatMessage.ToUid = userMessage.ToUid
+		userUnreadChatMessage.ToAvatar = userMessage.ToAvatar
+		userUnreadChatMessage.GroupId = userMessage.GroupId
+		userUnreadChatMessage.GroupType = userMessage.GroupType
+		userUnreadChatMessage.Content = userMessage.Content
+		userUnreadChatMessage.ContentType = userMessage.ContentType
+		userUnreadChatMessage.ImageWidth = userMessage.ImageWidth
+		userUnreadChatMessage.ImageHeight = userMessage.ImageHeight
+		userUnreadChatMessage.IsSent = 0
+		userUnreadChatMessage.Created = util.UnixOfBeijingTime()
+		base.DBEngine.Table("").InsertOne(&userUnreadChatMessage)
 	}
 
 

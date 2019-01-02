@@ -5,6 +5,7 @@ import (
 	"anonymousFriends/models"
 	"anonymousFriends/util"
 	"gopkg.in/mgo.v2/bson"
+	"strconv"
 )
 
 //消息模块
@@ -34,7 +35,7 @@ func (this *MessageController) Post() {
 
 	session, mongoDB := base.MongoDB()
 	defer session.Close()
-	c := mongoDB.C("message")
+	c := mongoDB.C("userChatMessage")
 	err := c.Insert(&models.UserChatSocketMessage{})
 	if err != nil {
 		util.Logger.Info("Insert err:"+err.Error())
@@ -73,13 +74,18 @@ func (this *MessageController) AddGroup() {
 	uId1 := this.MustInt64("uId1")
 	uId2, _ := this.GetInt64("uId2", 0)
 
-	addGroupFlag := false
+	addMemberFlag := false
 	var group models.Group
 	if groupId == 0 {
-		addGroupFlag = true
-		group.GroupType = groupType
-		group.GroupName = groupName
-		base.DBEngine.Table("group").InsertOne(&group)
+		hasStoredGroup, _ := base.DBEngine.Table("group").Where("((sender_uid=? and receiver_uid=?) or (sender_uid=? and receiver_uid=?))", uId1, uId2, uId2, uId1).Get(&group)
+		if !hasStoredGroup {
+			group.GroupType = groupType
+			group.GroupName = groupName
+			group.SenderUid = uId1
+			group.ReceiverUid = uId2
+			base.DBEngine.Table("group").InsertOne(&group)
+			addMemberFlag = true
+		}
 	} else {
 		base.DBEngine.Table("group").Where("group_id=?", groupId).Get(&group)
 		if group.GroupName != groupName {
@@ -88,7 +94,7 @@ func (this *MessageController) AddGroup() {
 		}
 	}
 
-	if addGroupFlag {
+	if addMemberFlag {
 		hasMember1, _ := base.DBEngine.Table("member").Where("group_id=? and u_id=?", group.GroupId, uId1).Get(new(models.Member))
 		if !hasMember1 {
 			var member1 models.Member
@@ -104,20 +110,41 @@ func (this *MessageController) AddGroup() {
 			member2.UId = uId2
 			base.DBEngine.Table("member").InsertOne(&member2)
 		}
-	} else {
-		hasMember1, _ := base.DBEngine.Table("member").Where("group_id=? and u_id=?", group.GroupId, uId1).Get(new(models.Member))
-		if !hasMember1 {
-			var member1 models.Member
-			member1.GroupId = group.GroupId
-			member1.UId = uId1
-			base.DBEngine.Table("member").InsertOne(&member1)
-		}
 	}
 
 	this.ReturnData = models.GroupInfo{group}
 }
 
+// @Title 获取离线消息
+// @Description 获取离线消息
+// @Param	uId					formData		int64  			true		"uId"
+// @Success 200 {object} models.GroupInfo
+// @router /getUnreadUserChatMessageList [get]
+func (this *MessageController) GetUnreadUserChatMessageList() {
+	uId := this.MustInt64("uId")
 
+	totalSql := "select count(1) from user_unread_chat_message where to_uid=? and is_sent=0 and deleted_at is null "
+	dataSql := "select * from user_unread_chat_message where to_uid=? and is_sent=0 and deleted_at is null order by created desc limit 0, "+strconv.Itoa(models.UNSENT_MESSAGE_PAGE_NUM)
+	total, totalErr := base.DBEngine.SQL(totalSql, uId).Count(new(models.UserUnsentChatMessage))
 
+	if totalErr != nil {
+		util.Logger.Info("---totalErr--"+totalErr.Error())
+		this.ReturnData = util.GenerateAlertMessage(models.CommonError100)
+		return
+	}
+
+	var messageList []models.UserUnsentChatMessage
+	if total > 0 {
+		base.DBEngine.SQL(dataSql, uId).Find(&messageList)
+	}
+	if messageList == nil {
+		messageList = make([]models.UserUnsentChatMessage, 0)
+	}
+
+	updateSentSql := "update user_unsent_chat_message set is_sent=1 where to_uid=? and is_sent=0 and deleted_at is null order by created desc limit "+strconv.Itoa(models.UNSENT_MESSAGE_PAGE_NUM)
+	base.DBEngine.Exec(updateSentSql, uId)
+
+	this.ReturnData = models.UserUnsentChatMessageListContainer{total, messageList}
+}
 
 
