@@ -123,8 +123,8 @@ func (this *MessageController) AddGroup() {
 func (this *MessageController) GetUnreadUserChatMessageList() {
 	uId := this.MustInt64("uId")
 
-	totalSql := "select count(1) from user_unread_chat_message where to_uid=? and is_sent=0 and deleted_at is null "
-	dataSql := "select * from user_unread_chat_message where to_uid=? and is_sent=0 and deleted_at is null order by created desc limit 0, "+strconv.Itoa(models.UNSENT_MESSAGE_PAGE_NUM)
+	totalSql := "select count(1) from user_unsent_chat_message where to_uid=? and is_sent=0 and deleted_at is null "
+	dataSql := "select * from user_unsent_chat_message where to_uid=? and is_sent=0 and deleted_at is null order by created desc limit 0, "+strconv.Itoa(models.UNSENT_MESSAGE_PAGE_NUM)
 	total, totalErr := base.DBEngine.SQL(totalSql, uId).Count(new(models.UserUnsentChatMessage))
 
 	if totalErr != nil {
