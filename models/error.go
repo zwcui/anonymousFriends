@@ -33,6 +33,9 @@ const (
 	DriftBottleError100 	= "DriftBottleError100###该瓶子不存在"
 
 	SharePositionError100 	= "SharePositionError100###现在有正在进行中的位置共享哦"
+	SharePositionError200 	= "SharePositionError200###未找到位置共享请求哦"
+	SharePositionError300 	= "SharePositionError300###位置共享已结束"
+	SharePositionError400 	= "SharePositionError400###您已接收或拒绝位置共享"
 
 
 )

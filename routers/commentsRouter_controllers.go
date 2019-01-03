@@ -153,6 +153,20 @@ func init() {
 			AllowHTTPMethods: []string{"get"},
 			Params: nil})
 
+	beego.GlobalControllerRouter["anonymousFriends/controllers:SharePositionController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:SharePositionController"],
+		beego.ControllerComments{
+			Method: "HandleSharePositionRequest",
+			Router: `/handleSharePositionRequest`,
+			AllowHTTPMethods: []string{"patch"},
+			Params: nil})
+
+	beego.GlobalControllerRouter["anonymousFriends/controllers:SharePositionController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:SharePositionController"],
+		beego.ControllerComments{
+			Method: "GetSharePositionGroupUserList",
+			Router: `/getSharePositionGroupUserList`,
+			AllowHTTPMethods: []string{"get"},
+			Params: nil})
+
 	beego.GlobalControllerRouter["anonymousFriends/controllers:SocialDynamicsController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:SocialDynamicsController"],
 		beego.ControllerComments{
 			Method: "PostSocialDynamic",

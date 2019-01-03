@@ -615,12 +615,29 @@ paths:
       responses:
         "200":
           description: '{string} success'
+  /sharePosition/getSharePositionGroupUserList:
+    get:
+      tags:
+      - sharePosition
+      description: 获取位置共享组中的用户列表
+      operationId: SharePositionController.获取位置共享组中的用户列表
+      parameters:
+      - in: query
+        name: id
+        description: id
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          schema:
+            $ref: '#/definitions/models.UserList'
   /sharePosition/getSharePositionRequest:
     get:
       tags:
       - sharePosition
-      description: 查看位置共享请求
-      operationId: SharePositionController.查看位置共享请求
+      description: 查看位置共享（每次进IM调用，接受或拒绝后重新调用）
+      operationId: SharePositionController.查看位置共享（每次进IM调用，接受或拒绝后重新调用）
       parameters:
       - in: formData
         name: uId
@@ -631,6 +648,35 @@ paths:
       - in: formData
         name: groupId
         description: 组id
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          schema:
+            $ref: '#/definitions/models.SharePositionInfoContainer'
+  /sharePosition/handleSharePositionRequest:
+    patch:
+      tags:
+      - sharePosition
+      description: 处理位置共享请求
+      operationId: SharePositionController.处理位置共享请求
+      parameters:
+      - in: formData
+        name: id
+        description: id
+        required: true
+        type: integer
+        format: int64
+      - in: formData
+        name: uId
+        description: 用户id
+        required: true
+        type: integer
+        format: int64
+      - in: formData
+        name: result
+        description: 处理结果，1接受 2拒绝 3接收后退出位置共享 4发起人自己取消位置共享
         required: true
         type: integer
         format: int64

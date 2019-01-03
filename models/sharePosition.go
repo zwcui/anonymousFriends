@@ -22,7 +22,7 @@ type SharePositionMember struct {
 	Id	       					int64  				`description:"记录id" json:"id" xorm:"pk autoincr"`
 	SharePositionGroupId		int64  				`description:"共享地理位置组id" json:"sharePositionGroupId"`
 	UId    						int64  				`description:"用户id" json:"uId"`
-	Status    					int  				`description:"状态，1接受 2拒绝" json:"status"`
+	Status    					int  				`description:"状态，1接受 2拒绝 3接收后退出位置共享" json:"status"`
 	Created           			int64  				`description:"创建时间" json:"created" xorm:"created"`
 	Updated           			int64  				`description:"修改时间" json:"updated" xorm:"updated"`
 	DeletedAt         			int64  				`description:"删除时间" json:"deleted" xorm:"deleted"`

@@ -18,7 +18,12 @@ type SharePositionController struct {
 }
 
 func (this *SharePositionController) Prepare(){
-	this.NeedBaseAuthList = []RequestPathAndMethod{}
+	this.NeedBaseAuthList = []RequestPathAndMethod{
+		{"/sendSharePositionRequest", "post"},
+		{"/getSharePositionRequest", "get"},
+		{"/handleSharePositionRequest", "patch"},
+		{"/getSharePositionGroupUserList", "get"},
+	}
 	this.bathAuth()
 }
 
@@ -71,8 +76,8 @@ func (this *SharePositionController) SendSharePositionRequest() {
 	this.ReturnData = "success"
 }
 
-// @Title 查看位置共享请求
-// @Description 查看位置共享请求
+// @Title 查看位置共享（每次进IM调用，接受或拒绝后重新调用）
+// @Description 查看位置共享（每次进IM调用，接受或拒绝后重新调用）
 // @Param	uId						formData		int64  		true		"用户id"
 // @Param	groupId					formData		int64  		true		"组id"
 // @Success 200 {object} models.SharePositionInfoContainer
@@ -82,7 +87,130 @@ func (this *SharePositionController) GetSharePositionRequest() {
 	groupId := this.MustInt64("groupId")
 
 	var sharePositionInfo models.SharePositionInfo
-	base.DBEngine.Table("share_position_group").Select("share_position_group.*, user.nick_name as sender_nick_name, user.avatar as sender_avatar").Join("LEFT OUTER", "user", "user.u_id=share_position_group.originator").Where("share_position_group.group_id=?", groupId).And("(share_position_group.status=0 or share_position_group.status=1)").And("not exists(select 1 from share_position_member where share_position_group.id=share_position_member.share_position_groupId and share_position_member.u_id=?)", uId).Get(&sharePositionInfo)
+	var sharePositionGroup models.SharePositionGroup
+	hasGroup, _ := base.DBEngine.Table("share_position_group").Where("group_id=?", groupId).And("(status=0 or status=1)").Get(&sharePositionGroup)
+	if hasGroup {
+		var user models.UserShort
+		base.DBEngine.Table("user").Where("u_id=?", uId).Get(&user)
+		sharePositionInfo.SharePositionGroup = sharePositionGroup
+		sharePositionInfo.SenderNickName = user.NickName
+		sharePositionInfo.SenderAvatar = user.Avatar
+
+		var sharePositionMember models.SharePositionMember
+		hasMember, _ := base.DBEngine.Table("share_position_member").Where("share_position_group_id=?", sharePositionGroup.GroupId).And("u_id=?", uId).Get(&sharePositionMember)
+		if hasMember {
+			if sharePositionMember.Status == 2 {
+				sharePositionInfo.Status = 2
+			}
+		}
+	} else {
+		sharePositionInfo.SharePositionGroup = sharePositionGroup
+		sharePositionInfo.SenderNickName = ""
+		sharePositionInfo.SenderAvatar = ""
+	}
+
+	//base.DBEngine.Table("share_position_group").Select("share_position_group.*, user.nick_name as sender_nick_name, user.avatar as sender_avatar").Join("LEFT OUTER", "user", "user.u_id=share_position_group.originator").Where("share_position_group.group_id=?", groupId).And("(share_position_group.status=0 or share_position_group.status=1)").And("not exists(select 1 from share_position_member where share_position_group.id=share_position_member.share_position_groupId and share_position_member.u_id=?)", uId).Get(&sharePositionInfo)
 
 	this.ReturnData = models.SharePositionInfoContainer{sharePositionInfo}
+}
+
+// @Title 处理位置共享请求
+// @Description 处理位置共享请求
+// @Param	id						formData		int64  		true		"id"
+// @Param	uId						formData		int64  		true		"用户id"
+// @Param	result					formData		int  		true		"处理结果，1接受 2拒绝 3接收后退出位置共享 4发起人自己取消位置共享"
+// @Success 200 {object} models.SharePositionInfoContainer
+// @router /handleSharePositionRequest [patch]
+func (this *SharePositionController) HandleSharePositionRequest() {
+	id := this.MustInt64("id")
+	uId := this.MustInt64("uId")
+	result := this.MustInt("result")
+
+	var sharePositionGroup models.SharePositionGroup
+	hasGroup, _ := base.DBEngine.Table("share_position_group").Where("id=?", id).Get(&sharePositionGroup)
+	if !hasGroup {
+		this.ReturnData = util.GenerateAlertMessage(models.SharePositionError200)
+		return
+	}
+	if sharePositionGroup.Status == 2 {
+		this.ReturnData = util.GenerateAlertMessage(models.SharePositionError300)
+		return
+	}
+
+	var sharePositionMember models.SharePositionMember
+	hasMember, _ := base.DBEngine.Table("share_position_member").Where("share_position_group_id=?", sharePositionGroup.Id).And("u_id=?", uId).Get(&sharePositionMember)
+	if hasMember && (sharePositionMember.Status == 1 || sharePositionMember.Status == 2) {
+		this.ReturnData = util.GenerateAlertMessage(models.SharePositionError400)
+		return
+	}
+
+	if hasMember {
+		if result == 3 {
+			sharePositionMember.Status = 3
+			base.DBEngine.Table("share_position_member").Where("id=?", sharePositionMember.Id).Cols("status").Update(&sharePositionMember)
+
+			//如果位置共享人数小于等于1人，则关闭组
+			total, _ := base.DBEngine.Table("share_position_member").Where("share_position_group_id=?", id).And("status=1").Count(new(models.SharePositionMember))
+			if total <= 1 {
+				sharePositionGroup.Status = 2
+				base.DBEngine.Table("share_position_group").Where("id=?", id).Cols("status").Update(&sharePositionGroup)
+			}
+		} else if result == 4 {
+			sharePositionMember.Status = 3
+			base.DBEngine.Table("share_position_member").Where("id=?", sharePositionMember.Id).Cols("status").Update(&sharePositionMember)
+			sharePositionGroup.Status = 2
+			base.DBEngine.Table("share_position_group").Where("id=?", id).Cols("status").Update(&sharePositionGroup)
+		}
+	} else {
+		sharePositionMember.SharePositionGroupId = sharePositionGroup.Id
+		sharePositionMember.UId = uId
+		if result == 1 {
+			sharePositionMember.Status = 1
+			if sharePositionGroup.Status != 1 {
+				sharePositionGroup.Status = 1
+				base.DBEngine.Table("share_position_group").Where("id=?", id).Cols("status").Update(&sharePositionGroup)
+			}
+		} else if result == 2 {
+			sharePositionMember.Status = 2
+			//如果位置共享人数小于等于1人，则关闭组
+			total, _ := base.DBEngine.Table("share_position_member").Where("share_position_group_id=?", id).And("status=1").Count(new(models.SharePositionMember))
+			if total <= 1 {
+				sharePositionGroup.Status = 2
+				base.DBEngine.Table("share_position_group").Where("id=?", id).Cols("status").Update(&sharePositionGroup)
+			}
+		}
+		base.DBEngine.Table("share_position_member").InsertOne(&sharePositionMember)
+	}
+
+	this.ReturnData = "success"
+}
+
+// @Title 获取位置共享组中的用户列表
+// @Description 获取位置共享组中的用户列表
+// @Param	id				query			int64	  		true		"id"
+// @Success 200 {object} models.UserList
+// @router /getSharePositionGroupUserList [get]
+func (this *SharePositionController) GetSharePositionGroupUserList() {
+	id := this.MustInt64("id")
+
+	var sharePositionGroup models.SharePositionGroup
+	hasGroup, _ := base.DBEngine.Table("share_position_group").Where("id=?", id).Get(&sharePositionGroup)
+	if !hasGroup {
+		this.ReturnData = util.GenerateAlertMessage(models.SharePositionError200)
+		return
+	}
+
+	if sharePositionGroup.Status == 2 {
+		this.ReturnData = util.GenerateAlertMessage(models.SharePositionError300)
+		return
+	}
+
+	var userList []models.UserShort
+	base.DBEngine.Table("user").Join("LEFT OUTER", "share_position_member", "share_position_member.u_id=user.u_id").Select("user.*").Where("share_position_member.id is not null and share_position_member.share_positionG_goup_id=? and share_position_member.status=1").Find(&userList)
+
+	if userList == nil {
+		userList = make([]models.UserShort, 0)
+	}
+
+	this.ReturnData = models.UserList{userList}
 }
