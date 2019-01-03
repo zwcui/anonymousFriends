@@ -930,7 +930,7 @@
                 "operationId": "SharePositionController.查看位置共享（每次进IM调用，接受或拒绝后重新调用）",
                 "parameters": [
                     {
-                        "in": "formData",
+                        "in": "query",
                         "name": "uId",
                         "description": "用户id",
                         "required": true,
@@ -938,7 +938,7 @@
                         "format": "int64"
                     },
                     {
-                        "in": "formData",
+                        "in": "query",
                         "name": "groupId",
                         "description": "组id",
                         "required": true,

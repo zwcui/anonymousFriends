@@ -46,7 +46,7 @@ func (this *SharePositionController) SendSharePositionRequest() {
 		sharePositionGroup.GroupId = groupId
 		sharePositionGroup.Originator = uId
 		sharePositionGroup.Status = 0
-		sharePositionGroup.Remark = "用户"+strconv.FormatInt(uId, 10)+"发起位置共享"
+		sharePositionGroup.Remark = "用户"+strconv.FormatInt(uId, 10)+"发起位置共享;"
 		base.DBEngine.Table("share_position_group").InsertOne(&sharePositionGroup)
 	} else {
 		this.ReturnData = util.GenerateAlertMessage(models.SharePositionError100)
@@ -54,7 +54,7 @@ func (this *SharePositionController) SendSharePositionRequest() {
 	}
 
 	var sharePositionMember models.SharePositionMember
-	sharePositionMember.SharePositionGroupId = sharePositionGroup.GroupId
+	sharePositionMember.SharePositionGroupId = sharePositionGroup.Id
 	sharePositionMember.UId = uId
 	sharePositionMember.Status = 1
 	base.DBEngine.Table("share_position_member").InsertOne(&sharePositionMember)
@@ -78,8 +78,8 @@ func (this *SharePositionController) SendSharePositionRequest() {
 
 // @Title 查看位置共享（每次进IM调用，接受或拒绝后重新调用）
 // @Description 查看位置共享（每次进IM调用，接受或拒绝后重新调用）
-// @Param	uId						formData		int64  		true		"用户id"
-// @Param	groupId					formData		int64  		true		"组id"
+// @Param	uId						query			int64  		true		"用户id"
+// @Param	groupId					query			int64  		true		"组id"
 // @Success 200 {object} models.SharePositionInfoContainer
 // @router /getSharePositionRequest [get]
 func (this *SharePositionController) GetSharePositionRequest() {
@@ -91,7 +91,7 @@ func (this *SharePositionController) GetSharePositionRequest() {
 	hasGroup, _ := base.DBEngine.Table("share_position_group").Where("group_id=?", groupId).And("(status=0 or status=1)").Get(&sharePositionGroup)
 	if hasGroup {
 		var user models.UserShort
-		base.DBEngine.Table("user").Where("u_id=?", uId).Get(&user)
+		base.DBEngine.Table("user").Where("u_id=?", sharePositionGroup.Originator).Get(&user)
 		sharePositionInfo.SharePositionGroup = sharePositionGroup
 		sharePositionInfo.SenderNickName = user.NickName
 		sharePositionInfo.SenderAvatar = user.Avatar
@@ -139,7 +139,7 @@ func (this *SharePositionController) HandleSharePositionRequest() {
 
 	var sharePositionMember models.SharePositionMember
 	hasMember, _ := base.DBEngine.Table("share_position_member").Where("share_position_group_id=?", sharePositionGroup.Id).And("u_id=?", uId).Get(&sharePositionMember)
-	if hasMember && (sharePositionMember.Status == 1 || sharePositionMember.Status == 2) {
+	if hasMember && (result == 1 || result == 2) {
 		this.ReturnData = util.GenerateAlertMessage(models.SharePositionError400)
 		return
 	}
@@ -149,17 +149,19 @@ func (this *SharePositionController) HandleSharePositionRequest() {
 			sharePositionMember.Status = 3
 			base.DBEngine.Table("share_position_member").Where("id=?", sharePositionMember.Id).Cols("status").Update(&sharePositionMember)
 
+			sharePositionGroup.Remark += "用户"+strconv.FormatInt(uId, 10)+"接收后退出位置共享;"
 			//如果位置共享人数小于等于1人，则关闭组
 			total, _ := base.DBEngine.Table("share_position_member").Where("share_position_group_id=?", id).And("status=1").Count(new(models.SharePositionMember))
 			if total <= 1 {
 				sharePositionGroup.Status = 2
-				base.DBEngine.Table("share_position_group").Where("id=?", id).Cols("status").Update(&sharePositionGroup)
 			}
+			base.DBEngine.Table("share_position_group").Where("id=?", id).Cols("status", "remark").Update(&sharePositionGroup)
 		} else if result == 4 {
 			sharePositionMember.Status = 3
 			base.DBEngine.Table("share_position_member").Where("id=?", sharePositionMember.Id).Cols("status").Update(&sharePositionMember)
 			sharePositionGroup.Status = 2
-			base.DBEngine.Table("share_position_group").Where("id=?", id).Cols("status").Update(&sharePositionGroup)
+			sharePositionGroup.Remark += "用户"+strconv.FormatInt(uId, 10)+"发起人自己取消位置共享;"
+			base.DBEngine.Table("share_position_group").Where("id=?", id).Cols("status", "remark").Update(&sharePositionGroup)
 		}
 	} else {
 		sharePositionMember.SharePositionGroupId = sharePositionGroup.Id
@@ -168,16 +170,18 @@ func (this *SharePositionController) HandleSharePositionRequest() {
 			sharePositionMember.Status = 1
 			if sharePositionGroup.Status != 1 {
 				sharePositionGroup.Status = 1
-				base.DBEngine.Table("share_position_group").Where("id=?", id).Cols("status").Update(&sharePositionGroup)
 			}
+			sharePositionGroup.Remark += "用户"+strconv.FormatInt(uId, 10)+"接收位置共享;"
+			base.DBEngine.Table("share_position_group").Where("id=?", id).Cols("status", "remark").Update(&sharePositionGroup)
 		} else if result == 2 {
 			sharePositionMember.Status = 2
 			//如果位置共享人数小于等于1人，则关闭组
 			total, _ := base.DBEngine.Table("share_position_member").Where("share_position_group_id=?", id).And("status=1").Count(new(models.SharePositionMember))
 			if total <= 1 {
 				sharePositionGroup.Status = 2
-				base.DBEngine.Table("share_position_group").Where("id=?", id).Cols("status").Update(&sharePositionGroup)
 			}
+			sharePositionGroup.Remark += "用户"+strconv.FormatInt(uId, 10)+"拒绝位置共享;"
+			base.DBEngine.Table("share_position_group").Where("id=?", id).Cols("status", "remark").Update(&sharePositionGroup)
 		}
 		base.DBEngine.Table("share_position_member").InsertOne(&sharePositionMember)
 	}
@@ -206,7 +210,7 @@ func (this *SharePositionController) GetSharePositionGroupUserList() {
 	}
 
 	var userList []models.UserShort
-	base.DBEngine.Table("user").Join("LEFT OUTER", "share_position_member", "share_position_member.u_id=user.u_id").Select("user.*").Where("share_position_member.id is not null and share_position_member.share_positionG_goup_id=? and share_position_member.status=1").Find(&userList)
+	base.DBEngine.Table("user").Join("LEFT OUTER", "share_position_member", "share_position_member.u_id=user.u_id").Select("user.*").Where("share_position_member.id is not null and share_position_member.share_position_group_id=? and share_position_member.status=1").Find(&userList)
 
 	if userList == nil {
 		userList = make([]models.UserShort, 0)
