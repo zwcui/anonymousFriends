@@ -40,6 +40,10 @@ func init() {
 		createZombieAtSpecialLocation()
 	})
 
+	//每1分钟查看需要关闭的共享地理位置
+	c.AddFunc("@every 1m", func() {
+		checkUnclosedSharePositionGroup()
+	})
 
 	//c.AddFunc("0 54 16 * * ", func() {
 	//	createZombieAtSpecialLocation()
