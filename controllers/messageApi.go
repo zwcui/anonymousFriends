@@ -117,7 +117,7 @@ func (this *MessageController) AddGroup() {
 
 // @Title 获取离线消息
 // @Description 获取离线消息
-// @Param	uId					formData		int64  			true		"uId"
+// @Param	uId					query			int64  			true		"uId"
 // @Success 200 {object} models.GroupInfo
 // @router /getUnreadUserChatMessageList [get]
 func (this *MessageController) GetUnreadUserChatMessageList() {

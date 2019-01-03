@@ -689,7 +689,7 @@
                 "operationId": "MessageController.获取离线消息",
                 "parameters": [
                     {
-                        "in": "formData",
+                        "in": "query",
                         "name": "uId",
                         "description": "uId",
                         "required": true,
