@@ -27,8 +27,9 @@ type SocialDynamics struct {
 
 //点赞
 type Like struct {
-	Id       			int64			`description:"id" json:"id"`
+	Id       			int64			`description:"id" json:"id" xorm:"pk autoincr"`
 	Type       			int 			`description:"type，1为朋友圈点赞" json:"type"`
+	SocialDynamicId		int64			`description:"socialDynamicId" json:"socialDynamicId"`
 	UId       			int64			`description:"uId" json:"uId"`
 }
 

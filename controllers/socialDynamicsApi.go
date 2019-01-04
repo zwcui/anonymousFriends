@@ -112,7 +112,7 @@ func (this *SocialDynamicsController) GetSocialDynamicList() {
 	pageSize := this.GetPageSize("pageSize")
 
 	totalSql := "select count(1) from social_dynamics where deleted_at is null "
-	dataSql := "select social_dynamics.*, case when exists(select 1 from `like` where `like`.id=social_dynamics.id and `like`.u_id='"+strconv.FormatInt(currentUid, 10)+"' and `like`.type=1) then 1 else 0 end as is_like from social_dynamics where deleted_at is null "
+	dataSql := "select social_dynamics.*, case when exists(select 1 from `like` where `like`.social_dynamic_id=social_dynamics.id and `like`.u_id='"+strconv.FormatInt(currentUid, 10)+"' and `like`.type=1) then 1 else 0 end as is_like from social_dynamics where deleted_at is null "
 	if uId != 0 {
 		totalSql += " and social_dynamics.u_id='"+strconv.FormatInt(uId, 10)+"' "
 		dataSql += " and social_dynamics.u_id='"+strconv.FormatInt(uId, 10)+"' "
@@ -203,15 +203,25 @@ func (this *SocialDynamicsController) LikeSocialDynamic() {
 	id := this.MustInt64("id")
 	likeType, _ := this.GetInt("type", 1)
 
+	var socialDynamics models.SocialDynamics
+	base.DBEngine.Table("social_dynamics").Where("id=?", id).Get(&socialDynamics)
+
 	if likeType == 1 {
 		var like models.Like
-		like.Id = id
+		like.SocialDynamicId = id
 		like.UId = currentUid
 		like.Type = 1
 		base.DBEngine.Table("like").InsertOne(&like)
+		socialDynamics.LikeNum += 1
 	} else {
-		base.DBEngine.Table("like").Where("id=?", id).And("u_id=?", currentUid).And("type=1").Delete(new(models.Like))
+		base.DBEngine.Table("like").Where("social_dynamic_id=?", id).And("u_id=?", currentUid).And("type=1").Delete(new(models.Like))
+		socialDynamics.LikeNum -= 1
+		if socialDynamics.LikeNum < 0 {
+			socialDynamics.LikeNum = 0
+		}
 	}
+	base.DBEngine.Table("social_dynamics").Where("id=?", id).Cols("like_num").Update(&socialDynamics)
+
 
 	this.ReturnData = "success"
 }

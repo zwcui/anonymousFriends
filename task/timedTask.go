@@ -30,7 +30,7 @@ func init() {
 		checkDriftBottleExpiryTime()
 	})
 
-	//每1分钟检查是否有过期的漂流瓶，设置为已失效
+	//每天扔僵尸漂流瓶
 	c.AddFunc("@every 1m", func() {
 		throwZombieDriftBottle()
 	})
