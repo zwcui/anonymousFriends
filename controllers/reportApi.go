@@ -17,7 +17,9 @@ type ReportController struct {
 }
 
 func (this *ReportController) Prepare(){
-	this.NeedBaseAuthList = []RequestPathAndMethod{}
+	this.NeedBaseAuthList = []RequestPathAndMethod{
+		{"/postReport", "post"},
+	}
 	this.bathAuth()
 }
 
