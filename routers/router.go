@@ -70,6 +70,11 @@ func init() {
 				&controllers.SharePositionController{},
 			),
 		),
+		beego.NSNamespace("/report",
+			beego.NSInclude(
+				&controllers.ReportController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }

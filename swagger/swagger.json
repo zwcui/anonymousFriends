@@ -895,6 +895,51 @@
                 }
             }
         },
+        "/report/postReport": {
+            "post": {
+                "tags": [
+                    "report"
+                ],
+                "description": "提出建议或举报",
+                "operationId": "ReportController.提出建议或举报",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "uId",
+                        "description": "发起人",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "type",
+                        "description": "类型，1:对app的建议 2:举报朋友圈 3:举报漂流瓶 4:举报用户",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "typeId",
+                        "description": "类型对应的id",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "content",
+                        "description": "内容，如涉嫌广告、非法、色情等",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} success"
+                    }
+                }
+            }
+        },
         "/sharePosition/getSharePositionGroupUserList": {
             "get": {
                 "tags": [
@@ -1876,7 +1921,7 @@
                     "format": "int64"
                 },
                 "type": {
-                    "description": "类型，1用户与僵尸账户聊天 2有用户注册",
+                    "description": "类型，1用户与僵尸账户聊天 2有用户注册 3建议和举报",
                     "type": "integer",
                     "format": "int64"
                 },
@@ -3047,6 +3092,10 @@
         {
             "name": "sharePosition",
             "description": "共享地理位置模块\n"
+        },
+        {
+            "name": "report",
+            "description": "建议与举报模块\n"
         }
     ]
 }

@@ -8,7 +8,7 @@ package models
 //管理员通知，存储管理员需做的事情
 type AdminNotice struct {
 	Id		           		int64  				`description:"Id" json:"id" xorm:"pk autoincr"`
-	Type					int 				`description:"类型，1用户与僵尸账户聊天 2有用户注册" json:"type"`
+	Type					int 				`description:"类型，1用户与僵尸账户聊天 2有用户注册 3建议和举报" json:"type"`
 	TypeId					int64 				`description:"类型id" json:"typeId"`
 	Content	           		string 				`description:"内容" json:"content"`
 	Status	           		int 				`description:"状态，0未处理，1已处理，2已忽略" json:"status"`

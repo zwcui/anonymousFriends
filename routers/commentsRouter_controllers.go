@@ -139,6 +139,13 @@ func init() {
 			AllowHTTPMethods: []string{"post"},
 			Params: nil})
 
+	beego.GlobalControllerRouter["anonymousFriends/controllers:ReportController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:ReportController"],
+		beego.ControllerComments{
+			Method: "PostReport",
+			Router: `/postReport`,
+			AllowHTTPMethods: []string{"post"},
+			Params: nil})
+
 	beego.GlobalControllerRouter["anonymousFriends/controllers:SharePositionController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:SharePositionController"],
 		beego.ControllerComments{
 			Method: "SendSharePositionRequest",
