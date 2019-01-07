@@ -382,11 +382,11 @@ func (this *UserController) GetUserListByPosition() {
 	var user models.User
 	base.DBEngine.Table("user").Where("u_id=?", uId).Get(&user)
 
-	//默认用户范围1000米
-	longitudeMax := user.Longitude + 0.01
-	longitudeMin := user.Longitude - 0.01
-	latitudeMax := user.Latitude + 0.01
-	latitudeMin := user.Latitude - 0.01
+	//默认用户范围3000米
+	longitudeMax := user.Longitude + 0.03
+	longitudeMin := user.Longitude - 0.03
+	latitudeMax := user.Latitude + 0.03
+	latitudeMin := user.Latitude - 0.03
 
 	whereSql := " and u_id !='"+strconv.FormatInt(uId, 10)+"' "
 	if province != "" {
@@ -548,7 +548,7 @@ func createZombieUser(user models.User, number int) []models.UserShort {
 		zombie.Province = user.Province
 		zombie.City = user.City
 		zombie.Area = user.Area
-		zombie.Longitude, zombie.Latitude = CalcZombiePositionByRangeMeter(user.Longitude, user.Latitude, 0, 0,0 ,0 , 1000)
+		zombie.Longitude, zombie.Latitude = CalcZombiePositionByRangeMeter(user.Longitude, user.Latitude, 0, 0,0 ,0 , 3000)
 		base.DBEngine.Table("user").Where("u_id=?", zombie.UId).Cols("province", "city", "area", "longitude", "latitude").Update(&zombie)
 
 		user, _ := zombie.UserToUserShort()
