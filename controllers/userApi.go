@@ -104,6 +104,7 @@ func (this *UserController) SignUp() {
 
 	//账户表
 	var userAccount models.UserAccount
+	userAccount.UId = user.UId
 	userAccount.CashBalance = 0
 	base.DBEngine.Table("user_account").InsertOne(&userAccount)
 
@@ -373,13 +374,19 @@ func (this *UserController) GetUserListByPosition() {
 	province := this.GetString("province", "")
 	city := this.GetString("city", "")
 	area := this.GetString("area", "")
-	longitudeMax, _ := this.GetFloat("longitudeMax", 0)
-	longitudeMin, _ := this.GetFloat("longitudeMin", 0)
-	latitudeMax, _ := this.GetFloat("latitudeMax", 0)
-	latitudeMin, _ := this.GetFloat("latitudeMin", 0)
+	//longitudeMax, _ := this.GetFloat("longitudeMax", 0)
+	//longitudeMin, _ := this.GetFloat("longitudeMin", 0)
+	//latitudeMax, _ := this.GetFloat("latitudeMax", 0)
+	//latitudeMin, _ := this.GetFloat("latitudeMin", 0)
 
 	var user models.User
 	base.DBEngine.Table("user").Where("u_id=?", uId).Get(&user)
+
+	//默认用户范围400米
+	longitudeMax := user.Longitude + 0.004
+	longitudeMin := user.Longitude - 0.004
+	latitudeMax := user.Latitude + 0.004
+	latitudeMin := user.Latitude - 0.004
 
 	whereSql := " and u_id !='"+strconv.FormatInt(uId, 10)+"' "
 	if province != "" {

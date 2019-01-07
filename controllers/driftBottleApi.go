@@ -119,7 +119,7 @@ func (this *DriftBottleController) PickUpDriftBottle() {
 	}
 
 	var commentList []models.CommentInfo
-	err := base.DBEngine.Table("comment").Select("comment.*, sender.nick_name as sender_nick_name, sender.u_id as sender_uid, receiver.nick_name as receiver_nick_name, receiver.u_id as receiver_uid").Join("LEFT OUTER", "user sender", "sender.u_id=comment.sender_uid").Join("LEFT OUTER", "user receiver", "receiver.u_id=comment.receiver_uid").Where("comment.type=2 and comment.type_id=?", bottleId).Desc("created").Find(&commentList)
+	err := base.DBEngine.Table("comment").Select("comment.*, sender.nick_name as sender_nick_name, sender.u_id as sender_uid, receiver.nick_name as receiver_nick_name, receiver.u_id as receiver_uid").Join("LEFT OUTER", "user sender", "sender.u_id=comment.sender_uid").Join("LEFT OUTER", "user receiver", "receiver.u_id=comment.receiver_uid").Where("comment.type=2 and comment.type_id=?", bottleId).Desc("created").Limit(20, 0).Find(&commentList)
 	if err != nil {
 		this.ReturnData = util.GenerateAlertMessage(models.CommonError100)
 		return
