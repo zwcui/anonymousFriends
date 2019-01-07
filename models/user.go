@@ -131,7 +131,7 @@ type GenderAndAvatar struct {
 
 //-------------user方法如下--------------
 
-func (u *User) UsetToUserShort() (userDTO *UserShort, error error) {
+func (u *User) UserToUserShort() (userDTO *UserShort, error error) {
 	josnByte, err := json.Marshal(u)
 	if err != nil {
 		return nil, err

@@ -115,7 +115,7 @@ func (this *UserController) SignUp() {
 	adminNotice.Status = 0
 	base.DBEngine.Table("admin_notice").InsertOne(&adminNotice)
 
-	userShort, _ := user.UsetToUserShort()
+	userShort, _ := user.UserToUserShort()
 	this.ReturnData = models.UserInfo{*userShort}
 }
 
@@ -171,7 +171,7 @@ func (this *UserController) SignIn() {
 	userSignInDeviceInfo.AppVersion = appVersion
 	base.DBEngine.Table("user_sign_in_device_info").Where("u_id=?", storedUser.UId).AllCols().Update(&userSignInDeviceInfo)
 
-	userShort, _ := storedUser.UsetToUserShort()
+	userShort, _ := storedUser.UserToUserShort()
 	this.ReturnData = models.UserInfo{*userShort}
 }
 
@@ -276,7 +276,7 @@ func (this *UserController) UpdateUserInfo() {
 	user.Status = status
 	base.DBEngine.Table("user").Where("u_id=?", uId).Cols("avatar", "nick_name", "phone_number", "birthday", "gender", "status", "tag_names", "tag_ids", "constellation").Update(&user)
 
-	userShort, _ := user.UsetToUserShort()
+	userShort, _ := user.UserToUserShort()
 	this.ReturnData = models.UserInfo{*userShort}
 }
 
@@ -407,12 +407,16 @@ func (this *UserController) GetUserListByPosition() {
 	var userList []models.UserShort
 	base.DBEngine.Table("user").Where("1=1 "+whereSql).Find(&userList)
 
+	util.Logger.Info("  getUserListByPosition "+whereSql)
+
 	if userList == nil {
 		userList = make([]models.UserShort, 0)
 	}
 
 	//如果周围的真实用户少于10个，则创建僵尸用户直到10个
 	if len(userList) < 10 {
+		util.Logger.Info("  createZombieUser len="+strconv.Itoa(10 - len(userList)))
+
 		zombieList := createZombieUser(user, 10 - len(userList))
 		for _, zombie := range zombieList {
 			userList = append(userList, zombie)
@@ -540,7 +544,7 @@ func createZombieUser(user models.User, number int) []models.UserShort {
 		zombie.Longitude, zombie.Latitude = CalcZombiePositionByRangeMeter(user.Longitude, user.Latitude, 0, 0,0 ,0 , 300)
 		base.DBEngine.Table("user").Where("u_id=?", zombie.UId).Cols("province", "city", "area", "longitude", "latitude").Update(&zombie)
 
-		user, _ := zombie.UsetToUserShort()
+		user, _ := zombie.UserToUserShort()
 		userList = append(userList, *user)
 	}
 	return userList
