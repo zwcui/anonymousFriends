@@ -1532,6 +1532,91 @@ definitions:
       weather:
         description: 天气，如'阵雨转多云 19~25摄氏度'
         type: string
+  models.DriftBottleDetail:
+    title: DriftBottle
+    type: object
+    properties:
+      area:
+        description: 区
+        type: string
+      bottleId:
+        description: bottleId
+        type: integer
+        format: int64
+      bottleName:
+        description: 类型名称，1普通瓶、2传递瓶、3同城瓶、4真话瓶、5暗号瓶、6提问瓶、7交往瓶、8祝愿瓶、9发泄瓶、10生日瓶、11表白瓶
+        type: string
+      bottleType:
+        description: 类型，1普通瓶、2传递瓶、3同城瓶、4真话瓶、5暗号瓶、6提问瓶、7交往瓶、8祝愿瓶、9发泄瓶、10生日瓶、11表白瓶
+        type: integer
+        format: int64
+      city:
+        description: 市
+        type: string
+      content:
+        description: 内容
+        type: string
+      created:
+        description: 创建时间
+        type: integer
+        format: int64
+      deleted:
+        description: 删除时间
+        type: integer
+        format: int64
+      expiryTime:
+        description: 到期时间
+        type: integer
+        format: int64
+      latitude:
+        description: 纬度
+        type: number
+        format: double
+      longitude:
+        description: 经度
+        type: number
+        format: double
+      picture:
+        description: 图片内容，多个英文逗号隔开
+        type: string
+      position:
+        description: 位置名称，如全家创意产业园店
+        type: string
+      province:
+        description: 省
+        type: string
+      receiverNickName:
+        description: 拾瓶人
+        type: string
+      receiverUid:
+        description: 拾瓶人
+        type: integer
+        format: int64
+      remark:
+        description: 备注
+        type: string
+      replyNum:
+        description: 回复数
+        type: integer
+        format: int64
+      senderNickName:
+        description: 抛瓶人
+        type: string
+      senderUid:
+        description: 抛瓶人
+        type: integer
+        format: int64
+      status:
+        description: 状态，0未抛出，1已抛出，2已接收，3已失效
+        type: integer
+        format: int64
+      updated:
+        description: 修改时间
+        type: integer
+        format: int64
+      weather:
+        description: 天气，如'阵雨转多云 19~25摄氏度'
+        type: string
   models.DriftBottleInfo:
     title: DriftBottleInfo
     type: object
@@ -1542,7 +1627,7 @@ definitions:
         items:
           $ref: '#/definitions/models.CommentInfo'
       driftBottle:
-        $ref: '#/definitions/models.DriftBottle'
+        $ref: '#/definitions/models.DriftBottleDetail'
         description: 漂流瓶信息
   models.DriftBottleListContainer:
     title: BaseListContainer
@@ -1552,7 +1637,7 @@ definitions:
         description: 漂流瓶列表
         type: array
         items:
-          $ref: '#/definitions/models.DriftBottle'
+          $ref: '#/definitions/models.DriftBottleDetail'
       pageNum:
         description: 当前页数
         type: integer

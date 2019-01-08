@@ -55,14 +55,20 @@ type ZombieDriftBottle struct {
 
 //---------------------结构体如下-------------------------
 
+type DriftBottleDetail struct {
+	DriftBottle									`description:"漂流瓶" xorm:"extends"`
+	SenderNickName     			string			`description:"抛瓶人" json:"senderNickName"`
+	ReceiverNickName     		string			`description:"拾瓶人" json:"receiverNickName"`
+}
+
 type DriftBottleInfo struct {
-	DriftBottle					DriftBottle		`description:"漂流瓶信息" json:"driftBottle"`
-	CommentList					[]CommentInfo	`description:"评论列表" json:"commentList"`
+	DriftBottle					DriftBottleDetail		`description:"漂流瓶信息" json:"driftBottle"`
+	CommentList					[]CommentInfo			`description:"评论列表" json:"commentList"`
 }
 
 type DriftBottleListContainer struct {
 	BaseListContainer
-	DriftBottleList 			[]DriftBottle 	`description:"漂流瓶列表" json:"driftBottleList"`
+	DriftBottleList 			[]DriftBottleDetail 	`description:"漂流瓶列表" json:"driftBottleList"`
 }
 
 //------------------------默认参数----------------------------

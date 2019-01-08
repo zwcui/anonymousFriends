@@ -1,5 +1,7 @@
 package models
 
+import "net/url"
+
 //聊天组
 type Group struct {
 	GroupId				int64			`description:"聊天组id" json:"groupId" xorm:"pk autoincr"`
@@ -84,5 +86,42 @@ const (
 	SharePositionRequest	= "正在向您发起位置共享，请点击查看~"
 )
 
+//--------------------消息常量------------------------
 //每次接口获取未读消息的条数
 const UNSENT_MESSAGE_PAGE_NUM = 50
+
+const (
+	DEFAULT_SCHEME = "anonymousfriends"
+	DEFAULT_HOST   = "app.anonymousfriends.cn"
+)
+
+
+//--------------------跳转jumpkey--------------------------
+const (
+	HOMEPAGE_JUMP_KEY                       = "homepage"                       //主页跳转key
+)
+
+//--------------------消息方法---------------------------
+//生成通知跳转链接
+//key为需要跳转的页面的key
+//pramas为页面需要的参数
+func JumpUrlWithKeyAndPramas(key string, pramas map[string]string) (urlStr string) {
+	url := url.URL{}
+
+	url.Scheme = DEFAULT_SCHEME
+	url.Host = DEFAULT_HOST
+
+	// Path
+	url.Path = key
+
+	if pramas != nil {
+		// Query Parameters
+		q := url.Query()
+		for key, value := range pramas {
+			q.Set(key, value)
+		}
+		url.RawQuery = q.Encode()
+	}
+
+	return url.String()
+}
