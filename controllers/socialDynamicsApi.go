@@ -52,7 +52,7 @@ func (this *SocialDynamicsController) PostSocialDynamic() {
 
 	weatherResponse, err := GetCurrentWeather(province, city, area, longitude, latitude)
 	weather:= ""
-	if err != nil {
+	if err == nil {
 		weather = weatherResponse.Lives[0].Weather + "·" + weatherResponse.Lives[0].Temperature + "℃"
 	}
 
@@ -90,7 +90,7 @@ func (this *SocialDynamicsController) DeleteSocialDynamic() {
 // @Title 查看朋友圈
 // @Description 查看朋友圈
 // @Param	currentUid			query			int64	  		true		"当前查看人"
-// @Param	uId					query			int64	  		false		"uId"
+// @Param	uId					query			int64	  		false		"查看指定人的朋友圈uId"
 // @Param	position			query			string  		false		"位置名称，如全家创意产业园店"
 // @Param   province        	query 	        string  		false       "省"
 // @Param   city    			query 	        string  		false       "市"
@@ -121,8 +121,8 @@ func (this *SocialDynamicsController) GetSocialDynamicList() {
 		totalSql += " and social_dynamics.u_id='"+strconv.FormatInt(uId, 10)+"' "
 		dataSql += " and social_dynamics.u_id='"+strconv.FormatInt(uId, 10)+"' "
 	} else {
-		totalSql += " and (social_dynamics.u_id in (select friend_uid from friend where owner_uid='"+strconv.FormatInt(currentUid, 10)+"' or social_dynamics.u_id='"+strconv.FormatInt(currentUid, 10)+"' )) "
-		dataSql += " and (social_dynamics.u_id in (select friend_uid from friend where owner_uid='"+strconv.FormatInt(currentUid, 10)+"' or social_dynamics.u_id='"+strconv.FormatInt(currentUid, 10)+"' )) "
+		totalSql += " and (social_dynamics.u_id in (select friend_uid from friend where owner_uid='"+strconv.FormatInt(currentUid, 10)+"') or social_dynamics.u_id='"+strconv.FormatInt(currentUid, 10)+"' ) "
+		dataSql += " and (social_dynamics.u_id in (select friend_uid from friend where owner_uid='"+strconv.FormatInt(currentUid, 10)+"') or social_dynamics.u_id='"+strconv.FormatInt(currentUid, 10)+"' ) "
 	}
 	if position != "" {
 		totalSql += " and social_dynamics.position='"+position+"' "
@@ -190,6 +190,10 @@ func (this *SocialDynamicsController) GetSocialDynamicList() {
 		}
 		result.CommentList = commentList
 		resultSocialDynamicList = append(resultSocialDynamicList, result)
+	}
+
+	if resultSocialDynamicList == nil {
+		resultSocialDynamicList = make([]models.SocialDynamicInfo, 0)
 	}
 
 	this.ReturnData = models.SocialDynamicListContainer{models.BaseListContainer{total, pageNum, pageTime}, resultSocialDynamicList}

@@ -768,7 +768,7 @@ paths:
         format: int64
       - in: query
         name: uId
-        description: uId
+        description: 查看指定人的朋友圈uId
         type: integer
         format: int64
       - in: query
