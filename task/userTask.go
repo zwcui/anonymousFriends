@@ -7,6 +7,7 @@ import (
 	"anonymousFriends/base"
 	"math/rand"
 	"anonymousFriends/controllers"
+	"strings"
 )
 
 func TestTimedTask(){
@@ -26,7 +27,9 @@ func ZombieMoveTask(){
 
 	for _, zombie := range zombieList {
 		moveFlag := getRandomZombieMoveFlag()
-		if moveFlag == 1 {
+		currentHour := util.GetCurrentHour(util.UnixOfBeijingTime())
+		//僵尸账户移动时间控制，上午8点至晚上24点
+		if moveFlag == 1 && (currentHour >= 8 || currentHour <= 0) {
 			util.Logger.Info("定时任务：僵尸账户位置移动前-->"+strconv.FormatInt(zombie.UId, 10)+"："+strconv.FormatFloat(zombie.Longitude, 'f', 6, 64)+", "+strconv.FormatFloat(zombie.Latitude, 'f', 6, 64))
 			zombie.Longitude, zombie.Latitude = controllers.CalcZombiePositionByRangeMeter(zombie.Longitude, zombie.Latitude, zombie.ZombieLongitudeMax, zombie.ZombieLongitudeMin, zombie.ZombieLatitudeMax, zombie.ZombieLatitudeMin, 300)
 			base.DBEngine.Table("user").Where("u_id=?", zombie.UId).Cols("longitude", "latitude").Update(&zombie)
@@ -34,6 +37,25 @@ func ZombieMoveTask(){
 		}
 	}
 
+}
+
+func CheckZombieMoveTask(){
+	util.Logger.Info("定时任务：检查僵尸账户是否移动至不合理区域")
+	var zombieList []models.User
+	base.DBEngine.Table("user").Where("is_zombie=1").And("status=1").And("longitude !=0 and latitude != 0").Asc("updated").Limit(2000, 0).Find(&zombieList)
+
+	for _, zombie := range zombieList {
+		rangeMeter := 0
+		regeo, err := controllers.GetRegeocode(zombie.Longitude, zombie.Latitude)
+		if err == nil {
+			if strings.HasSuffix(regeo.Regeocode.FormattedAddress, "海") || strings.HasSuffix(regeo.Regeocode.FormattedAddress, "湖") || strings.HasSuffix(regeo.Regeocode.FormattedAddress, "河") || strings.HasSuffix(regeo.Regeocode.FormattedAddress, "江") {
+				util.Logger.Info("定时任务：检查僵尸账户是否移动至不合理区域，不合理："+strconv.FormatInt(zombie.UId, 10)+"在"+regeo.Regeocode.FormattedAddress)
+				rangeMeter = 5000
+				zombie.Longitude, zombie.Latitude = controllers.CalcZombiePositionByRangeMeter(zombie.Longitude, zombie.Latitude, zombie.ZombieLongitudeMax, zombie.ZombieLongitudeMin, zombie.ZombieLatitudeMax, zombie.ZombieLatitudeMin, rangeMeter)
+				base.DBEngine.Table("user").Where("u_id=?", zombie.UId).Cols("longitude", "latitude").Update(&zombie)
+			}
+		}
+	}
 }
 
 //获得随机经纬度加减

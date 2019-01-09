@@ -5,6 +5,8 @@
 */
 package controllers
 
+import "anonymousFriends/util"
+
 //调试模块
 type TestController struct {
 	apiController
@@ -56,4 +58,13 @@ func (this *TestController) TestAmapWeatherApi() {
 	} else {
 		this.ReturnData = weatherResponse
 	}
+}
+
+// @Title 测试其他
+// @Description 测试其他
+// @Success 200 {string}
+// @router /test [get]
+func (this *TestController) Test() {
+	util.Logger.Info(util.GetCurrentHour(util.UnixOfBeijingTime()))
+
 }

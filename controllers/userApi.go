@@ -586,12 +586,12 @@ func CalcZombiePositionByRangeMeter(longitude float64, latitude float64, longitu
 			continue
 		} else {
 			//调用高德逆地理编码API，僵尸账户无法进入江河湖海
+			//问题：经纬度120.70678312357686,31.274517456305  显示在独墅湖，接口返回独墅湖大道
 			//regeo, err := GetRegeocode(longitude + zombieLongitudeChange, latitude + zombieLatitudeChange)
-			//if err != nil {
+			//if err == nil {
 			//	if strings.HasSuffix(regeo.Regeocode.FormattedAddress, "海") || strings.HasSuffix(regeo.Regeocode.FormattedAddress, "湖") || strings.HasSuffix(regeo.Regeocode.FormattedAddress, "河") || strings.HasSuffix(regeo.Regeocode.FormattedAddress, "江") {
-			//
+			//		rangeMeter = 3000
 			//		util.Logger.Info("-------change--------")
-			//
 			//		continue
 			//	}
 			//}

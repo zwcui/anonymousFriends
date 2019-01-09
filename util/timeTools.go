@@ -27,6 +27,14 @@ func FormatTimestamp(timestamp int64) string{
 	return dataTimeStr
 }
 
+func GetCurrentHour(timestamp int64) int {
+	timeLayout := "15"
+	location, _ := time.LoadLocation("Asia/Shanghai")
+	dataTimeStr := time.Unix(timestamp, 0).In(location).Format(timeLayout)
+	currentHour, _ := strconv.Atoi(dataTimeStr)
+	return currentHour
+}
+
 // 格式化时间
 func TimeDurationFormat(timestamp int64) (timeFormat string) {
 	if timestamp == 0 {

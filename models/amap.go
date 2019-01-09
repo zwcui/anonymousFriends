@@ -45,7 +45,7 @@ type AddressComponent struct {
 	Towncode					[]string				`description:"towncode" json:"towncode"`
 	//Neighborhood				Neighborhood			`description:"neighborhood" json:"neighborhood"`
 	Building					Building				`description:"building" json:"building"`
-	StreetNumber				StreetNumber			`description:"streetNumber" json:"streetNumber"`
+	//StreetNumber				StreetNumber			`description:"streetNumber" json:"streetNumber"`
 	//BusinessAreas				[]string				`description:"businessAreas" json:"businessAreas"`
 }
 

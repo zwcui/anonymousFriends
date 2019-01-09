@@ -938,6 +938,15 @@ paths:
         "200":
           schema:
             $ref: '#/definitions/models.TagList'
+  /test/test:
+    get:
+      tags:
+      - test
+      description: 测试其他
+      operationId: TestController.测试其他
+      responses:
+        "200":
+          description: '{string}'
   /test/testAmapRegeoApi:
     get:
       tags:
@@ -1366,9 +1375,6 @@ definitions:
       province:
         description: province
         type: string
-      streetNumber:
-        $ref: '#/definitions/models.StreetNumber'
-        description: streetNumber
       towncode:
         description: towncode
       township:
@@ -2292,25 +2298,6 @@ definitions:
         format: int64
       weather:
         description: 天气，如'阵雨转多云 19~25摄氏度'
-        type: string
-  models.StreetNumber:
-    title: StreetNumber
-    type: object
-    properties:
-      direction:
-        description: direction
-        type: string
-      distance:
-        description: distance
-        type: string
-      location:
-        description: location
-        type: string
-      number:
-        description: number
-        type: string
-      street:
-        description: street
         type: string
   models.Tag:
     title: Tag
