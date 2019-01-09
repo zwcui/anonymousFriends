@@ -127,7 +127,7 @@ func GetCurrentWeather(province, city, area string, longitude, latitude float64)
 		util.Logger.Info("-------response.StatusCode != 200-----")
 		return weatherResponse, errors.New("response.StatusCode != 200")
 	}
-	
+
 	return weatherResponse, err
 
 }
