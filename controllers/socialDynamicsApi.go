@@ -32,7 +32,6 @@ func (this *SocialDynamicsController) Prepare(){
 // @Param	content				formData		string  		false		"文字内容"
 // @Param	picture				formData		string  		false		"图片内容，多个英文逗号隔开"
 // @Param	position			formData		string  		false		"位置名称，如全家创意产业园店"
-// @Param   weather	        	formData        string  		false       "天气"
 // @Param   province        	formData        string  		false       "省"
 // @Param   city    			formData        string  		false       "市"
 // @Param	area				formData		string	  		false		"区"
@@ -45,12 +44,17 @@ func (this *SocialDynamicsController) PostSocialDynamic() {
 	content := this.GetString("content")
 	picture := this.GetString("picture", "")
 	position := this.GetString("position", "")
-	weather := this.GetString("weather", "")
 	province := this.GetString("province", "")
 	city := this.GetString("city", "")
 	area := this.GetString("area", "")
 	longitude, _ := this.GetFloat("longitude", 0)
 	latitude, _ := this.GetFloat("latitude", 0)
+
+	weatherResponse, err := GetCurrentWeather(province, city, area, longitude, latitude)
+	weather:= ""
+	if err != nil {
+		weather = weatherResponse.Lives[0].Weather + "·" + weatherResponse.Lives[0].Temperature + "℃"
+	}
 
 	var socialDynamics models.SocialDynamics
 	socialDynamics.UId = uId

@@ -68,3 +68,24 @@ func GetRandomLocation(provinceId, cityId, areaId int64) (provinceName, cityName
 
 	return province.AreaName, city.AreaName, area.AreaName, longitude, latitude
 }
+
+//根据所在城市区域获得省地址
+func GetProvinceLocation(province string) (location models.Location) {
+	sql := "select * from location province where province.area_name='"+province+"'"
+	base.DBEngine.SQL(sql).Get(&location)
+	return location
+}
+
+//根据所在城市区域获得市地址
+func GetCityLocation(city string) (location models.Location) {
+	sql := "select * from location city where city.area_name='"+city+"'"
+	base.DBEngine.SQL(sql).Get(&location)
+	return location
+}
+
+//根据所在城市区域获得区地址
+func GetAreaLocation(city, area string) (location models.Location) {
+	sql := "select * from location area where area.area_name='"+area+"' and exists(select 1 from location city where city.area_id=area.parent_id and city.area_name='"+city+"')"
+	base.DBEngine.SQL(sql).Get(&location)
+	return location
+}

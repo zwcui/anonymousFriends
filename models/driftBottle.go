@@ -58,7 +58,9 @@ type ZombieDriftBottle struct {
 type DriftBottleDetail struct {
 	DriftBottle									`description:"漂流瓶" xorm:"extends"`
 	SenderNickName     			string			`description:"抛瓶人" json:"senderNickName"`
+	//SenderAvatar     			string			`description:"抛瓶人" json:"senderAvatar"`
 	ReceiverNickName     		string			`description:"拾瓶人" json:"receiverNickName"`
+	//ReceiverAvatar     			string			`description:"拾瓶人" json:"receiverAvatar"`
 }
 
 type DriftBottleInfo struct {

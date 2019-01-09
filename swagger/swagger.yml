@@ -871,10 +871,6 @@ paths:
         description: 位置名称，如全家创意产业园店
         type: string
       - in: formData
-        name: weather
-        description: 天气
-        type: string
-      - in: formData
         name: province
         description: 省
         type: string
@@ -942,6 +938,62 @@ paths:
         "200":
           schema:
             $ref: '#/definitions/models.TagList'
+  /test/testAmapRegeoApi:
+    get:
+      tags:
+      - test
+      description: 测试高德逆地理编码
+      operationId: TestController.测试高德逆地理编码
+      parameters:
+      - in: query
+        name: longitude
+        description: longitude
+        required: true
+        type: number
+        format: double
+      - in: query
+        name: latitude
+        description: latitude
+        required: true
+        type: number
+        format: double
+      responses:
+        "200":
+          schema:
+            $ref: '#/definitions/models.RegeoResponse'
+  /test/testAmapWeatherApi:
+    get:
+      tags:
+      - test
+      description: 测试高德天气查询
+      operationId: TestController.测试高德天气查询
+      parameters:
+      - in: query
+        name: province
+        description: province
+        type: string
+      - in: query
+        name: city
+        description: city
+        type: string
+      - in: query
+        name: area
+        description: area
+        type: string
+      - in: query
+        name: longitude
+        description: longitude
+        type: number
+        format: double
+      - in: query
+        name: latitude
+        description: latitude
+        type: number
+        format: double
+      responses:
+        "200":
+          schema:
+            $ref: '#/definitions/models.RegeoResponse'
   /user/getUserAccountInfo:
     get:
       tags:
@@ -1289,6 +1341,38 @@ paths:
         "200":
           description: '{string} success'
 definitions:
+  models.AddressComponent:
+    title: AddressComponent
+    type: object
+    properties:
+      adcode:
+        description: adcode
+        type: string
+      building:
+        $ref: '#/definitions/models.Building'
+        description: building
+      city:
+        description: city数组
+        type: string
+      citycode:
+        description: citycode
+        type: string
+      country:
+        description: country
+        type: string
+      district:
+        description: district
+        type: string
+      province:
+        description: province
+        type: string
+      streetNumber:
+        $ref: '#/definitions/models.StreetNumber'
+        description: streetNumber
+      towncode:
+        description: towncode
+      township:
+        description: township
   models.AdminNotice:
     title: AdminNotice
     type: object
@@ -1345,6 +1429,31 @@ definitions:
         description: 总数
         type: integer
         format: int64
+  models.Aoi:
+    title: Aoi
+    type: object
+    properties:
+      adcode:
+        description: adcode
+        type: string
+      area:
+        description: area
+        type: string
+      distance:
+        description: distance
+        type: string
+      id:
+        description: id
+        type: string
+      location:
+        description: location
+        type: string
+      name:
+        description: name
+        type: string
+      type:
+        description: type
+        type: string
   models.BaseListContainer:
     title: BaseListContainer
     type: object
@@ -1361,6 +1470,12 @@ definitions:
         description: 总数
         type: integer
         format: int64
+  models.Building:
+    title: Building
+    type: object
+    properties:
+      name:
+        description: name
   models.Comment:
     title: Comment
     type: object
@@ -1812,6 +1927,130 @@ definitions:
       group:
         $ref: '#/definitions/models.Group'
         description: 聊天组
+  models.Poi:
+    title: Poi
+    type: object
+    properties:
+      address:
+        description: address
+        type: string
+      businessarea:
+        description: businessarea
+        type: string
+      direction:
+        description: direction
+        type: string
+      distance:
+        description: distance
+        type: string
+      id:
+        description: id
+        type: string
+      location:
+        description: location
+        type: string
+      name:
+        description: name
+        type: string
+      poiweight:
+        description: poiweight
+        type: string
+      tel:
+        description: tel
+        type: string
+      type:
+        description: type
+        type: string
+  models.RegeoResponse:
+    title: RegeoResponse
+    type: object
+    properties:
+      info:
+        description: info
+        type: string
+      infocode:
+        description: infocode
+        type: string
+      regeocode:
+        $ref: '#/definitions/models.Regeocode'
+        description: regeocode
+      status:
+        description: status
+        type: string
+  models.Regeocode:
+    title: Regeocode
+    type: object
+    properties:
+      addressComponent:
+        $ref: '#/definitions/models.AddressComponent'
+        description: addressComponent
+      aois:
+        description: aois
+        type: array
+        items:
+          $ref: '#/definitions/models.Aoi'
+      formatted_address:
+        description: formatted_address
+        type: string
+      pois:
+        description: pois
+        type: array
+        items:
+          $ref: '#/definitions/models.Poi'
+      roadinters:
+        description: roadinters
+        type: array
+        items:
+          $ref: '#/definitions/models.Roadinter'
+      roads:
+        description: roads
+        type: array
+        items:
+          $ref: '#/definitions/models.Road'
+  models.Road:
+    title: Road
+    type: object
+    properties:
+      direction:
+        description: direction
+        type: string
+      distance:
+        description: distance
+        type: string
+      id:
+        description: id
+        type: string
+      location:
+        description: location
+        type: string
+      name:
+        description: name
+        type: string
+  models.Roadinter:
+    title: Roadinter
+    type: object
+    properties:
+      direction:
+        description: direction
+        type: string
+      distance:
+        description: distance
+        type: string
+      first_id:
+        description: first_id
+        type: string
+      first_name:
+        description: first_name
+        type: string
+      location:
+        description: location
+        type: string
+      second_id:
+        description: second_id
+        type: string
+      second_name:
+        description: second_name
+        type: string
   models.SharePositionGroup:
     title: SharePositionGroup
     type: object
@@ -2054,6 +2293,25 @@ definitions:
       weather:
         description: 天气，如'阵雨转多云 19~25摄氏度'
         type: string
+  models.StreetNumber:
+    title: StreetNumber
+    type: object
+    properties:
+      direction:
+        description: direction
+        type: string
+      distance:
+        description: distance
+        type: string
+      location:
+        description: location
+        type: string
+      number:
+        description: number
+        type: string
+      street:
+        description: street
+        type: string
   models.Tag:
     title: Tag
     type: object
@@ -2294,3 +2552,6 @@ tags:
 - name: report
   description: |
     建议与举报模块
+- name: test
+  description: |
+    调试模块

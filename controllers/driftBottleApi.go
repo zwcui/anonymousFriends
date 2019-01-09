@@ -115,7 +115,8 @@ func (this *DriftBottleController) PickUpDriftBottle() {
 		driftBottle.Status = 2
 		base.DBEngine.Table("drift_bottle").Where("bottle_id=?", driftBottle.BottleId).Cols("receiver_uid", "status").Update(&driftBottle)
 	} else {
-		base.DBEngine.Table("drift_bottle").Where("bottle_id=?", bottleId).Get(&driftBottle)
+		bottleSql := "SELECT drift_bottle.*, (select user.nick_name from user where user.u_id=drift_bottle.sender_uid) as sender_nick_name, (select user.nick_name from user where user.u_id=drift_bottle.receiver_uid) as receiver_nick_name FROM drift_bottle WHERE bottle_id=?"
+		base.DBEngine.SQL(bottleSql, bottleId).Get(&driftBottle)
 	}
 
 	var commentList []models.CommentInfo

@@ -585,6 +585,16 @@ func CalcZombiePositionByRangeMeter(longitude float64, latitude float64, longitu
 		if longitude + zombieLongitudeChange >= longitudeMax || longitude + zombieLongitudeChange <= longitudeMin || latitude + zombieLatitudeChange >= latitudeMax || latitude + zombieLatitudeChange <= latitudeMin {
 			continue
 		} else {
+			//调用高德逆地理编码API，僵尸账户无法进入江河湖海
+			//regeo, err := GetRegeocode(longitude + zombieLongitudeChange, latitude + zombieLatitudeChange)
+			//if err != nil {
+			//	if strings.HasSuffix(regeo.Regeocode.FormattedAddress, "海") || strings.HasSuffix(regeo.Regeocode.FormattedAddress, "湖") || strings.HasSuffix(regeo.Regeocode.FormattedAddress, "河") || strings.HasSuffix(regeo.Regeocode.FormattedAddress, "江") {
+			//
+			//		util.Logger.Info("-------change--------")
+			//
+			//		continue
+			//	}
+			//}
 			break
 		}
 	}
