@@ -2154,6 +2154,9 @@ definitions:
       area:
         description: 区
         type: string
+      avatar:
+        description: 发布人头像
+        type: string
       city:
         description: 市
         type: string
@@ -2197,6 +2200,9 @@ definitions:
         description: 经度
         type: number
         format: double
+      nickName:
+        description: 发布人昵称
+        type: string
       picture:
         description: 图片内容，多个英文逗号隔开
         type: string

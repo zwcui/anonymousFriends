@@ -116,7 +116,7 @@ func (this *SocialDynamicsController) GetSocialDynamicList() {
 	pageSize := this.GetPageSize("pageSize")
 
 	totalSql := "select count(1) from social_dynamics where deleted_at is null "
-	dataSql := "select social_dynamics.*, case when exists(select 1 from `like` where `like`.social_dynamic_id=social_dynamics.id and `like`.u_id='"+strconv.FormatInt(currentUid, 10)+"' and `like`.type=1) then 1 else 0 end as is_like from social_dynamics where deleted_at is null "
+	dataSql := "select social_dynamics.*, user.nick_name as nick_name, user.avatar as avatar, case when exists(select 1 from `like` where `like`.social_dynamic_id=social_dynamics.id and `like`.u_id='"+strconv.FormatInt(currentUid, 10)+"' and `like`.type=1) then 1 else 0 end as is_like from social_dynamics left join user on social_dynamics.u_id=user.u_id where social_dynamics.deleted_at is null "
 	if uId != 0 {
 		totalSql += " and social_dynamics.u_id='"+strconv.FormatInt(uId, 10)+"' "
 		dataSql += " and social_dynamics.u_id='"+strconv.FormatInt(uId, 10)+"' "
@@ -178,6 +178,8 @@ func (this *SocialDynamicsController) GetSocialDynamicList() {
 		_, socialDynamic.Content = util.FilterContent(socialDynamic.Content)
 		_, socialDynamic.Position = util.FilterContent(socialDynamic.Position)
 		result.SocialDynamics = socialDynamic.SocialDynamics
+		result.NickName = socialDynamic.NickName
+		result.Avatar = socialDynamic.Avatar
 		result.IsLike = socialDynamic.IsLike
 		var commentList []models.CommentInfo
 		err := base.DBEngine.Table("comment").Select("comment.*, sender.nick_name as sender_nick_name, sender.u_id as sender_uid, receiver.nick_name as receiver_nick_name, receiver.u_id as receiver_uid").Join("LEFT OUTER", "user sender", "sender.u_id=comment.sender_uid").Join("LEFT OUTER", "user receiver", "receiver.u_id=comment.receiver_uid").Where("comment.type=1 and comment.type_id=?", result.Id).Desc("created").Find(&commentList)
