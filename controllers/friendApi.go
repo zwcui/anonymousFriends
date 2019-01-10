@@ -37,14 +37,17 @@ func (this *FriendController) MakeFriends() {
 	senderUid := this.MustInt64("senderUid")
 	receiverUid := this.MustInt64("receiverUid")
 
+	hasStoredFriend, _ := base.DBEngine.Table("friend").Where("owner_uid=? and friend_uid=?", senderUid, receiverUid).And("status=1").Get(new(models.Friend))
+	if hasStoredFriend {
+		this.ReturnData = util.GenerateAlertMessage(models.FriendError200)
+		return
+	}
+
 	var storedSenderRequest models.FriendRequest
 	hasSenderRequest, _ := base.DBEngine.Table("friend_request").Where("sender_uid=?", senderUid).And("receiver_uid=?", receiverUid).Get(&storedSenderRequest)
 	if hasSenderRequest {
 		if storedSenderRequest.Status == 0 {
 			this.ReturnData = util.GenerateAlertMessage(models.FriendError100)
-			return
-		} else if storedSenderRequest.Status == 1 {
-			this.ReturnData = util.GenerateAlertMessage(models.FriendError200)
 			return
 		}
 	} else {
@@ -53,9 +56,6 @@ func (this *FriendController) MakeFriends() {
 		if hasReceiverRequest {
 			if storedReceiverRequest.Status == 0 {
 				this.ReturnData = util.GenerateAlertMessage(models.FriendError300)
-				return
-			} else if storedReceiverRequest.Status == 1 {
-				this.ReturnData = util.GenerateAlertMessage(models.FriendError200)
 				return
 			}
 		}
