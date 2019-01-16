@@ -213,7 +213,9 @@ func UmengPush(isAndroid bool, params map[string]interface{}) (body []byte, err 
 	if err != nil {
 		return
 	}
-	defer resp.Body.Close()
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 
 	//util.Logger.Debug("UmengPush response Status:", resp.Status)
 

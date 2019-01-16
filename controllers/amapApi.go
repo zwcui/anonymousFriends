@@ -37,7 +37,9 @@ func GetRegeocode(longitude float64, latitude float64) (regeoResponse models.Reg
 		return regeoResponse, err
 	}
 
-	defer response.Body.Close()
+	if response != nil {
+		defer response.Body.Close()
+	}
 
 	if response.StatusCode == 200 {
 		body, err := ioutil.ReadAll(response.Body)
@@ -103,7 +105,9 @@ func GetCurrentWeather(province, city, area string, longitude, latitude float64)
 		return weatherResponse, err
 	}
 
-	defer response.Body.Close()
+	if response != nil {
+		defer response.Body.Close()
+	}
 
 	if response.StatusCode == 200 {
 		body, err := ioutil.ReadAll(response.Body)

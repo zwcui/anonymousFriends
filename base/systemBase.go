@@ -171,7 +171,7 @@ func initDB(dbConfig databaseConfig){
 	DBEngine.SetLogger(xorm.NewSimpleLogger(f))
 
 	//同步表结构
-	err = DBEngine.Sync2(new(models.User), new(models.UserSignInDeviceInfo), new(models.UserAccount), new(models.AccountTransactionRecord), new(models.DefaultNickName),
+	err = DBEngine.Sync2(new(models.User), new(models.UserSignInDeviceInfo), new(models.UserAccount), new(models.AccountTransactionRecord), new(models.DefaultNickName), new(models.DailySignIn),
 		new(models.Group), new(models.Member),
 		new(models.SocialDynamics), new(models.Like), new(models.ZombieSocialDynamics),
 		new(models.FriendRequest), new(models.Friend),

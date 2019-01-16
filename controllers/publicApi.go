@@ -69,7 +69,9 @@ func (this *PublicController) TestHttpRequest() {
 
 	resp, err := client.Do(req)
 
-	defer resp.Body.Close()
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {

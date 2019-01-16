@@ -11,7 +11,7 @@ import (
 )
 
 func TestTimedTask(){
-	util.Logger.Info(strconv.FormatInt(util.UnixOfBeijingTime(), 10)+"-->"+util.FormatTimestamp(util.UnixOfBeijingTime()))
+	util.Logger.Info(strconv.FormatInt(util.UnixOfBeijingTime(), 10)+"-->"+util.FormatTimestampToTime(util.UnixOfBeijingTime()))
 }
 
 //僵尸账户定时任务主动生成总数

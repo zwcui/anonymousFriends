@@ -300,4 +300,11 @@ func init() {
 			AllowHTTPMethods: []string{"post"},
 			Params: nil})
 
+	beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"] = append(beego.GlobalControllerRouter["anonymousFriends/controllers:UserController"],
+		beego.ControllerComments{
+			Method: "DailySignIn",
+			Router: `/dailySignIn`,
+			AllowHTTPMethods: []string{"post"},
+			Params: nil})
+
 }

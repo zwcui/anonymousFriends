@@ -37,6 +37,8 @@ const (
 	SharePositionError300 	= "SharePositionError300###位置共享已结束"
 	SharePositionError400 	= "SharePositionError400###您已接收或拒绝位置共享"
 
+	DailySignInError100 	= "DailySignInError100###你今天已经签到了哟~"
+
 
 )
 

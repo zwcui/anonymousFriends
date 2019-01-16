@@ -20,8 +20,15 @@ func UnixOfBeijingTime() int64 {
 	return beijingTime.Unix()
 }
 
-func FormatTimestamp(timestamp int64) string{
+func FormatTimestampToTime(timestamp int64) string{
 	timeLayout := "2006-01-02 15:04:05"
+	location, _ := time.LoadLocation("Asia/Shanghai")
+	dataTimeStr := time.Unix(timestamp, 0).In(location).Format(timeLayout)
+	return dataTimeStr
+}
+
+func FormatTimestampToDate(timestamp int64) string{
+	timeLayout := "2006-01-02"
 	location, _ := time.LoadLocation("Asia/Shanghai")
 	dataTimeStr := time.Unix(timestamp, 0).In(location).Format(timeLayout)
 	return dataTimeStr

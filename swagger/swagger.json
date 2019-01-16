@@ -1468,6 +1468,30 @@
                 }
             }
         },
+        "/user/dailySignIn": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "description": "每日签到",
+                "operationId": "UserController.每日签到",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "uId",
+                        "description": "uId",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} success"
+                    }
+                }
+            }
+        },
         "/user/getUserAccountInfo": {
             "get": {
                 "tags": [

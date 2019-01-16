@@ -454,7 +454,30 @@ func (this *UserController) SignOut() {
 	this.ReturnData = "success"
 }
 
+// @Title 每日签到
+// @Description 每日签到
+// @Param	uId				formData		int64	  		true		"uId"
+// @Success 200 {string} success
+// @router /dailySignIn [post]
+func (this *UserController) DailySignIn() {
+	uId := this.MustInt64("uId")
 
+	date := util.FormatTimestampToDate(util.UnixOfBeijingTime())
+	hasDailySignIn, _ := base.DBEngine.Table("daily_sign_in").Where("u_id=?", uId).And("sign_in_date=?", date).And("status=1").Get(new(models.DailySignIn))
+
+	if hasDailySignIn {
+		this.ReturnData = util.GenerateAlertMessage(models.DailySignInError100)
+		return
+	}
+
+	var dailySignIn models.DailySignIn
+	dailySignIn.UId = uId
+	dailySignIn.SignInDate = date
+	dailySignIn.Status = 1
+	base.DBEngine.Table("daily_sign_in").InsertOne(&dailySignIn)
+
+	this.ReturnData = "success"
+}
 
 
 
