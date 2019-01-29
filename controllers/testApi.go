@@ -5,7 +5,9 @@
 */
 package controllers
 
-import "anonymousFriends/util"
+import (
+	"anonymousFriends/util"
+)
 
 //调试模块
 type TestController struct {
@@ -66,5 +68,31 @@ func (this *TestController) TestAmapWeatherApi() {
 // @router /test [get]
 func (this *TestController) Test() {
 	util.Logger.Info(util.GetCurrentHour(util.UnixOfBeijingTime()))
+
+
+	user := "service@mail.zwcui.cn"
+	password := ""
+	host := "smtpdm.aliyun.com:465"
+	to := "747660511@qq.com"
+
+	subject := "使用Golang发送邮件"
+
+	body := `
+		<html>
+		<body>
+		<h3>
+		"Test send to email"
+		</h3>
+		</body>
+		</html>
+		`
+	util.Logger.Info("send email")
+	err := SendToMail(user, password, host, to, subject, body, "html")
+	if err != nil {
+		util.Logger.Info("Send mail error!")
+		util.Logger.Info(err)
+	} else {
+		util.Logger.Info("Send mail success!")
+	}
 
 }

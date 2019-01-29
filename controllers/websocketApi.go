@@ -251,7 +251,7 @@ func handleUserChatMessage(socketMessage *models.SocketMessage, reply string, co
 		userUnreadChatMessage.ImageHeight = userMessage.ImageHeight
 		userUnreadChatMessage.IsSent = 0
 		userUnreadChatMessage.Created = util.UnixOfBeijingTime()
-		base.DBEngine.Table("").InsertOne(&userUnreadChatMessage)
+		base.DBEngine.Table("user_unsent_chat_message").InsertOne(&userUnreadChatMessage)
 	}
 
 
