@@ -3400,11 +3400,13 @@
                 },
                 "imageHeight": {
                     "description": "图片高度,客户端根据这个显示图片高度",
-                    "type": "string"
+                    "type": "integer",
+                    "format": "int64"
                 },
                 "imageWidth": {
                     "description": "图片宽度,客户端根据这个显示图片宽度",
-                    "type": "string"
+                    "type": "integer",
+                    "format": "int64"
                 },
                 "toAvatar": {
                     "description": "toAvatar",

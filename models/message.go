@@ -52,8 +52,8 @@ type UserUnsentChatMessage struct {
 	GroupType        		int    				`description:"组类型 1:一对一 2:一对多 " json:"groupType"`
 	Content           		string  			`description:"content" json:"content" `
 	ContentType	           	int		  			`description:"消息内容类型 0:文本 1:图片 2:语音 3:视频 4:位置，经纬度，英文逗号,隔开" json:"contentType" `
-	ImageWidth     			string 				`description:"图片宽度,客户端根据这个显示图片宽度" json:"imageWidth"`
-	ImageHeight     		string 				`description:"图片高度,客户端根据这个显示图片高度" json:"imageHeight"`
+	ImageWidth     			int 				`description:"图片宽度,客户端根据这个显示图片宽度" json:"imageWidth"`
+	ImageHeight     		int 				`description:"图片高度,客户端根据这个显示图片高度" json:"imageHeight"`
 	IsSent		     		int 				`description:"是否已发，1是0否" json:"isSent"`
 	Created           		int64  				`description:"注册时间" json:"created" xorm:"created"`
 	DeletedAt         		int64  				`description:"删除时间" json:"deleted" xorm:"deleted"`
