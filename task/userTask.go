@@ -30,10 +30,10 @@ func ZombieMoveTask(){
 		currentHour := util.GetCurrentHour(util.UnixOfBeijingTime())
 		//僵尸账户移动时间控制，上午8点至晚上24点
 		if moveFlag == 1 && (currentHour >= 8 || currentHour <= 0) {
-			util.Logger.Info("定时任务：僵尸账户位置移动前-->"+strconv.FormatInt(zombie.UId, 10)+"："+strconv.FormatFloat(zombie.Longitude, 'f', 6, 64)+", "+strconv.FormatFloat(zombie.Latitude, 'f', 6, 64))
+			//util.Logger.Info("定时任务：僵尸账户位置移动前-->"+strconv.FormatInt(zombie.UId, 10)+"："+strconv.FormatFloat(zombie.Longitude, 'f', 6, 64)+", "+strconv.FormatFloat(zombie.Latitude, 'f', 6, 64))
 			zombie.Longitude, zombie.Latitude = controllers.CalcZombiePositionByRangeMeter(zombie.Longitude, zombie.Latitude, zombie.ZombieLongitudeMax, zombie.ZombieLongitudeMin, zombie.ZombieLatitudeMax, zombie.ZombieLatitudeMin, 300)
 			base.DBEngine.Table("user").Where("u_id=?", zombie.UId).Cols("longitude", "latitude").Update(&zombie)
-			util.Logger.Info("定时任务：僵尸账户位置移动后-->"+strconv.FormatInt(zombie.UId, 10)+"："+strconv.FormatFloat(zombie.Longitude, 'f', 6, 64)+", "+strconv.FormatFloat(zombie.Latitude, 'f', 6, 64))
+			//util.Logger.Info("定时任务：僵尸账户位置移动后-->"+strconv.FormatInt(zombie.UId, 10)+"："+strconv.FormatFloat(zombie.Longitude, 'f', 6, 64)+", "+strconv.FormatFloat(zombie.Latitude, 'f', 6, 64))
 		}
 	}
 
