@@ -170,14 +170,29 @@ func handleHeartbeat(socketMessage *models.SocketMessage, conn *websocket.Conn){
 			}
 
 			util.Logger.Info("-----socketConnection.heartbeat.ExpireTime-----"+strconv.FormatInt(socketMessage.MessageSenderUid, 10)+"--"+strconv.FormatInt(UserSocketConnections[socketMessage.MessageSenderUid].ExpireTime, 10))
-			socketConnection := UserSocketConnections[socketMessage.MessageSenderUid]
-			if socketMessage.MessageType == 0 {
-				socketConnection.ConnType = 1
-			} else if socketMessage.MessageType == -1 {
-				socketConnection.ConnType = 2
+			//切换网络刷新conn，现为每次心跳刷新conn
+			if conn.Request().Header.Get("deviceToken") != "" && storedSocketConnection.Conn.Request().Header.Get("deviceToken") == conn.Request().Header.Get("deviceToken") {
+				util.Logger.Info("refresh storedSocketConnection")
+				var socketConnection models.SocketConnection
+				socketConnection.Conn = conn
+				if socketMessage.MessageType == 0 {
+					socketConnection.ConnType = 1
+				} else if socketMessage.MessageType == -1 {
+					socketConnection.ConnType = 2
+				}
+				socketConnection.ExpireTime = socketMessage.MessageExpireTime
+				socketConnection.Token = socketMessage.MessageToken
+				UserSocketConnections[socketMessage.MessageSenderUid] = socketConnection
+			} else {
+				socketConnection := UserSocketConnections[socketMessage.MessageSenderUid]
+				if socketMessage.MessageType == 0 {
+					socketConnection.ConnType = 1
+				} else if socketMessage.MessageType == -1 {
+					socketConnection.ConnType = 2
+				}
+				socketConnection.ExpireTime = socketMessage.MessageExpireTime
+				UserSocketConnections[socketMessage.MessageSenderUid] = socketConnection
 			}
-			socketConnection.ExpireTime = socketMessage.MessageExpireTime
-			UserSocketConnections[socketMessage.MessageSenderUid] = socketConnection
 		}
 	}
 

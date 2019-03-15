@@ -100,7 +100,7 @@ func (this *apiController) bathAuth(){
 				this.StopRun()
 			}
 			//校验密码
-			//passwordByte := util.Base64Encode([]byte(encryptedPassword))
+			//passwordByte, _ := util.Base64Decode([]byte(encryptedPassword))
 			//password := string(passwordByte)
 			password := encryptedPassword
 			hashedPwd, _ := util.EncryptPasswordWithSalt(password, user.Salt)

@@ -11,15 +11,21 @@ import (
 )
 
 //根据错误码获取
-func getErrorCodeAndDescription(error string) (errorCode string, errorDescription string) {
+func getErrorCodeAndDescription(error string, suffix string) (errorCode string, errorDescription string) {
 	errorCode = strings.Split(error, models.ErrorSpliter)[0]
-	errorDescription = strings.Split(error, models.ErrorSpliter)[1]
+	errorDescription = strings.Split(error, models.ErrorSpliter)[1] + suffix
 	return errorCode, errorDescription
 }
 
 //生成错误返回结构体
-func GenerateAlertMessage(error string) models.AlertMessage{
+func GenerateAlertMessage(errorArgs ...string) models.AlertMessage{
 	var alert models.AlertMessage
-	alert.AlertCode, alert.AlertMessage = getErrorCodeAndDescription(error)
+	if len(errorArgs) > 1 {
+		alert.AlertCode, alert.AlertMessage = getErrorCodeAndDescription(errorArgs[0], errorArgs[1])
+	} else if len(errorArgs) == 1 {
+		alert.AlertCode, alert.AlertMessage = getErrorCodeAndDescription(errorArgs[0], "")
+	} else {
+		alert.AlertCode, alert.AlertMessage = getErrorCodeAndDescription(models.CommonError100, "")
+	}
 	return alert
 }
